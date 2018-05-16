@@ -26,5 +26,17 @@
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.7.0",
     "react-app-rewired": "^1.5.2"
-  }
+  },
+  "description": "MySeq is a web-application for interactive analysis of personal genomes",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mlinderm/myseq.git"
+  },
+  "keywords": [],
+  "author": "Michael Linderman <mlinderman@middlebury.edu>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/mlinderm/myseq/issues"
+  },
+  "homepage": "https://github.com/mlinderm/myseq#readme"
 }
