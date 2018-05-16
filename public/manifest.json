@@ -1,0 +1,6 @@
+{
+  "short_name": "MySeq",
+  "name": "MySeq Personal Genome Analyzer",
+  "start_url": "./index.html",
+  "display": "standalone"
+}

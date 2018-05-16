@@ -1,0 +1,30 @@
+{
+  "name": "myseq",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "myseq-vcf": "../myseq-vcf",
+    "prop-types": "^15.6.1",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
+    "react-router-dom": "^4.2.2",
+    "react-scripts": "1.1.4",
+    "reactstrap": "^6.0.1",
+    "styled-components": "^3.2.6"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "build:embed": "react-app-rewired build --embed"
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.11.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.7.0",
+    "react-app-rewired": "^1.5.2"
+  }
+}
