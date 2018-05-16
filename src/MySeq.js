@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { Container } from 'reactstrap';
 import SourceContext from './contexts/SourceContext';
 import SourceRoute from './components/SourceRoute';

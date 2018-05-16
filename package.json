@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "myseq-vcf": "../myseq-vcf",
+    "myseq-vcf": "mlinderm/myseq-vcf#f997e6d",
     "prop-types": "^15.6.1",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
@@ -17,7 +17,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "build:embed": "react-app-rewired build --embed"
+    "build:embed": "react-app-rewired build --embed",
+    "lint": "eslint ."
   },
   "devDependencies": {
     "eslint": "^4.19.1",
@@ -27,13 +28,16 @@
     "eslint-plugin-react": "^7.7.0",
     "react-app-rewired": "^1.5.2"
   },
-  "description": "MySeq is a web-application for interactive analysis of personal genomes",
+  "description": "MySeq is a web-application for interactive analysis of personal genomes.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mlinderm/myseq.git"
   },
-  "keywords": [],
+  "keywords": ["MySeq", "genomics", "VCF"],
   "author": "Michael Linderman <mlinderman@middlebury.edu>",
+  "contributors": [
+    "Leo McElroy <lmcelroy@middlebury.edu>"
+  ],
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/mlinderm/myseq/issues"
