@@ -7,6 +7,7 @@ import SourceRoute from './components/SourceRoute';
 import Navigation from './components/Navigation';
 import LoadVcfFile from './components/LoadVcfFile';
 import VariantQuery from './components/query/VariantQuery';
+import Traits from './components/traits/Traits';
 
 class MySeq extends Component {
   constructor(props) {
@@ -57,6 +58,7 @@ class MySeq extends Component {
                   }
                 />
                 <SourceRoute path="/query" exact component={VariantQuery} />
+                <Route path="/traits" component={Traits} />
               </Switch>
             </Container>
           </main>

@@ -63,6 +63,9 @@ class Navigation extends Component {
               <DropdownMenu right>
                 <DropdownItem tag={Link} to="/query">Query Variants</DropdownItem>
               </DropdownMenu>
+              <DropdownMenu right>
+                <DropdownItem tag={Link} to="/traits">Physical Traits</DropdownItem>
+              </DropdownMenu>
             </UncontrolledDropdown>
           </Nav>
           { samples.length > 0 &&
