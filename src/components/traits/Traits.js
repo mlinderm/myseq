@@ -5,9 +5,11 @@ import { Nav, NavItem, NavLink, Dropdown, DropdownToggle, DropdownItem, Dropdown
 import SourceRoute from '../SourceRoute';
 
 import EarwaxTrait from './EarwaxTrait';
+import AsparagusTrait from './AsparagusTrait';
 
 const traits = [
   { title: 'Earwax Consistency', route: '/traits/earwax', component: EarwaxTrait },
+  { title: 'Asparagus Asnomia', route: '/traits/asparagus', component: AsparagusTrait },
 ];
 
 

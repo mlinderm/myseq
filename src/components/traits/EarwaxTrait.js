@@ -6,6 +6,7 @@ const earwax = {
   variant: {
     chr: '16', pos: 48258198, ref: 'C', alt: 'T',
   },
+  rsID: 'rs17822931',
   association: [
     { genotype: 'C/C', phenotype: 'Wet earwax' },
     { genotype: 'C/T', phenotype: 'Wet earwax' },

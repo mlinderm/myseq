@@ -33,7 +33,7 @@ class SingleVariantTrait extends Component {
     return (
       <div>
         <h3>{ trait.title }</h3>
-        Querying the genotype for variant {`${query.chr}:g.${query.pos}${query.ref}>${query.alt}` }:
+        Querying the genotype for variant {`${query.chr}:g.${query.pos}${query.ref}>${query.alt}`} ({trait.rsID && (<a target="_blank" rel="noreferrer noopener" href={`https://www.ncbi.nlm.nih.gov/snp/${trait.rsID}`}>{trait.rsID}</a>)}):
         <Table bordered>
           <thead>
             <tr><th>Genotype</th><th>Phenotype</th></tr>
@@ -62,6 +62,7 @@ SingleVariantTrait.propTypes = {
   trait: PropTypes.shape({
     title: PropTypes.string,
     variant: PropTypes.object,
+    rsID: PropTypes.string,
     association: PropTypes.array,
   }).isRequired,
   children: PropTypes.node.isRequired,
