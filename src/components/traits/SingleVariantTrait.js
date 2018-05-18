@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Table } from 'reactstrap';
 import { VCFSource } from 'myseq-vcf';
-import SourceContext from '../../contexts/SourceContext';
+import { settingsProps } from '../../contexts/SettingsContext';
+import { withSourceAndSettings } from '../../contexts/context-helpers';
 
-class SingleVariantTraitImpl extends Component {
+class SingleVariantTrait extends Component {
   constructor(props) {
     super(props);
 
@@ -15,10 +16,7 @@ class SingleVariantTraitImpl extends Component {
 
   componentDidMount() {
     // Use assumeRefRef to always get variant
-    const { sample, assumeRefRef } = {
-      sample: undefined,
-      assumeRefRef: true,
-    }; // this.props.settings;
+    const { sample, assumeRefRef } = this.props.settings;
     const query = this.props.trait.variant;
 
     this.props.source.variant(query.chr, query.pos, query.ref, query.alt, assumeRefRef)
@@ -58,7 +56,8 @@ class SingleVariantTraitImpl extends Component {
   }
 }
 
-SingleVariantTraitImpl.propTypes = {
+SingleVariantTrait.propTypes = {
+  settings: settingsProps.isRequired,
   source: PropTypes.instanceOf(VCFSource).isRequired,
   trait: PropTypes.shape({
     title: PropTypes.string,
@@ -68,12 +67,4 @@ SingleVariantTraitImpl.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-function SingleVariantTrait(props) {
-  return (
-    <SourceContext.Consumer>
-      {source => (<SingleVariantTraitImpl source={source} {...props} />)}
-    </SourceContext.Consumer>
-  );
-}
-
-export default SingleVariantTrait;
+export default withSourceAndSettings(SingleVariantTrait);

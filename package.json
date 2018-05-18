@@ -33,7 +33,11 @@
     "type": "git",
     "url": "git+https://github.com/mlinderm/myseq.git"
   },
-  "keywords": ["MySeq", "genomics", "VCF"],
+  "keywords": [
+    "MySeq",
+    "genomics",
+    "VCF"
+  ],
   "author": "Michael Linderman <mlinderman@middlebury.edu>",
   "contributors": [
     "Leo McElroy <lmcelroy@middlebury.edu>"
