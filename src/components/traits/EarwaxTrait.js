@@ -14,7 +14,7 @@ const earwax = {
   ],
 };
 
-function EarwaxTrait() {
+export default function EarwaxTrait() {
   return (
     <SingleVariantTrait trait={earwax}>
       <p>
@@ -23,5 +23,3 @@ function EarwaxTrait() {
     </SingleVariantTrait>
   );
 }
-
-export default EarwaxTrait;

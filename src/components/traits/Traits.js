@@ -6,10 +6,12 @@ import SourceRoute from '../SourceRoute';
 
 import EarwaxTrait from './EarwaxTrait';
 import AsparagusTrait from './AsparagusTrait';
+import BitterTastingTrait from './BitterTastingTrait';
 
 const traits = [
   { title: 'Earwax Consistency', route: '/traits/earwax', component: EarwaxTrait },
   { title: 'Asparagus Asnomia', route: '/traits/asparagus', component: AsparagusTrait },
+  { title: 'Bitter Tasting', route: '/traits/bitter', component: BitterTastingTrait },
 ];
 
 

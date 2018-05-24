@@ -14,7 +14,7 @@ const trait = {
   ],
 };
 
-function AsparagusTrait() {
+export default function AsparagusTrait() {
   return (
     <SingleVariantTrait trait={trait}>
       <p>
@@ -23,5 +23,3 @@ function AsparagusTrait() {
     </SingleVariantTrait>
   );
 }
-
-export default AsparagusTrait;
