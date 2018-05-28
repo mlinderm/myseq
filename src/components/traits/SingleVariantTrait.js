@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Table } from 'reactstrap';
 import { VCFSource } from 'myseq-vcf';
-import { settingsProps } from '../../contexts/SettingsContext';
-import { withSourceAndSettings } from '../../contexts/context-helpers';
+import { withSourceAndSettings, settingsPropType } from '../../contexts/context-helpers';
 
 class SingleVariantTrait extends Component {
   constructor(props) {
@@ -57,7 +56,7 @@ class SingleVariantTrait extends Component {
 }
 
 SingleVariantTrait.propTypes = {
-  settings: settingsProps.isRequired,
+  settings: settingsPropType.isRequired,
   source: PropTypes.instanceOf(VCFSource).isRequired,
   trait: PropTypes.shape({
     title: PropTypes.string,

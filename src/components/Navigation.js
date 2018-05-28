@@ -50,7 +50,7 @@ class Navigation extends Component {
     const { isOpen } = this.state;
 
     return (
-      <Navbar color="light" light expand="md">
+      <Navbar color="light" light expand="md" className="mb-3">
         <NavbarBrand tag={Link} to="/">MySeq</NavbarBrand>
         <NavbarToggler onClick={this.handleMenuToggle} />
         <Collapse isOpen={isOpen} navbar>
@@ -62,8 +62,6 @@ class Navigation extends Component {
               <DropdownToggle nav caret>Analyses</DropdownToggle>
               <DropdownMenu right>
                 <DropdownItem tag={Link} to="/query">Query Variants</DropdownItem>
-              </DropdownMenu>
-              <DropdownMenu right>
                 <DropdownItem tag={Link} to="/traits">Physical Traits</DropdownItem>
               </DropdownMenu>
             </UncontrolledDropdown>

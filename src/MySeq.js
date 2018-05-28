@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { Container } from 'reactstrap';
 import SourceContext from './contexts/SourceContext';
-import SettingsContext, { defaultSettings, settingsProps } from './contexts/SettingsContext';
+import SettingsContext, { defaultSettings, settingsPropType } from './contexts/SettingsContext';
 import SourceRoute from './components/SourceRoute';
 import Navigation from './components/Navigation';
+import Settings from './components/Settings';
 import LoadVcfFile from './components/LoadVcfFile';
 import VariantQuery from './components/query/VariantQuery';
 import Traits from './components/traits/Traits';
@@ -54,8 +55,15 @@ class MySeq extends Component {
                   <Route
                     path="/load"
                     exact
-                    render={renderProps =>
-                      <LoadVcfFile {...renderProps} setSource={this.setSource} />
+                    render={rp =>
+                      <LoadVcfFile {...rp} setSource={this.setSource} />
+                    }
+                  />
+                  <Route
+                    path="/settings"
+                    exact
+                    render={rp =>
+                      <Settings {...rp} settings={settings} updateSettings={this.updateSettings} />
                     }
                   />
                   <SourceRoute path="/query" exact component={VariantQuery} />
@@ -71,7 +79,7 @@ class MySeq extends Component {
 }
 
 MySeq.propTypes = {
-  settings: settingsProps,
+  settings: settingsPropType,
 };
 
 MySeq.defaultProps = {

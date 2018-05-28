@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Table } from 'reactstrap';
 
+import { VCFVariant } from 'myseq-vcf';
+
 function VariantTable(props) {
   return (
     <Table bordered size="sm">
@@ -10,7 +12,11 @@ function VariantTable(props) {
       </thead>
       <tbody>
         {props.variants.map(variant => (
-          <tr key={variant.toString()}>
+          <tr
+            key={variant.toString()}
+            onClick={() => props.selectVariant(variant)}
+            className={variant === props.selectedVariant ? 'table-primary' : undefined}
+          >
             <td>{variant.toString()}</td>
             <td>{variant.ids}</td>
             <td>{variant.genotype()}</td>
@@ -22,7 +28,13 @@ function VariantTable(props) {
 }
 
 VariantTable.propTypes = {
-  variants: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+  variants: PropTypes.arrayOf(PropTypes.instanceOf(VCFVariant)).isRequired,
+  selectVariant: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+  selectedVariant: PropTypes.instanceOf(VCFVariant),
+};
+
+VariantTable.defaultProps = {
+  selectedVariant: undefined,
 };
 
 export default VariantTable;

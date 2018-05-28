@@ -1,7 +1,10 @@
 /* eslint-disable import/prefer-default-export */
 import React from 'react';
-import SettingsContext from './SettingsContext';
+
+import SettingsContext, { withSettings, settingsPropType } from './SettingsContext';
 import SourceContext from './SourceContext';
+
+export { SettingsContext, withSettings, settingsPropType };
 
 export function withSourceAndSettings(Component) {
   return function SourceAndSettingsComponent(props) {

@@ -4,7 +4,9 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Col, Row, Form, FormGroup, Label, Input, FormFeedback, FormText, Button } from 'reactstrap';
 import { VCFSource } from 'myseq-vcf';
+
 import VariantTable from './VariantTable';
+import VariantDetail from './VariantDetail';
 
 const QueryExample = styled.button`
   background: none!important;
@@ -94,9 +96,12 @@ class VariantQuery extends Component {
       error: false,
       helpMessage: '',
       variants: [],
+      selectedVariant: undefined,
     };
 
     this.handleCoordinateQuery = this.handleCoordinateQuery.bind(this);
+    this.handleSelectVariant = this.handleSelectVariant.bind(this);
+    this.handleCloseDetail = this.handleSelectVariant.bind(this, undefined);
   }
 
   handleCoordinateQuery(region) {
@@ -120,7 +125,12 @@ class VariantQuery extends Component {
     );
   }
 
+  handleSelectVariant(variant) {
+    this.setState({ selectedVariant: variant });
+  }
+
   render() {
+    const { region, variants, selectedVariant } = this.state;
     return (
       <div>
         <CoordinateSearchBox
@@ -128,13 +138,20 @@ class VariantQuery extends Component {
           error={this.state.error}
           helpMessage={this.state.helpMessage}
         />
-        {this.state.region &&
+        {region &&
           <Row>
             <Col sm={6}>
-              <p>Listing {this.state.variants.length} variant(s) in {this.state.region}</p>
-              <VariantTable variants={this.state.variants} />
+              <p>Listing {variants.length} variant(s) in {region}</p>
+              <VariantTable
+                variants={variants}
+                selectVariant={this.handleSelectVariant}
+                selectedVariant={selectedVariant}
+              />
             </Col>
           </Row>
+        }
+        {selectedVariant &&
+          <VariantDetail variant={selectedVariant} close={this.handleCloseDetail} />
         }
       </div>
     );
