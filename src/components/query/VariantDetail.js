@@ -7,7 +7,7 @@ import { get } from 'lodash-es';
 
 import { VCFVariant } from 'myseq-vcf';
 import { settingsPropType, withSettings } from '../../contexts/SettingsContext';
-import { dbSNP, clinVarVariant, omimVariant } from '../util/links';
+import { DbSnp, ClinVar, Omim } from '../util/links';
 
 const Label = styled.dt.attrs({
   className: 'col-sm-2',
@@ -49,8 +49,8 @@ class VariantDetail extends Component {
     // User does not want to query external services
     if (this.props.settings.external) {
       const { variant } = this.props;
-      // TODO: Replace with toHgvs() method
-      let hgvs = `${variant.contig}:g.${variant.position}${variant.ref}>${variant.alt[0]}`;
+
+      let hgvs = variant.toHgvs();
       if (!hgvs.startsWith('chr')) {
         hgvs = `chr${hgvs}`;
       }
@@ -115,11 +115,11 @@ class VariantDetail extends Component {
               <Label>VCF Filter:</Label>
               <Value>{variant.filter || 'Unknown'}</Value>
               <Label>dbSNP:</Label>
-              <Value>{dbSNP(get(detail, 'dbsnp.rsid'))}</Value>
+              <Value><DbSnp rsId={get(detail, 'dbsnp.rsid')} /></Value>
               <Label>ClinVar:</Label>
-              <Value>{clinVarVariant(get(detail, 'clinvar.variant_id'))}</Value>
+              <Value><ClinVar variantId={get(detail, 'clinvar.variant_id')} /></Value>
               <Label>OMIM:</Label>
-              <Value>{omimVariant(get(detail, 'clinvar.omim'))}</Value>
+              <Value><Omim mimNumber={get(detail, 'clinvar.omim')} /></Value>
               <Label>Allele Frequency:</Label>
               <Value>{computeAF(detail)}</Value>
             </dl>

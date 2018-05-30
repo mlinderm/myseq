@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Table } from 'reactstrap';
+import { Table, Row, Col } from 'reactstrap';
 import { VCFSource } from 'myseq-vcf';
 import { withSourceAndSettings, settingsPropType } from '../../contexts/context-helpers';
+import { DbSnp } from '../util/links';
 
 class SingleVariantTrait extends Component {
   constructor(props) {
@@ -32,24 +33,30 @@ class SingleVariantTrait extends Component {
     return (
       <div>
         <h3>{ trait.title }</h3>
-        Querying the genotype for variant {`${query.chr}:g.${query.pos}${query.ref}>${query.alt}`} ({trait.rsID && (<a target="_blank" rel="noreferrer noopener" href={`https://www.ncbi.nlm.nih.gov/snp/${trait.rsID}`}>{trait.rsID}</a>)}):
-        <Table bordered>
-          <thead>
-            <tr><th>Genotype</th><th>Phenotype</th></tr>
-          </thead>
-          <tbody>
-            { trait.association.map(assoc => (
-              <tr
-                key={assoc.genotype}
-                className={(this.state.genotype === assoc.genotype) ? 'table-primary' : undefined}
-              >
-                <td>{assoc.genotype}</td>
-                <td>{assoc.phenotype}</td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-        { this.props.children }
+        <Row>
+          <Col md={6}>
+            Querying for variant {`${query.chr}:g.${query.pos}${query.ref}>${query.alt}`} {trait.rsId && (<span>(<DbSnp rsId={trait.rsId} />)</span>)}:
+            <Table bordered>
+              <thead>
+                <tr><th>Genotype</th><th>Phenotype</th></tr>
+              </thead>
+              <tbody>
+                { trait.association.map(assoc => (
+                  <tr
+                    key={assoc.genotype}
+                    className={(this.state.genotype === assoc.genotype) ? 'table-primary' : undefined}
+                  >
+                    <td>{assoc.genotype}</td>
+                    <td>{assoc.phenotype}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </Col>
+          <Col md={6}>
+            { this.props.children }
+          </Col>
+        </Row>
       </div>
     );
   }
@@ -61,7 +68,7 @@ SingleVariantTrait.propTypes = {
   trait: PropTypes.shape({
     title: PropTypes.string,
     variant: PropTypes.object,
-    rsID: PropTypes.string,
+    rsId: PropTypes.string,
     association: PropTypes.array,
   }).isRequired,
   children: PropTypes.node.isRequired,

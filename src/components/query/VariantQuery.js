@@ -105,6 +105,7 @@ class VariantQuery extends Component {
   }
 
   handleCoordinateQuery(region) {
+    // TODO: Normalize contig name
     const coords = region.split(/[:-]/, 3);
     this.props.source.variants(coords[0], parseInt(coords[1], 10), parseInt(coords[2], 10)).then(
       (variants) => {
