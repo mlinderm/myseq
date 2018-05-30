@@ -18,15 +18,15 @@ const Value = styled.dd.attrs({
 })``;
 
 function computeAF(detail, digits = 5) {
-  let exomeAN = get(detail, 'gnomad_genome.an.an');
-  let genomeAN = get(detail, 'gnomad_exome.an.an');
+  let genomeAN = get(detail, 'gnomad_genome.an.an');
+  let exomeAN = get(detail, 'gnomad_exome.an.an');
   if (exomeAN || genomeAN) {
     exomeAN = exomeAN || 0;
     genomeAN = genomeAN || 0;
     return ((
       (get(detail, 'gnomad_genome.af.af', 0.0) * genomeAN) +
       (get(detail, 'gnomad_exome.af.af', 0.0) * exomeAN)
-    ) / (exomeAN + genomeAN)).toFixed(digits);
+    ) / (genomeAN + exomeAN)).toFixed(digits);
   }
   return 'Not reported';
 }
@@ -35,33 +35,42 @@ class VariantDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      detail: props.settings.external ? undefined : null,
+      detail: undefined,
       activeTab: 'sum',
     };
     this.switchTab = this.switchTab.bind(this);
   }
 
   componentDidMount() {
-    // User does not want to query external services
-    if (this.props.settings.external) {
-      const { variant } = this.props;
+    this.updateVariantDetail(this.props.variant);
+  }
 
-      let hgvs = variant.toHgvs();
-      if (!hgvs.startsWith('chr')) {
-        hgvs = `chr${hgvs}`;
-      }
-      fetch(
-        `https://myvariant.info/v1/variant/${hgvs}`,
-        { mode: 'cors', 'Content-Type': 'application/json' },
-      )
+  componentDidUpdate(prevProps) {
+    if (prevProps.variant !== this.props.variant) {
+      this.updateVariantDetail(this.props.variant);
+    }
+  }
+
+  updateVariantDetail(variant) {
+    // Only fetch detail if permitted to access external services
+    if (this.props.settings.external) {
+      (new Promise((resolve) => {
+        // MyVariant.info requires a leading chr
+        const hgvs = variant.toHgvs();
+        resolve(!hgvs.startsWith('chr') ? `chr${hgvs}` : hgvs);
+      }))
+        .then(hgvs => fetch(
+          `https://myvariant.info/v1/variant/${hgvs}`,
+          { mode: 'cors', 'Content-Type': 'application/json' },
+        ))
         .then((response) => {
           if (response.ok) {
             return response.json();
           }
-          throw new Error('Unknown variant');
+          throw new Error('No additional detail available for variant');
         })
         .then(detail => this.setState({ detail }))
-        .catch(() => this.setState({ detail: null }));
+        .catch(() => this.setState({ detail: undefined }));
     }
   }
 

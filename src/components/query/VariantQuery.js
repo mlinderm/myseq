@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Col, Row, Form, FormGroup, Label, Input, FormFeedback, FormText, Button } from 'reactstrap';
 import { VCFSource } from 'myseq-vcf';
+import { flatten, identity } from 'lodash-es';
 
 import { withSettings, settingsPropType } from '../../contexts/SettingsContext';
 import VariantTable from './VariantTable';
@@ -27,6 +28,7 @@ class CoordinateSearchBoxImpl extends Component {
     };
 
     this.handleSearchChange = this.handleSearchChange.bind(this);
+    this.handleQueries = this.handleQueries.bind(this);
     this.handleQuery = this.handleQuery.bind(this);
     this.createSearch = this.createSearch.bind(this);
   }
@@ -35,15 +37,13 @@ class CoordinateSearchBoxImpl extends Component {
     this.setState({ region: evt.target.value });
   }
 
-  handleQuery(evt) {
-    evt.preventDefault();
-    const { region } = this.state;
+  handleQuery(region) {
     if (region.startsWith('rs')) {
       // Obtain coordinates for rsID if external queries are permitted
       if (!this.props.settings.external) {
-        throw new Error('Querying external services must be enabled to search by rsID');
+        return Promise.reject(new Error('Querying external services must be enabled to search by rsID'));
       }
-      fetch(
+      return fetch(
         `https://myvariant.info/v1/query?q=dbsnp.rsid:${region}&fields=dbsnp.chrom,dbsnp.hg19`,
         { mode: 'cors', 'Content-Type': 'application/json' },
       )
@@ -51,26 +51,20 @@ class CoordinateSearchBoxImpl extends Component {
         .then((results) => {
           if (results.total === 1) {
             const { chrom, hg19 } = results.hits[0].dbsnp;
-            this.props.coordinateQuery(`${chrom}:${hg19.start}-${hg19.end}`);
-          } else {
-            throw new Error('Unknown or invalid rsID');
+            return `${chrom}:${hg19.start}-${hg19.end}`;
           }
-        })
-        .catch(err => this.props.coordinateQuery(err));
+          throw new Error('Unknown or invalid rsID');
+        });
     } else if (region.includes(':')) {
       // Query is likely specified as a region, i.e. chr1:1-100
       const coords = region.split(/[:-]/, 3);
-      if (coords.length === 2) {
-        this.props.coordinateQuery(`${region}-${coords[1]}`);
-      } else {
-        this.props.coordinateQuery(this.state.region);
-      }
-    } else {
+      return Promise.resolve((coords.length === 2) ? `${region}-${coords[1]}` : region);
+    } else { // eslint-disable-line no-else-return
       // Attempt query as a gene symbol
       if (!this.props.settings.external) {
-        throw new Error('Querying external services must be enabled to search by gene name');
+        return Promise.reject(new Error('Querying external services must be enabled to search by gene name'));
       }
-      fetch(
+      return fetch(
         `http://mygene.info/v3/query?q=symbol:${region}&fields=genomic_pos&species=human`,
         { mode: 'cors', 'Content-Type': 'application/json' },
       )
@@ -78,13 +72,17 @@ class CoordinateSearchBoxImpl extends Component {
         .then((results) => {
           if (results.total === 1) {
             const { chr, start, end } = results.hits[0].genomic_pos;
-            this.props.coordinateQuery(`${chr}:${start}-${end}`);
-          } else {
-            throw new Error('Unknown or invalid gene symbol');
+            return `${chr}:${start}-${end}`;
           }
-        })
-        .catch(err => this.props.coordinateQuery(err));
+          throw new Error('Unknown or invalid gene symbol');
+        });
     }
+  }
+
+  handleQueries(evt) {
+    evt.preventDefault();
+    Promise.all(this.state.region.split(/[ ,]/).filter(identity).map(this.handleQuery))
+      .then(this.props.coordinateQuery, this.props.coordinateQuery);
   }
 
   createSearch(search) {
@@ -101,7 +99,7 @@ class CoordinateSearchBoxImpl extends Component {
   render() {
     // TODO: Auto load example queries
     return (
-      <Form onSubmit={this.handleQuery}>
+      <Form onSubmit={this.handleQueries}>
         <FormGroup row>
           <Col sm={12} md={6}>
             <Label for="query-text" hidden>Query by genomic coordinates</Label>
@@ -149,19 +147,38 @@ class VariantQuery extends Component {
     this.handleCloseDetail = this.handleSelectVariant.bind(this, undefined);
   }
 
-  handleCoordinateQuery(region) {
+  handleCoordinateQuery(regions) {
     const { source } = this.props;
-    // TODO: Normalize contig name
-    ((region instanceof Error) ? Promise.reject(region) : Promise.resolve(region.split(/[:-]/, 3)))
-      .then(coords => source.variants(coords[0], parseInt(coords[1], 10), parseInt(coords[2], 10)))
+
+    if (regions instanceof Error) {
+      this.setState({
+        error: true, helpMessage: regions.message, variants: [], selectedVariant: undefined,
+      });
+      return;
+    }
+
+    // TODO: Normalize query (contig name, overlapping chunks, etc.)
+    Promise.all(regions.map((region) => {
+      const [ctg, start, end] = region.split(/[:-]/, 3);
+      return source.variants(ctg, parseInt(start, 10), parseInt(end, 10));
+    }))
+      .then(flatten)
       .then((variants) => {
         this.setState({
-          region, variants, selectedVariant: undefined, error: false, helpMessage: '',
+          region: regions.join(', '),
+          variants,
+          selectedVariant: undefined,
+          error: false,
+          helpMessage: '',
         });
       })
       .catch((err) => {
         this.setState({
-          error: true, helpMessage: err.message, variants: [], selectedVariant: undefined,
+          error: true,
+          helpMessage: err.message,
+          region: undefined,
+          variants: [],
+          selectedVariant: undefined,
         });
       });
   }
