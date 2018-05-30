@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Table } from 'reactstrap';
-
 import { VCFVariant } from 'myseq-vcf';
+
+import { DbSnp } from '../util/links';
 
 function VariantTable(props) {
   return (
@@ -18,7 +19,7 @@ function VariantTable(props) {
             className={variant === props.selectedVariant ? 'table-primary' : undefined}
           >
             <td>{variant.toString()}</td>
-            <td>{variant.ids}</td>
+            <td><DbSnp rsId={variant.ids} /></td>
             <td>{variant.genotype()}</td>
           </tr>
         ))}

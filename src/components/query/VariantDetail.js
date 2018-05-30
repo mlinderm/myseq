@@ -15,11 +15,7 @@ const Label = styled.dt.attrs({
 
 const Value = styled.dd.attrs({
   className: 'col-sm-10',
-})`
-  i {
-    font-size: 1rem;
-  }
-`;
+})``;
 
 function computeAF(detail, digits = 5) {
   let exomeAN = get(detail, 'gnomad_genome.an.an');
@@ -90,7 +86,6 @@ class VariantDetail extends Component {
     );
   }
 
-  // TODO: respect privacy setting
   render() {
     const { variant, close } = this.props;
     const { detail } = this.state;

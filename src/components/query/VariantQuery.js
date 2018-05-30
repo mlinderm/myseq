@@ -5,8 +5,10 @@ import styled from 'styled-components';
 import { Col, Row, Form, FormGroup, Label, Input, FormFeedback, FormText, Button } from 'reactstrap';
 import { VCFSource } from 'myseq-vcf';
 
+import { withSettings, settingsPropType } from '../../contexts/SettingsContext';
 import VariantTable from './VariantTable';
 import VariantDetail from './VariantDetail';
+
 
 const QueryExample = styled.button`
   background: none!important;
@@ -17,7 +19,7 @@ const QueryExample = styled.button`
   cursor: pointer;
 `;
 
-class CoordinateSearchBox extends Component {
+class CoordinateSearchBoxImpl extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -36,12 +38,52 @@ class CoordinateSearchBox extends Component {
   handleQuery(evt) {
     evt.preventDefault();
     const { region } = this.state;
-
-    const coords = region.split(/[:-]/, 3);
-    if (coords.length === 2) {
-      this.props.coordinateQuery(`${region}-${coords[1]}`);
+    if (region.startsWith('rs')) {
+      // Obtain coordinates for rsID if external queries are permitted
+      if (!this.props.settings.external) {
+        throw new Error('Querying external services must be enabled to search by rsID');
+      }
+      fetch(
+        `https://myvariant.info/v1/query?q=dbsnp.rsid:${region}&fields=dbsnp.chrom,dbsnp.hg19`,
+        { mode: 'cors', 'Content-Type': 'application/json' },
+      )
+        .then(response => ((response.ok) ? response.json() : ({ total: 0 })))
+        .then((results) => {
+          if (results.total === 1) {
+            const { chrom, hg19 } = results.hits[0].dbsnp;
+            this.props.coordinateQuery(`${chrom}:${hg19.start}-${hg19.end}`);
+          } else {
+            throw new Error('Unknown or invalid rsID');
+          }
+        })
+        .catch(err => this.props.coordinateQuery(err));
+    } else if (region.includes(':')) {
+      // Query is likely specified as a region, i.e. chr1:1-100
+      const coords = region.split(/[:-]/, 3);
+      if (coords.length === 2) {
+        this.props.coordinateQuery(`${region}-${coords[1]}`);
+      } else {
+        this.props.coordinateQuery(this.state.region);
+      }
     } else {
-      this.props.coordinateQuery(this.state.region);
+      // Attempt query as a gene symbol
+      if (!this.props.settings.external) {
+        throw new Error('Querying external services must be enabled to search by gene name');
+      }
+      fetch(
+        `http://mygene.info/v3/query?q=symbol:${region}&fields=genomic_pos&species=human`,
+        { mode: 'cors', 'Content-Type': 'application/json' },
+      )
+        .then(response => ((response.ok) ? response.json() : ({ total: 0 })))
+        .then((results) => {
+          if (results.total === 1) {
+            const { chr, start, end } = results.hits[0].genomic_pos;
+            this.props.coordinateQuery(`${chr}:${start}-${end}`);
+          } else {
+            throw new Error('Unknown or invalid gene symbol');
+          }
+        })
+        .catch(err => this.props.coordinateQuery(err));
     }
   }
 
@@ -73,7 +115,7 @@ class CoordinateSearchBox extends Component {
               </Col>
             </Row>
             <FormText>
-              Examples: chr1:1-100, {this.createSearch('chr7:141672604')}, BRCA1, rs10246939
+              Examples: chr1:1-100, {this.createSearch('chr7:141672604')}, {this.createSearch('BRCA1')}, {this.createSearch('rs10246939')}
             </FormText>
           </Col>
         </FormGroup>
@@ -82,11 +124,14 @@ class CoordinateSearchBox extends Component {
   }
 }
 
-CoordinateSearchBox.propTypes = {
+CoordinateSearchBoxImpl.propTypes = {
+  settings: settingsPropType.isRequired,
   coordinateQuery: PropTypes.func.isRequired,
   error: PropTypes.bool.isRequired,
   helpMessage: PropTypes.string.isRequired,
 };
+
+const CoordinateSearchBox = withSettings(CoordinateSearchBoxImpl);
 
 class VariantQuery extends Component {
   constructor(props) {
@@ -105,25 +150,20 @@ class VariantQuery extends Component {
   }
 
   handleCoordinateQuery(region) {
+    const { source } = this.props;
     // TODO: Normalize contig name
-    const coords = region.split(/[:-]/, 3);
-    this.props.source.variants(coords[0], parseInt(coords[1], 10), parseInt(coords[2], 10)).then(
-      (variants) => {
+    ((region instanceof Error) ? Promise.reject(region) : Promise.resolve(region.split(/[:-]/, 3)))
+      .then(coords => source.variants(coords[0], parseInt(coords[1], 10), parseInt(coords[2], 10)))
+      .then((variants) => {
         this.setState({
-          region,
-          variants,
-          error: false,
-          helpMessage: '',
+          region, variants, selectedVariant: undefined, error: false, helpMessage: '',
         });
-      },
-      (err) => {
+      })
+      .catch((err) => {
         this.setState({
-          error: true,
-          helpMessage: err.message,
-          variants: [],
+          error: true, helpMessage: err.message, variants: [], selectedVariant: undefined,
         });
-      },
-    );
+      });
   }
 
   handleSelectVariant(variant) {
