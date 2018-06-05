@@ -57,8 +57,7 @@ class CoordinateSearchBoxImpl extends Component {
         });
     } else if (region.includes(':')) {
       // Query is likely specified as a region, i.e. chr1:1-100
-      const coords = region.split(/[:-]/, 3);
-      return Promise.resolve((coords.length === 2) ? `${region}-${coords[1]}` : region);
+      return Promise.resolve(region);
     } else { // eslint-disable-line no-else-return
       // Attempt query as a gene symbol
       if (!this.props.settings.external) {
@@ -158,14 +157,22 @@ class VariantQuery extends Component {
     }
 
     // TODO: Normalize query (contig name, overlapping chunks, etc.)
-    Promise.all(regions.map((region) => {
-      const [ctg, start, end] = region.split(/[:-]/, 3);
-      return source.variants(ctg, parseInt(start, 10), parseInt(end, 10));
-    }))
+    source.normalizeRegions(regions)
+      .then((normRegions) => {
+        this.setState({
+          region: normRegions.map((region) => {
+            const { ctg, pos, end } = region;
+            return `${ctg}:${pos}-${end}`;
+          }).join(', '),
+        });
+        return Promise.all(normRegions.map((region) => {
+          const { ctg, pos, end } = region;
+          return source.variants(ctg, pos, end);
+        }));
+      })
       .then(flatten)
       .then((variants) => {
         this.setState({
-          region: regions.join(', '),
           variants,
           selectedVariant: undefined,
           error: false,

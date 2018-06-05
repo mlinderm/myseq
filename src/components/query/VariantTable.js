@@ -19,7 +19,7 @@ function VariantTable(props) {
             className={variant === props.selectedVariant ? 'table-primary' : undefined}
           >
             <td>{variant.toString()}</td>
-            <td><DbSnp rsId={variant.ids} /></td>
+            <td><DbSnp rsId={variant.id} /></td>
             <td>{variant.genotype()}</td>
           </tr>
         ))}

@@ -119,7 +119,7 @@ class VariantDetail extends Component {
               <Label>VCF Filter:</Label>
               <Value>{variant.filter || 'Unknown'}</Value>
               <Label>dbSNP:</Label>
-              <Value><DbSnp rsId={get(detail, 'dbsnp.rsid')} /></Value>
+              <Value><DbSnp rsId={get(detail, 'dbsnp.rsid') || variant.id} /></Value>
               <Label>ClinVar:</Label>
               <Value><ClinVar variantId={get(detail, 'clinvar.variant_id')} /></Value>
               <Label>OMIM:</Label>
