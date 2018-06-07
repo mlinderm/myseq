@@ -11,6 +11,7 @@ import {
   ReferenceGenome,
   b37Reference,
 } from 'myseq-vcf';
+import { parse } from 'query-string';
 
 const Icon = styled.i`
   font-size: 36px
@@ -47,6 +48,7 @@ VCFLink.defaultProps = {
 class LoadVcfFile extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       redirectToReferrer: false,
       url: '',
@@ -55,6 +57,28 @@ class LoadVcfFile extends Component {
       urlError: false,
       urlHelpMessage: '',
     };
+
+    const { from } = this.props.location.state;
+    if (from.search) {
+      // Look for vcf and tbi keys in in the query string to automatically load source
+      const query = parse(from.search);
+      if (query.vcf) {
+        const url = query.vcf.trim();
+        try {
+          const indexedFile = new TabixIndexedFile(
+            new RemoteFileReader(url),
+            new RemoteFileReader(query.tbi || `${url}.tbi`),
+          );
+          const vcfSource = new VCFSource(indexedFile);
+
+          // Notify application of new source
+          this.props.setSource(vcfSource);
+          Object.assign(this.state, { url, redirectToReferrer: true });
+        } catch (err) {
+          Object.assign(this.state, { url, urlError: true, urlHelpMessage: err.message });
+        }
+      }
+    }
 
     this.handleFiles = this.handleFiles.bind(this);
     this.updateURL = this.updateURL.bind(this);
