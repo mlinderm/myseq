@@ -5,7 +5,7 @@ import { PubMed } from '../util/links';
 const trait = {
   title: 'Asparagus Asnomia',
   variant: {
-    chr: 1, pos: 248496863, ref: 'A', alt: 'G',
+    ctg: '1', pos: 248496863, ref: 'A', alt: 'G',
   },
   rsId: 'rs4481887',
   association: [

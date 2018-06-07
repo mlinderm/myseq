@@ -5,7 +5,7 @@ import { PubMed } from '../util/links';
 const earwax = {
   title: 'Earwax Consistency',
   variant: {
-    chr: '16', pos: 48258198, ref: 'C', alt: 'T',
+    ctg: '16', pos: 48258198, ref: 'C', alt: 'T',
   },
   rsId: 'rs17822931',
   association: [

@@ -8,6 +8,12 @@ import EarwaxTrait from './EarwaxTrait';
 import AsparagusTrait from './AsparagusTrait';
 import BitterTastingTrait from './BitterTastingTrait';
 
+/*
+Add a new trait by creating the corresponding component and adding it to the
+list below. Each trait component contains the variant, genotype-phenotype mapping
+and a brief explanation of the trait.
+*/
+
 const traits = [
   { title: 'Earwax Consistency', route: '/traits/earwax', component: EarwaxTrait },
   { title: 'Asparagus Asnomia', route: '/traits/asparagus', component: AsparagusTrait },
