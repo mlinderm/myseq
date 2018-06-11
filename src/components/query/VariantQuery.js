@@ -4,7 +4,8 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Col, Row, Form, FormGroup, Label, Input, FormFeedback, FormText, Button } from 'reactstrap';
 import { VCFSource } from 'myseq-vcf';
-import { flatten, identity } from 'lodash-es';
+import flatten from 'lodash/flatten';
+import identity from 'lodash/identity';
 
 import { withSettings, settingsPropType } from '../../contexts/SettingsContext';
 import VariantTable from './VariantTable';
@@ -20,7 +21,7 @@ const QueryExample = styled.button`
   cursor: pointer;
 `;
 
-class CoordinateSearchBoxImpl extends Component {
+export class CoordinateSearchBoxImpl extends Component {
   constructor(props) {
     super(props);
     this.state = {

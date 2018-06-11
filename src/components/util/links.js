@@ -2,7 +2,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { isString, isArrayLikeObject } from 'lodash-es';
+import isString from 'lodash/isString';
+import isArrayLikeObject from 'lodash/isArrayLikeObject';
 
 const Icon = styled.i.attrs({
   className: 'material-icons',

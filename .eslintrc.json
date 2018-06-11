@@ -10,6 +10,7 @@
       "components": ["Link"],
       "specialLink": ["to"],
       "aspects": ["noHref", "invalidHref", "preferButton"]
-    }]
+    }],
+    "import/no-extraneous-dependencies": ["error", {"devDependencies": true}]
   }
 }

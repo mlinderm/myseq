@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import { Nav, NavItem, NavLink, TabPane, TabContent } from 'reactstrap';
-import { get } from 'lodash-es';
+import get from 'lodash/get';
 
 import { VCFVariant } from 'myseq-vcf';
 import { settingsPropType, withSettings } from '../../contexts/SettingsContext';
