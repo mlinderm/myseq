@@ -7,6 +7,7 @@ import SourceRoute from '../SourceRoute';
 import EarwaxTrait from './EarwaxTrait';
 import AsparagusTrait from './AsparagusTrait';
 import BitterTastingTrait from './BitterTastingTrait';
+import MuscleTrait from './MuscleTrait';
 
 /*
 Add a new trait by creating the corresponding component and adding it to the
@@ -18,6 +19,7 @@ const traits = [
   { title: 'Earwax Consistency', route: '/traits/earwax', component: EarwaxTrait },
   { title: 'Asparagus Asnomia', route: '/traits/asparagus', component: AsparagusTrait },
   { title: 'Bitter Tasting', route: '/traits/bitter', component: BitterTastingTrait },
+  { title: 'Muscle Performance', route: '/traits/muscle', component: MuscleTrait },
 ];
 
 
