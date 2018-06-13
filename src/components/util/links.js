@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import isString from 'lodash/isString';
 import isArrayLikeObject from 'lodash/isArrayLikeObject';
+import { stringify } from 'query-string';
 
 const Icon = styled.i.attrs({
   className: 'material-icons',
@@ -82,5 +83,24 @@ Omim.propTypes = {
 };
 Omim.defaultProps = {
   mimNumber: undefined,
+  children: null,
+};
+
+export function SNPedia(props) {
+  const { title } = props;
+  if (title) {
+    return (<a target="_blank" rel="noreferrer noopener" href={`http://snpedia.com/index.php?${stringify(props)}`}>{props.children || 'SNPedia'}<Icon>launch</Icon></a>);
+  }
+
+  return null;
+}
+
+SNPedia.propTypes = {
+  title: PropTypes.string.isRequired,
+  oldid: PropTypes.number, // eslint-disable-line
+  children: PropTypes.node,
+};
+SNPedia.defaultProps = {
+  oldid: undefined,
   children: null,
 };
