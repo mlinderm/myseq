@@ -8,7 +8,8 @@ import EarwaxTrait from './EarwaxTrait';
 import AsparagusTrait from './AsparagusTrait';
 import BitterTastingTrait from './BitterTastingTrait';
 import MuscleTrait from './MuscleTrait';
-import EyeColorTrait from './EyeColorTrait';
+import EyeColorTraitBrown from './EyeColorTrait_Brown';
+import EyeColorTraitGreen from './EyeColorTrait_Green';
 
 /*
 Add a new trait by creating the corresponding component and adding it to the
@@ -21,7 +22,8 @@ const traits = [
   { title: 'Asparagus Asnomia', route: '/traits/asparagus', component: AsparagusTrait },
   { title: 'Bitter Tasting', route: '/traits/bitter', component: BitterTastingTrait },
   { title: 'Muscle Performance', route: '/traits/muscle', component: MuscleTrait },
-  { title: 'Eye Color: Blue/Gray', route: '/traits/eyecolorbluegray', component: EyeColorTrait },
+  { title: 'Eye Color: Blue-Gray/Green', route: '/traits/eyecolorgreen', component: EyeColorTraitGreen },
+  { title: 'Eye Color: Brown/Blue', route: '/traits/eyecolorbrown', component: EyeColorTraitBrown },
 ];
 
 
