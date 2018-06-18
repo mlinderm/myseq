@@ -6,12 +6,12 @@ import { Link } from 'react-router-dom';
 import { withSourceAndSettings, settingsPropType } from '../../contexts/context-helpers';
 import { DbSnp } from '../util/links';
 
-class SingleVariantTrait extends Component {
+class MultiVariantTrait extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      genotype: undefined,
+      genotypes: undefined,
       showSettingsAlert: false,
     };
 
@@ -20,15 +20,15 @@ class SingleVariantTrait extends Component {
 
   componentDidMount() {
     const { sample, assumeRefRef } = this.props.settings;
-    const query = this.props.trait.variant;
-
-    this.props.source.variant(query.ctg, query.pos, query.ref, query.alt, assumeRefRef)
-      .then((variant) => {
-        if (variant) {
-          this.setState({ genotype: variant.genotype(sample) });
-        } else if (!assumeRefRef) {
-          this.setState({ showSettingsAlert: true });
-        }
+    const queries = this.props.trait.variants;
+    console.log(queries);
+    Promise.all(queries.map(query => {
+      console.log(query);
+      return this.props.source.variant(query.ctg, query.pos, query.ref, query.alt, true /*assumeRefRef*/);
+    }))
+      .then((variants) => {
+        console.log(variants);
+        this.setState({ genotypes: variants.map(variant => (variant ? variant.genotypes(sample) : undefined)) }); // eslint-disable-line
       });
   }
 
@@ -38,7 +38,7 @@ class SingleVariantTrait extends Component {
 
   render() {
     const { trait } = this.props;
-    const { variant: query } = trait;
+    // const { variants: query } = trait;
     return (
       <div>
         <h3>{ trait.title }</h3>
@@ -50,18 +50,21 @@ class SingleVariantTrait extends Component {
         </Alert>
         <Row>
           <Col md={6}>
-            Querying for variant {`${query.ctg}:g.${query.pos}${query.ref}>${query.alt}`} {trait.rsId && (<span>(<DbSnp rsId={trait.rsId} />)</span>)}:
+            { this.state.genotypes && this.state.genotypes.map(genotype => (<span>{genotype}</span>)) }
             <Table bordered>
               <thead>
-                <tr><th>Genotype (Var 1)</th><th>Genotype (Var 2)</th><th>Phenotype</th></tr>
+                <tr>
+                  {trait.variants.map(() => (<th>Variant</th>))}
+                  <th>Phenotype</th>
+                </tr>
               </thead>
               <tbody>
                 { trait.association.map(assoc => (
                   <tr
-                    key={assoc.genotype}
-                    className={(this.state.genotype === assoc.genotype) ? 'table-primary' : undefined}
+                    key={assoc.genotypes}
+                    className={((this.state.genotypes === assoc.genotypes)) ? 'table-primary' : undefined}
                   >
-                    <td>{assoc.genotype}</td>
+                    { assoc.genotypes.map(genotype => (<td>{genotype}</td>)) }
                     <td>{assoc.phenotype}</td>
                   </tr>
                 ))}
@@ -93,24 +96,24 @@ Example trait object for "Bitter Tasting" phenotype
 };
 */
 
-SingleVariantTrait.propTypes = {
+MultiVariantTrait.propTypes = {
   settings: settingsPropType.isRequired,
   source: PropTypes.instanceOf(VCFSource).isRequired,
   trait: PropTypes.shape({
     title: PropTypes.string,
-    variant: PropTypes.shape({ // hg19/b37 variant with VCF ctg, pos, ref, alt fields
+    variants: PropTypes.arrayOf(PropTypes.shape({ // hg19/b37 variant with VCF ctg, pos, ref, alt fields
       ctg: PropTypes.string,
       pos: PropTypes.number,
       ref: PropTypes.string,
       alt: PropTypes.string,
-    }),
+    })),
     rsId: PropTypes.string,
     association: PropTypes.arrayOf(PropTypes.shape({
-      genotype: PropTypes.string, // allele/allele (with reference allele first), e.g. C/T
+      genotype: PropTypes.arrayOf(String), // allele/allele (with reference allele first), e.g. C/T
       phenotype: PropTypes.string,
     })),
   }).isRequired,
   children: PropTypes.node.isRequired,
 };
 
-export default withSourceAndSettings(SingleVariantTrait);
+export default withSourceAndSettings(MultiVariantTrait);
