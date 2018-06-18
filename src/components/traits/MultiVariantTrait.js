@@ -21,14 +21,18 @@ class MultiVariantTrait extends Component {
   componentDidMount() {
     const { sample, assumeRefRef } = this.props.settings;
     const queries = this.props.trait.variants;
-    console.log(queries);
-    Promise.all(queries.map(query => {
-      console.log(query);
-      return this.props.source.variant(query.ctg, query.pos, query.ref, query.alt, true /*assumeRefRef*/);
-    }))
+
+    Promise.all(queries.map(query => this.props.source.variant(
+      query.ctg,
+      query.pos,
+      query.ref,
+      query.alt,
+      assumeRefRef,
+    )))
       .then((variants) => {
-        console.log(variants);
-        this.setState({ genotypes: variants.map(variant => (variant ? variant.genotypes(sample) : undefined)) }); // eslint-disable-line
+        this.setState({
+          genotypes: variants.map(variant => (variant ? variant.genotype(sample) : undefined)),
+        });
       });
   }
 
@@ -50,21 +54,21 @@ class MultiVariantTrait extends Component {
         </Alert>
         <Row>
           <Col md={6}>
-            { this.state.genotypes && this.state.genotypes.map(genotype => (<span>{genotype}</span>)) }
             <Table bordered>
               <thead>
                 <tr>
-                  {trait.variants.map(() => (<th>Variant</th>))}
+                  {trait.rsId.map(rsId => (<th key={rsId}><DbSnp rsId={rsId} /></th>))}
                   <th>Phenotype</th>
                 </tr>
               </thead>
               <tbody>
-                { trait.association.map(assoc => (
+                {trait.association.map(assoc => (
                   <tr
                     key={assoc.genotypes}
                     className={((this.state.genotypes === assoc.genotypes)) ? 'table-primary' : undefined}
                   >
-                    { assoc.genotypes.map(genotype => (<td>{genotype}</td>)) }
+                    { assoc.genotypes.map((genotype, index) =>
+                      (<td key={`${trait.rsId[index]}: ${genotype}`}>{genotype}</td>))}
                     <td>{assoc.phenotype}</td>
                   </tr>
                 ))}
@@ -80,34 +84,18 @@ class MultiVariantTrait extends Component {
   }
 }
 
-/*
-Example trait object for "Bitter Tasting" phenotype
-{
-  title: 'Bitter Tasting (of PTC)',
-  variant: {
-    chr: '7', pos: 141673345, ref: 'C', alt: 'G',
-  },
-  rsID: 'rs713598',
-  association: [
-    { genotype: 'C/C', phenotype: 'Possibly does not taste PTC as bitter' },
-    { genotype: 'C/G', phenotype: 'Can taste PTC as bitter' },
-    { genotype: 'G/G', phenotype: 'Can taste PTC as bitter' },
-  ],
-};
-*/
-
 MultiVariantTrait.propTypes = {
   settings: settingsPropType.isRequired,
   source: PropTypes.instanceOf(VCFSource).isRequired,
   trait: PropTypes.shape({
     title: PropTypes.string,
-    variants: PropTypes.arrayOf(PropTypes.shape({ // hg19/b37 variant with VCF ctg, pos, ref, alt fields
+    variants: PropTypes.arrayOf(PropTypes.shape({ // hg19/b37 variant
       ctg: PropTypes.string,
       pos: PropTypes.number,
       ref: PropTypes.string,
       alt: PropTypes.string,
     })),
-    rsId: PropTypes.string,
+    rsId: PropTypes.arrayOf(PropTypes.string),
     association: PropTypes.arrayOf(PropTypes.shape({
       genotype: PropTypes.arrayOf(String), // allele/allele (with reference allele first), e.g. C/T
       phenotype: PropTypes.string,
