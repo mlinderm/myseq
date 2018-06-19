@@ -104,3 +104,21 @@ SNPedia.defaultProps = {
   oldid: undefined,
   children: null,
 };
+
+export function PharmGKB(props) {
+  const { PAid, PAidGuide } = props;
+  if (PAid) {
+    return (<a target="_blank" rel="noreferrer noopener" href={`https://www.pharmgkb.org/chemical/${PAid}/guideline/${PAidGuide}`}>{props.children || 'PharmGKB'}<Icon>launch</Icon></a>);
+  }
+
+  return null;
+}
+
+PharmGKB.propTypes = {
+  PAid: PropTypes.string.isRequired,
+  PAidGuide: PropTypes.string.isRequired,
+  children: PropTypes.node,
+};
+PharmGKB.defaultProps = {
+  children: null,
+};

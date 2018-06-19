@@ -9,6 +9,7 @@ import Settings from './components/Settings';
 import LoadVcfFile from './components/LoadVcfFile';
 import VariantQuery from './components/query/VariantQuery';
 import Traits from './components/traits/Traits';
+import PGx from './components/PGx/PGx';
 
 class MySeq extends Component {
   constructor(props) {
@@ -68,6 +69,7 @@ class MySeq extends Component {
                   />
                   <SourceRoute path="/query" exact component={VariantQuery} />
                   <Route path="/traits" component={Traits} />
+                  <Route path="/pgx" component={PGx} />
                 </Switch>
               </Container>
             </main>
