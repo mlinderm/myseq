@@ -4,6 +4,7 @@ import { Table, Row, Col, Alert } from 'reactstrap';
 import { VCFSource } from 'myseq-vcf';
 import { Link } from 'react-router-dom';
 import isEqual from 'lodash/isEqual';
+import every from 'lodash/every';
 import { withSourceAndSettings, settingsPropType } from '../../contexts/context-helpers';
 import { DbSnp } from '../util/links';
 
@@ -34,6 +35,10 @@ class MultiVariantTrait extends Component {
         this.setState({
           genotypes: variants.map(variant => (variant ? variant.genotype(sample) : undefined)),
         });
+
+        if (!assumeRefRef && !every(variants)) {
+          this.setState({ showSettingsAlert: true });
+        }
       });
   }
 
