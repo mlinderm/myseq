@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Table, Row, Col, Alert } from 'reactstrap';
 import { VCFSource } from 'myseq-vcf';
 import { Link } from 'react-router-dom';
+import isEqual from 'lodash/isEqual';
 import { withSourceAndSettings, settingsPropType } from '../../contexts/context-helpers';
 import { DbSnp } from '../util/links';
 
@@ -11,7 +12,7 @@ class MultiVariantTrait extends Component {
     super(props);
 
     this.state = {
-      genotypes: undefined,
+      genotypes: [],
       showSettingsAlert: false,
     };
 
@@ -65,7 +66,7 @@ class MultiVariantTrait extends Component {
                 {trait.association.map(assoc => (
                   <tr
                     key={assoc.genotypes}
-                    className={((this.state.genotypes === assoc.genotypes)) ? 'table-primary' : undefined}
+                    className={isEqual(this.state.genotypes, assoc.genotypes) ? 'table-primary' : undefined}
                   >
                     { assoc.genotypes.map((genotype, index) =>
                       (<td key={`${trait.rsId[index]}: ${genotype}`}>{genotype}</td>))}
@@ -97,7 +98,7 @@ MultiVariantTrait.propTypes = {
     })),
     rsId: PropTypes.arrayOf(PropTypes.string),
     association: PropTypes.arrayOf(PropTypes.shape({
-      genotype: PropTypes.arrayOf(String), // allele/allele (with reference allele first), e.g. C/T
+      genotypes: PropTypes.arrayOf(String), // allele/allele (with reference allele first), e.g. C/T
       phenotype: PropTypes.string,
     })),
   }).isRequired,
