@@ -2,7 +2,7 @@ import React from 'react';
 import SingleVariantTrait from './SingleVariantTrait';
 import { PubMed } from '../util/links';
 
-const trait = {
+const asparagus = {
   title: 'Asparagus Asnomia',
   variant: {
     ctg: '1', pos: 248496863, ref: 'A', alt: 'G',
@@ -17,7 +17,7 @@ const trait = {
 
 export default function AsparagusTrait() {
   return (
-    <SingleVariantTrait trait={trait}>
+    <SingleVariantTrait trait={asparagus}>
       <p>
         This <abbr title="Single Nucleotide Polymorphism">SNP</abbr> near the <i>OR2M7</i> gene is associated with the ability to smell the methanethiol produced after eating asparagus. [<PubMed pubmedId={20876394} />]
       </p>
