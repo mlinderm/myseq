@@ -1,9 +1,9 @@
 import React from 'react';
-import MultiVariantTrait from './MultiVariantTrait';
+import MultiVariantTrait from '../traits/MultiVariantTrait';
 import { SNPedia } from '../util/links';
 
 const alzheimer = {
-  title: 'Alzheimer Risk',
+  title: "Alzheimer's Disease",
   variants: [
     {
       ctg: '19', pos: 45411941, ref: 'T', alt: 'C',
@@ -26,7 +26,7 @@ const alzheimer = {
   ],
 };
 
-export default function AlzheimersRiskTrait() {
+export default function AlzheimersRisk() {
   return (
     <MultiVariantTrait trait={alzheimer}>
       <p>

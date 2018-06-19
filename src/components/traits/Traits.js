@@ -10,7 +10,7 @@ import BitterTastingTrait from './BitterTastingTrait';
 import MuscleTrait from './MuscleTrait';
 import EyeColorTraitBrown from './EyeColorTrait_Brown';
 import EyeColorTraitGreen from './EyeColorTrait_Green';
-import AlzheimersRiskTrait from './AlzheimersRisk';
+
 
 /*
 Add a new trait by creating the corresponding component and adding it to the
@@ -25,7 +25,6 @@ const traits = [
   { title: 'Muscle Performance', route: '/traits/muscle', component: MuscleTrait },
   { title: 'Eye Color: Blue-Gray/Green', route: '/traits/eyecolorgreen', component: EyeColorTraitGreen },
   { title: 'Eye Color: Brown/Blue', route: '/traits/eyecolorbrown', component: EyeColorTraitBrown },
-  { title: 'Alzheimers Risk', route: '/traits/alzheimers', component: AlzheimersRiskTrait },
 ];
 
 

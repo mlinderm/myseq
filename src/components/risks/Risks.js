@@ -5,9 +5,11 @@ import { Nav, NavItem, NavLink, Dropdown, DropdownToggle, DropdownItem, Dropdown
 import SourceRoute from '../SourceRoute';
 
 import Type2DiabetesRisk from './Type2DiabetesRisk';
+import AlzheimersRisk from './AlzheimersRisk';
 
 const analyses = [
   { title: 'Type 2 Diabetes', route: '/risks/t2d', component: Type2DiabetesRisk },
+  { title: "Alzheimer's Disease", route: '/risks/alzheimers', component: AlzheimersRisk },
 ];
 
 class Risks extends Component {
