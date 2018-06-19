@@ -13,7 +13,7 @@ and a brief explanation of the trait.
 */
 
 const drugs = [
-  { title: 'Simvastatin', route: '/PGX/simvastatin', component: SimvastatinDrug },
+  { title: 'Simvastatin', route: '/pgx/simvastatin', component: SimvastatinDrug },
 ];
 
 
@@ -39,7 +39,7 @@ class PGx extends Component {
       <div>
         <Nav>
           <NavItem>
-            <NavLink className="pl-0" tag={Link} to="/pgx">PGx</NavLink>
+            <NavLink className="pl-0" tag={Link} to="/pgx">Pharmacogenomics</NavLink>
           </NavItem>
           <NavItem className="nav-link">/</NavItem>
           <Dropdown nav isOpen={this.state.dropdownOpen} toggle={this.toggleDropdown}>
