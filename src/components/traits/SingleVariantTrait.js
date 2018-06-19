@@ -53,7 +53,7 @@ class SingleVariantTrait extends Component {
             Querying for variant {`${query.ctg}:g.${query.pos}${query.ref}>${query.alt}`} {trait.rsId && (<span>(<DbSnp rsId={trait.rsId} />)</span>)}:
             <Table bordered>
               <thead>
-                <tr><th>Genotype (Var 1)</th><th>Genotype (Var 2)</th><th>Phenotype</th></tr>
+                <tr><th>Genotype</th><th>Phenotype</th></tr>
               </thead>
               <tbody>
                 { trait.association.map(assoc => (
