@@ -14,8 +14,8 @@ and a brief explanation of the trait.
 */
 
 const drugs = [
-  { title: 'Simvastatin', route: '/PGX/simvastatin', component: SimvastatinDrug },
-  { title: 'Warfarin', route: '/PGX/warfarin', component: WarfarinDrug },
+  { title: 'Simvastatin', route: '/PGx/simvastatin', component: SimvastatinDrug },
+  { title: 'Warfarin', route: '/PGx/warfarin', component: WarfarinDrug },
 ];
 
 

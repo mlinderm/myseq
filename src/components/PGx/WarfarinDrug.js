@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import isEqual from 'lodash/isEqual';
 import every from 'lodash/every';
 import { withSourceAndSettings, settingsPropType } from '../../contexts/context-helpers';
-import { PubMed, SNPedia, PharmGKB } from '../util/links';
+import { SNPedia, PharmGKB } from '../util/links';
 
 const warfarinFDA = {
   title: 'Warfarin',
