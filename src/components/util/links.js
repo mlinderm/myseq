@@ -16,7 +16,7 @@ const Icon = styled.i.attrs({
 export function PubMed(props) {
   const { pubmedId } = props;
   if (pubmedId && !isArrayLikeObject(pubmedId)) {
-    return (<a target="_blank" rel="noreferrer noopener" href={`https://www.ncbi.nlm.nih.gov/pubmed/${pubmedId}`}>PMID {pubmedId}<Icon>launch</Icon></a>);
+    return (<a target="_blank" rel="noreferrer noopener" href={`https://www.ncbi.nlm.nih.gov/pubmed/${pubmedId}`}>{props.children || `PMID ${pubmedId}`}<Icon>launch</Icon></a>);
   } else if (pubmedId) {
     return pubmedId.map(anPubmed => (<PubMed key={anPubmed} pubmedId={anPubmed} />));
   }
@@ -25,10 +25,12 @@ export function PubMed(props) {
 
 PubMed.propTypes = {
   pubmedId: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.array]),
+  children: PropTypes.node,
 };
 
 PubMed.defaultProps = {
   pubmedId: undefined,
+  children: null,
 };
 
 export function DbSnp(props) {

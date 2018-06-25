@@ -14,8 +14,8 @@ and a brief explanation of the trait.
 */
 
 const drugs = [
-  { title: 'Simvastatin', route: '/PGx/simvastatin', component: SimvastatinDrug },
-  { title: 'Warfarin', route: '/PGx/warfarin', component: WarfarinDrug },
+  { title: 'Simvastatin', route: '/pgx/simvastatin', component: SimvastatinDrug },
+  { title: 'Warfarin', route: '/pgx/warfarin', component: WarfarinDrug },
 ];
 
 
@@ -41,7 +41,7 @@ class PGx extends Component {
       <div>
         <Nav>
           <NavItem>
-            <NavLink className="pl-0" tag={Link} to="/pgx">PGx</NavLink>
+            <NavLink className="pl-0" tag={Link} to="/pgx">Pharmacogenomics</NavLink>
           </NavItem>
           <NavItem className="nav-link">/</NavItem>
           <Dropdown nav isOpen={this.state.dropdownOpen} toggle={this.toggleDropdown}>

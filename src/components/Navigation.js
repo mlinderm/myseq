@@ -63,7 +63,7 @@ class Navigation extends Component {
               <DropdownMenu right>
                 <DropdownItem tag={Link} to="/query">Query Variants</DropdownItem>
                 <DropdownItem tag={Link} to="/traits">Physical Traits</DropdownItem>
-                <DropdownItem tag={Link} to="/pgx">PGx</DropdownItem>
+                <DropdownItem tag={Link} to="/pgx">Pharmacogenomics</DropdownItem>
               </DropdownMenu>
             </UncontrolledDropdown>
           </Nav>

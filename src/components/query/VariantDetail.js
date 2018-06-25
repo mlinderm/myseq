@@ -53,23 +53,33 @@ class VariantDetail extends Component {
 
   updateVariantDetail(variant) {
     // Only fetch detail if permitted to access external services
-    if (this.props.settings.external) {
-      (new Promise((resolve) => {
-        // MyVariant.info requires a leading chr
-        const hgvs = variant.toHgvs();
-        resolve(!hgvs.startsWith('chr') ? `chr${hgvs}` : hgvs);
-      }))
-        .then(hgvs => fetch(
-          `https://myvariant.info/v1/variant/${hgvs}`,
-          { mode: 'cors', 'Content-Type': 'application/json' },
-        ))
+    if (this.props.settings.external && variant.alt.length === 1) {
+      let chrom = variant.contig;
+      if (chrom.startsWith('chr')) {
+        chrom = chrom.slice(3);
+      }
+      if (chrom === 'M') {
+        chrom = 'MT';
+      }
+      const alt = variant.alt[0];
+
+      fetch(
+        `https://myvariant.info/v1/query?q=chrom:${chrom} AND vcf.position:${variant.position} AND vcf.ref:${variant.ref} AND vcf.alt:${alt}`,
+        { mode: 'cors', 'Content-Type': 'application/json' },
+      )
         .then((response) => {
           if (response.ok) {
             return response.json();
           }
           throw new Error('No additional detail available for variant');
         })
-        .then(detail => this.setState({ detail }))
+        .then((results) => {
+          if (results.total === 1) {
+            this.setState({ detail: results.hits[0] });
+          } else {
+            throw new Error('No additional detail available for variant');
+          }
+        })
         .catch(() => this.setState({ detail: undefined }));
     }
   }
