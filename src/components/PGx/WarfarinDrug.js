@@ -6,15 +6,17 @@ import { VCFSource } from 'myseq-vcf';
 import { Link } from 'react-router-dom';
 import isEqual from 'lodash/isEqual';
 import every from 'lodash/every';
+import classNames from 'classnames';
 import { withSourceAndSettings, settingsPropType } from '../../contexts/context-helpers';
-import { SNPedia, PharmGKB } from '../util/links';
+import { PharmGKB, PubMed, ExternalLink } from '../util/links';
+import { flipStrand } from '../util/alleles';
 
 const warfarinFDA = {
   title: 'Warfarin',
   variants: [
     {
-      ctg: '16', pos: 31107689, ref: 'G', alt: 'A',
-    }, // VKORC1
+      ctg: '16', pos: 31107689, ref: 'C', alt: 'T', flip: true,
+    }, // VKORC1 (flip to be consistent with external tables, etc.)
     {
       ctg: '10', pos: 96702047, ref: 'C', alt: 'T',
     }, // CYP2C9 *2
@@ -27,17 +29,17 @@ const warfarinFDA = {
   association: [
     {
       vkorcGenotype: 'G/G',
-      cypGenotype: [['C/C', 'A/A'], ['C/T', 'A/A'], ['C/C', 'A/C'], ['T/T', 'A/A'], ['C/T', 'A/C'], ['C/C', 'C/C']],
+      cyp2c9Genotype: [['C/C', 'A/A'], ['C/T', 'A/A'], ['C/C', 'A/C'], ['T/T', 'A/A'], ['C/T', 'A/C'], ['C/C', 'C/C']],
       phenotype: ['5-7', '5-7', '3-4', '3-4', '3-4', '0.5-2'],
     },
     {
       vkorcGenotype: 'G/A',
-      cypGenotype: [['C/C', 'A/A'], ['C/T', 'A/A'], ['C/C', 'A/C'], ['T/T', 'A/A'], ['C/T', 'A/C'], ['C/C', 'C/C']],
+      cyp2c9Genotype: [['C/C', 'A/A'], ['C/T', 'A/A'], ['C/C', 'A/C'], ['T/T', 'A/A'], ['C/T', 'A/C'], ['C/C', 'C/C']],
       phenotype: ['5-7', '3-4', '3-4', '3-4', '0.5-2', '0.5-2'],
     },
     {
       vkorcGenotype: 'A/A',
-      cypGenotype: [['C/C', 'A/A'], ['C/T', 'A/A'], ['C/C', 'A/C'], ['T/T', 'A/A'], ['C/T', 'A/C'], ['C/C', 'C/C']],
+      cyp2c9Genotype: [['C/C', 'A/A'], ['C/T', 'A/A'], ['C/C', 'A/C'], ['T/T', 'A/A'], ['C/T', 'A/C'], ['C/C', 'C/C']],
       phenotype: ['3-4', '3-4', '0.5-2', '0.5-2', '0.5-2', '0.5-2'],
     },
   ],
@@ -47,8 +49,8 @@ const warfarinAlg = {
   title: 'Warfarin',
   variants: [
     {
-      ctg: '16', pos: 31107689, ref: 'G', alt: 'A',
-    }, // VKORC1
+      ctg: '16', pos: 31107689, ref: 'C', alt: 'T', flip: true,
+    }, // VKORC1 (flip to be consistent with external tables, etc.)
     {
       ctg: '19', pos: 15990431, ref: 'C', alt: 'T',
     }, // CYP4F2
@@ -65,7 +67,7 @@ const warfarinAlg = {
       ctg: '10', pos: 96741058, ref: 'C', alt: 'G',
     }, // CYP2C9 *5
     {
-      ctg: '10', pos: 96709040, ref: 'A', alt: '',
+      ctg: '10', pos: 96709038, ref: 'GA', alt: 'G',
     }, // CYP2C9 *6
 
   ],
@@ -95,7 +97,13 @@ class WarfarinFDA extends Component {
     )))
       .then((variants) => {
         this.setState({
-          genotypes: variants.map(variant => (variant ? variant.genotype(sample) : undefined)),
+          genotypes: variants.map((variant, idx) => {
+            if (!variant) {
+              return undefined;
+            }
+            const genotype = variant.genotype(sample);
+            return queries[idx].flip ? flipStrand(genotype) : genotype;
+          }),
         });
 
         if (!assumeRefRef && !every(variants)) {
@@ -106,22 +114,23 @@ class WarfarinFDA extends Component {
 
   render() {
     return (
-      <Table bordered>
+      <Table bordered size="sm">
         <thead>
           <tr>
-            <th>Genotype</th>
+            <th>VKORC1-1639</th>
             { warfarinFDA.starName.map(name => (<th>{name}</th>)) }
           </tr>
         </thead>
         <tbody>
           {warfarinFDA.association.map((assoc) => {
-            const genotypes = assoc.cypGenotype.map(cypGenotype => [assoc.vkorcGenotype].concat(cypGenotype));
+            const genotypes = assoc.cyp2c9Genotype.map(cyp2c9Genotype =>
+              [assoc.vkorcGenotype].concat(cyp2c9Genotype));
             return (
               <tr key={assoc.genotypes}>
-                <td>{assoc.vkorcGenotype}</td>
+                <td>{flipStrand(assoc.vkorcGenotype)}</td>
                 { assoc.phenotype.map((phenotype, index) => (
                   <td
-                    className={isEqual(genotypes[index], this.state.genotypes) ? 'table-primary' : undefined}
+                    className={classNames({ 'table-primary': isEqual(genotypes[index], this.state.genotypes) })}
                   >
                     {phenotype}
                   </td>
@@ -134,6 +143,12 @@ class WarfarinFDA extends Component {
     );
   }
 }
+
+WarfarinFDA.propTypes = {
+  settings: settingsPropType.isRequired,
+  source: PropTypes.instanceOf(VCFSource).isRequired,
+  missingGenotype: PropTypes.func.isRequired,
+};
 
 class WarfarinAlg extends Component {
   constructor(props) {
@@ -157,7 +172,13 @@ class WarfarinAlg extends Component {
     )))
       .then((variants) => {
         this.setState({
-          genotypes: variants.map(variant => (variant ? variant.genotype(sample) : undefined)),
+          genotypes: variants.map((variant, idx) => {
+            if (!variant) {
+              return undefined;
+            }
+            const genotype = variant.genotype(sample);
+            return queries[idx].flip ? flipStrand(genotype) : genotype;
+          }),
         });
 
         if (!assumeRefRef && !every(variants)) {
@@ -168,11 +189,11 @@ class WarfarinAlg extends Component {
 
   render() {
     return (
-      <Table bordered>
+      <Table bordered size="sm">
         <thead>
           <tr>
+            <th>Variant</th>
             <th>Genotype</th>
-            <th>Your Variant Mapping</th>
           </tr>
         </thead>
         <tbody>
@@ -187,6 +208,12 @@ class WarfarinAlg extends Component {
     );
   }
 }
+
+WarfarinAlg.propTypes = {
+  settings: settingsPropType.isRequired,
+  source: PropTypes.instanceOf(VCFSource).isRequired,
+  missingGenotype: PropTypes.func.isRequired,
+};
 
 class WarfarinDrug extends Component {
   constructor(props) {
@@ -218,20 +245,25 @@ class WarfarinDrug extends Component {
             If you are analyzing whole genome sequencing (WGS) data consider setting MySeq to assume the genotype of missing variants is the same as the reference genome. You can do so on the <Link to="/settings">settings</Link> page.
           </p>
         </Alert>
+        <p>
+          Warfarin is a widely used anticoagulant therapy with a narrow therapeutic range and large variability in the dose required for a patient to achieve the target anticoagulation. The <PubMed pubmedId={28198005}>CPIC Guidelines</PubMed> provides a multi-tier set of guidelines (implemented as a decision-tree). These analyses reproduce the dosage table from the FDA label and extract the genotypes needed by the <ExternalLink href="http://warfarindosing.org">WarfarinDosing.org</ExternalLink> genetics-based dosing algorithm.
+        </p>
+        <h4>Warfarin FDA Label</h4>
         <Row>
-          <Col md={6}>
+          <Col md={8}>
             <WarfarinFDA
               source={this.props.source}
               settings={this.props.settings}
               missingGenotype={this.handleMissingGenotype}
             />
           </Col>
-          <Col md={6}>
+          <Col md={4}>
             <p>
-              This table represented the suggested daily dosage of warfarin (in mg/day) in order to achieve an optimal theraputic effect, according to the United States Food and Drug Administration. It is based on the CYP2C9 (<SNPedia title="Rs1799853" oldid={1533694} />, <SNPedia title="Rs1057910" oldid={1524224} />) and VKORC1 (<SNPedia title="Rs9923231" oldid={1530369} />) genotypes. Adapted from <PharmGKB PAid="PA451906" PAidGuide="PA166104949" />.
+              FDA suggested daily Warfarin dosage (in mg/day) in order to achieve an optimal theraputic effect. Adapted from <PharmGKB PAid="PA451906" PAidGuide="PA166104949" />.
             </p>
           </Col>
         </Row>
+        <h4>Warfarin Dosing Algorithm</h4>
         <Row>
           <Col md={6}>
             <WarfarinAlg
@@ -242,7 +274,7 @@ class WarfarinDrug extends Component {
           </Col>
           <Col md={6}>
             <p>
-              This table presents the user&apos;s reference/alternate alleles for specific genotypes to provide the correct genetic information in estimating an accurate warfarin dosage. The genotypes given in this table are as follows: VKORC1-1639/3673, CYP4F2, GGCX, CYP2C9*2, CYP2C9*3, CYP2C9*5, and CYP2C9*6.
+              These genotypes, along with other clinical variables, are utilized by the <ExternalLink href="http://warfarindosing.org">WarfarinDosing.org</ExternalLink> dosing algorithm.
             </p>
           </Col>
         </Row>

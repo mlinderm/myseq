@@ -124,3 +124,12 @@ PharmGKB.propTypes = {
 PharmGKB.defaultProps = {
   children: null,
 };
+
+export function ExternalLink(props) {
+  return (<a target="_blank" rel="noreferrer noopener" href={props.href}>{props.children}<Icon>launch</Icon></a>);
+}
+
+ExternalLink.propTypes = {
+  href: PropTypes.string.isRequired,
+  children: PropTypes.node.isRequired,
+};
