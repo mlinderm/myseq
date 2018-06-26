@@ -5,6 +5,7 @@ import { Nav, NavItem, NavLink, Dropdown, DropdownToggle, DropdownItem, Dropdown
 import SourceRoute from '../SourceRoute';
 
 import SimvastatinDrug from './SimvastatinDrug';
+import WarfarinDrug from './WarfarinDrug';
 
 /*
 Add a new trait by creating the corresponding component and adding it to the
@@ -14,6 +15,7 @@ and a brief explanation of the trait.
 
 const drugs = [
   { title: 'Simvastatin', route: '/pgx/simvastatin', component: SimvastatinDrug },
+  { title: 'Warfarin', route: '/pgx/warfarin', component: WarfarinDrug },
 ];
 
 

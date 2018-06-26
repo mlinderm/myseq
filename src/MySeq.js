@@ -9,7 +9,7 @@ import Settings from './components/Settings';
 import LoadVcfFile from './components/LoadVcfFile';
 import VariantQuery from './components/query/VariantQuery';
 import Traits from './components/traits/Traits';
-import PGx from './components/PGx/PGx';
+import PGx from './components/pgx/PGx';
 
 class MySeq extends Component {
   constructor(props) {
