@@ -2,6 +2,12 @@
   "name": "myseq",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "8.9.x"
+  },
+  "cacheDirectories": [
+    "node_modules"
+  ],
   "dependencies": {
     "classnames": "^2.2.5",
     "lodash": "^4.17.10",
@@ -49,11 +55,11 @@
   ],
   "author": "Michael Linderman <mlinderman@middlebury.edu>",
   "contributors": [
-    "Leo McElroy <lmcelroy@middlebury.edu>"
+    "Leo McElroy <lmcelroy@middlebury.edu>",
+    "Laura Chang <hayoungc@middlebury.edu>"
   ],
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/mlinderm/myseq/issues"
-  },
-  "homepage": "https://github.com/mlinderm/myseq#readme"
+  }
 }
