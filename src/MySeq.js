@@ -72,10 +72,7 @@ class MySeq extends Component {
                   />
                   <SourceRoute path="/query" exact component={VariantQuery} />
                   <Route path="/traits" component={Traits} />
-<<<<<<< HEAD
                   <Route path="/pgx" component={PGx} />
-=======
->>>>>>> Basic LR analysis for polygenic risk
                   <Route path="/risks" component={Risks} />
                 </Switch>
               </Container>
