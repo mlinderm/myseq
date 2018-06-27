@@ -1,15 +1,18 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { Container } from 'reactstrap';
+
 import SourceContext from './contexts/SourceContext';
 import SettingsContext, { defaultSettings, settingsPropType } from './contexts/SettingsContext';
 import SourceRoute from './components/SourceRoute';
 import Navigation from './components/Navigation';
+
 import Settings from './components/Settings';
 import LoadVcfFile from './components/LoadVcfFile';
 import VariantQuery from './components/query/VariantQuery';
 import Traits from './components/traits/Traits';
 import PGx from './components/pgx/PGx';
+import Risks from './components/risks/Risks';
 
 class MySeq extends Component {
   constructor(props) {
@@ -70,6 +73,7 @@ class MySeq extends Component {
                   <SourceRoute path="/query" exact component={VariantQuery} />
                   <Route path="/traits" component={Traits} />
                   <Route path="/pgx" component={PGx} />
+                  <Route path="/risks" component={Risks} />
                 </Switch>
               </Container>
             </main>
