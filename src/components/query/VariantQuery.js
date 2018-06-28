@@ -88,8 +88,10 @@ export class CoordinateSearchBoxImpl extends Component {
   createSearch(search) {
     return (
       <QueryExample onClick={(evt) => {
-        evt.preventDefault();
-        this.setState({ region: search });
+          evt.preventDefault();
+          this.setState({ region: search });
+          Promise.all(search.split(/[ ,]/).filter(identity).map(this.handleQuery))
+            .then(this.props.coordinateQuery, this.props.coordinateQuery);
         }}
       >
         {search}

@@ -58,7 +58,7 @@ class LoadVcfFile extends Component {
       urlHelpMessage: '',
     };
 
-    const { from } = this.props.location.state;
+    const { from } = this.props.location.state || { from: { pathname: '/' } };
     if (from.search) {
       // Look for vcf and tbi keys in in the query string to automatically load source
       const query = parse(from.search);
