@@ -1,5 +1,5 @@
 import React from 'react';
-import MultiVariantTrait from '../traits/MultiVariantTrait';
+import MultiVariantTrait from '../analyses/MultiVariantTrait';
 import { SNPedia } from '../util/links';
 
 const alzheimer = {

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Table, Row, Col, Alert } from 'reactstrap';
+import { Table, Row, Col } from 'reactstrap';
 import { VCFSource } from 'myseq-vcf';
-import { Link } from 'react-router-dom';
 import { withSourceAndSettings, settingsPropType } from '../../contexts/context-helpers';
+import SettingsAlert from './SettingsAlert';
 import { DbSnp } from '../util/links';
 
 class SingleVariantTrait extends Component {
@@ -37,17 +37,18 @@ class SingleVariantTrait extends Component {
   }
 
   render() {
-    const { trait } = this.props;
+    const { settings, trait, children } = this.props;
+    const {
+      showSettingsAlert,
+    } = this.state;
     const { variant: query } = trait;
     return (
       <div>
         <h3>{ trait.title }</h3>
-        <Alert color="info" isOpen={this.state.showSettingsAlert} toggle={this.handleAlertDismiss}>
-          <h4>Nothing highlighted?</h4>
-          <p>
-            If you are analyzing whole genome sequencing (WGS) data consider setting MySeq to assume the genotype of missing variants is the same as the reference genome. You can do so on the <Link to="/settings">settings</Link> page.
-          </p>
-        </Alert>
+        <SettingsAlert
+          isOpen={showSettingsAlert && !settings.assumeRefRef}
+          toggle={this.handleAlertDismiss}
+        />
         <Row>
           <Col md={6}>
             Querying for variant {`${query.ctg}:g.${query.pos}${query.ref}>${query.alt}`} {trait.rsId && (<span>(<DbSnp rsId={trait.rsId} />)</span>)}:
@@ -69,7 +70,7 @@ class SingleVariantTrait extends Component {
             </Table>
           </Col>
           <Col md={6}>
-            { this.props.children }
+            { children }
           </Col>
         </Row>
       </div>

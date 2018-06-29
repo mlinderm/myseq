@@ -1,5 +1,5 @@
 import React from 'react';
-import SingleVariantTrait from './SingleVariantTrait';
+import SingleVariantTrait from '../analyses/SingleVariantTrait';
 import { PubMed, SNPedia } from '../util/links';
 
 const muscle = {
