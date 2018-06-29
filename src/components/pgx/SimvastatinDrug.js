@@ -1,5 +1,5 @@
 import React from 'react';
-import SingleVariantTrait from '../traits/SingleVariantTrait';
+import SingleVariantTrait from '../analyses/SingleVariantTrait';
 import { PubMed, PharmGKB } from '../util/links';
 
 const simvastatin = {

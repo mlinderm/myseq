@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Table, Alert, Row, Col, Card, CardText, CardHeader, CardBody } from 'reactstrap';
+import { Table, Row, Col, Card, CardText, CardHeader, CardBody } from 'reactstrap';
 import { VCFSource } from 'myseq-vcf';
-import { Link } from 'react-router-dom';
 import every from 'lodash/every';
 import { withSourceAndSettings, settingsPropType } from '../../contexts/context-helpers';
+import SettingsAlert from './SettingsAlert';
 import { DbSnp } from '../util/links';
 
 class LRRiskModel extends Component {
@@ -84,14 +84,10 @@ class LRRiskModel extends Component {
     return (
       <div>
         <h3>{ title }</h3>
-        { showSettingsAlert && !settings.assumeRefRef &&
-          <Alert color="info" isOpen={this.state.showSettingsAlert} toggle={this.handleAlertDismiss}>
-            <h4>Missing entries?</h4>
-            <p>
-              If you are analyzing whole genome sequencing (WGS) data consider setting MySeq to assume the genotype of missing variants. You can do so on the <Link to="/settings">settings</Link> page.
-            </p>
-          </Alert>
-        }
+        <SettingsAlert
+          isOpen={showSettingsAlert && !settings.assumeRefRef}
+          toggle={this.handleAlertDismiss}
+        />
         <Row className="mb-3">
           <Col md={3}>
             <Card className="text-center">
@@ -105,7 +101,7 @@ class LRRiskModel extends Component {
             <Card className="text-center">
               <CardHeader tag="h5">Risk with Genome</CardHeader>
               <CardBody>
-                <CardText>{postTestRisk.toLocaleString(undefined, { style: 'percent' })}</CardText>
+                <CardText id="postTestRisk">{postTestRisk.toLocaleString(undefined, { style: 'percent' })}</CardText>
               </CardBody>
             </Card>
           </Col>
@@ -160,4 +156,5 @@ LRRiskModel.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
+export { LRRiskModel as LRRiskModelImpl };
 export default withSourceAndSettings(LRRiskModel);

@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import React from 'react';
-import LRRiskModel from './LRRiskModel';
+import LRRiskModel from '../analyses/LRRiskModel';
 import { PubMed } from '../util/links';
 
 
