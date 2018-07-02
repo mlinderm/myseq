@@ -43,7 +43,7 @@ function RiskCard(props) {
         <CardBody>
           <HundredPersonFigure count={count} color={props.color} />
           <CardText className="text-left">
-            {count} of 100 ({props.risk.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 1 })}) people {props.modifier} will develop {props.disease} in their lifetime
+            {count} of 100 (<span className="risk-pct">{props.risk.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 1 })}</span>) people {props.modifier} will develop {props.disease} in their lifetime
           </CardText>
         </CardBody>
       </Card>
