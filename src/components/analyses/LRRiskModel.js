@@ -3,9 +3,66 @@ import PropTypes from 'prop-types';
 import { Table, Row, Col, Card, CardText, CardHeader, CardBody } from 'reactstrap';
 import { VCFSource } from 'myseq-vcf';
 import every from 'lodash/every';
+import range from 'lodash/range';
 import { withSourceAndSettings, settingsPropType } from '../../contexts/context-helpers';
 import SettingsAlert from './SettingsAlert';
 import { DbSnp } from '../util/links';
+
+// https://fontawesome.com/license
+// Creative Commons Attribution 4.0 International license
+
+function HundredPersonFigure(props) {
+  const maxColorIdx = props.count;
+  return (
+    <svg width="140px" height="240px">
+      <defs>
+        <g id="Outline" transform="scale(0.0390625)">
+          <path d="M96 0c35.346 0 64 28.654 64 64s-28.654 64-64 64-64-28.654-64-64S60.654 0 96 0m48 144h-11.36c-22.711 10.443-49.59 10.894-73.28 0H48c-26.51 0-48 21.49-48 48v136c0 13.255 10.745 24 24 24h16v136c0 13.255 10.745 24 24 24h64c13.255 0 24-10.745 24-24V352h16c13.255 0 24-10.745 24-24V192c0-26.51-21.49-48-48-48z" />
+        </g>
+      </defs>
+      {range(100).map((idx) => {
+        const row = 9 - Math.floor(idx / 10);
+        const col = idx % 10;
+        return (<use key={idx} xlinkHref="#Outline" x={col * 14} y={row * 24} style={{ fill: (idx < maxColorIdx ? props.color : 'grey') }} />);
+      })}
+    </svg>
+  );
+}
+
+HundredPersonFigure.propTypes = {
+  count: PropTypes.number.isRequired,
+  color: PropTypes.string.isRequired,
+};
+
+function RiskCard(props) {
+  const count = Math.round(props.risk * 100);
+  return (
+    <Col md={3}>
+      <Card className="text-center">
+        <CardHeader tag="h5">{props.title}</CardHeader>
+        <CardBody>
+          <HundredPersonFigure count={count} color={props.color} />
+          <CardText className="text-left">
+            {count} of 100 ({props.risk.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 1 })}) people {props.modifier} will develop {props.disease} in their lifetime
+          </CardText>
+        </CardBody>
+      </Card>
+    </Col>
+  );
+}
+
+RiskCard.propTypes = {
+  risk: PropTypes.number.isRequired,
+  title: PropTypes.node.isRequired,
+  modifier: PropTypes.node,
+  disease: PropTypes.string.isRequired,
+  color: PropTypes.string,
+};
+
+RiskCard.defaultProps = {
+  modifier: null,
+  color: 'blue',
+};
 
 class LRRiskModel extends Component {
   constructor(props) {
@@ -76,7 +133,6 @@ class LRRiskModel extends Component {
     const postTestOdds = preTestOdds * cumulativeLR;
     const postTestRisk = postTestOdds / (1 + postTestOdds);
 
-    // TODO: 100 person figures for risk
     // TODO: Add 23&Me like descriptor of risk calculation
     // TODO: Support form for changing pre-test risk
     // TODO: Add link to source paper (other information)
@@ -89,22 +145,8 @@ class LRRiskModel extends Component {
           toggle={this.handleAlertDismiss}
         />
         <Row className="mb-3">
-          <Col md={3}>
-            <Card className="text-center">
-              <CardHeader tag="h5">Average Risk</CardHeader>
-              <CardBody>
-                <CardText>{preTestRisk.toLocaleString(undefined, { style: 'percent' })}</CardText>
-              </CardBody>
-            </Card>
-          </Col>
-          <Col md={3}>
-            <Card className="text-center">
-              <CardHeader tag="h5">Risk with Genome</CardHeader>
-              <CardBody>
-                <CardText id="postTestRisk">{postTestRisk.toLocaleString(undefined, { style: 'percent' })}</CardText>
-              </CardBody>
-            </Card>
-          </Col>
+          <RiskCard risk={preTestRisk} title="Average Risk" disease={title} />
+          <RiskCard risk={postTestRisk} title="Risk with Genome" disease={title} modifier="with the same genetic makeup" color="limegreen" />
         </Row>
         <Row>
           <Col md={6}>
