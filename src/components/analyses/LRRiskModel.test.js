@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { mount } from 'enzyme';
 import { waitForState } from 'enzyme-async-helpers';
 import { VCFSource, VCFVariant, TabixIndexedFile, LocalFileReader } from 'myseq-vcf';
 
@@ -45,7 +45,7 @@ describe('Liklihood Ratio Model', () => {
   });
 
   test('Compute cumulative LR from variants', () => {
-    const lr = shallow((
+    const lr = mount((
       <LRRiskModel
         settings={defaultSettings}
         source={mockVCFSource}
@@ -65,7 +65,7 @@ describe('Liklihood Ratio Model', () => {
 
         const postTestOdds = (0.25 / (1 - 0.25)) * cumulativeLR;
         const postTestRisk = postTestOdds / (1 + postTestOdds);
-        expect(lr.contains(postTestRisk.toLocaleString(undefined, { style: 'percent' })))
+        expect(lr.contains(<span className="risk-pct">{postTestRisk.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 1 })}</span>))
           .toBe(true);
       });
   });

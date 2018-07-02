@@ -66,7 +66,7 @@ AnalysisSelector.propTypes = {
   analyses: PropTypes.arrayOf(PropTypes.shape({
     title: PropTypes.string,
     route: PropTypes.string,
-    component: PropTypes.node,
+    component: PropTypes.func,
   })).isRequired,
   dropdownText: PropTypes.string,
   children: PropTypes.node,
