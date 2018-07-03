@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import isString from 'lodash/isString';
 import isArrayLikeObject from 'lodash/isArrayLikeObject';
 import { stringify } from 'query-string';
+import { VCFVariant, Ref } from 'myseq-vcf';
 
 const Icon = styled.i.attrs({
   className: 'material-icons',
@@ -132,4 +133,51 @@ export function ExternalLink(props) {
 ExternalLink.propTypes = {
   href: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,
+};
+
+export function GnomAD(props) {
+  const { variant } = props;
+  return (
+    <a
+      target="_blank"
+      rel="noreferrer noopener"
+      href={`http://gnomad.broadinstitute.org/awesome?query=${variant.contig}-${variant.position}-${variant.ref}-${variant.alt[0]}`}
+    >
+      {props.children}<Icon>launch</Icon>
+    </a>
+  );
+}
+
+GnomAD.propTypes = {
+  variant: PropTypes.instanceOf(VCFVariant).isRequired,
+  children: PropTypes.node,
+};
+
+GnomAD.defaultProps = {
+  children: 'gnomAD Variant',
+};
+
+export function GenomeBrowser(props) {
+  const { variant } = props;
+  const ctg = Ref.hg19Reference.normalizeContig(variant.contig);
+  const { position: pos } = variant;
+
+  return (
+    <a
+      target="_blank"
+      rel="noreferrer noopener"
+      href={`http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&highlight=hg19.${ctg}%3A${pos}-${pos}&position=${ctg}%3A${Math.max(pos - 25, 0)}-${pos + 25}`}
+    >
+      {props.children}<Icon>launch</Icon>
+    </a>
+  );
+}
+
+GenomeBrowser.propTypes = {
+  variant: PropTypes.instanceOf(VCFVariant).isRequired,
+  children: PropTypes.node,
+};
+
+GenomeBrowser.defaultProps = {
+  children: 'UCSC Genome Browser',
 };
