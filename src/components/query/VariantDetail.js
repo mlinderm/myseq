@@ -2,20 +2,36 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import styled from 'styled-components';
-import { Nav, NavItem, NavLink, TabPane, TabContent } from 'reactstrap';
+import { Nav, NavItem, NavLink, TabPane, TabContent, Row, Col, Table } from 'reactstrap';
 import get from 'lodash/get';
+import isArray from 'lodash/isArray';
 
 import { VCFVariant } from 'myseq-vcf';
 import { settingsPropType, withSettings } from '../../contexts/SettingsContext';
-import { DbSnp, ClinVar, Omim } from '../util/links';
+import { DbSnp, ClinVar, Omim, GnomAD, GenomeBrowser } from '../util/links';
+
+const DefList = styled.dl.attrs({
+  className: 'row',
+})`
+  line-height: 1;
+`;
 
 const Label = styled.dt.attrs({
-  className: 'col-sm-2',
+  className: 'col-sm-5',
 })``;
 
 const Value = styled.dd.attrs({
-  className: 'col-sm-10',
+  className: 'col-sm-7',
 })``;
+
+const MoreLink = styled.button`
+  background: none!important;
+  color: #007bff;
+  border: none;
+  padding: 0!important;
+  font: inherit;
+  cursor: pointer;
+`;
 
 function computeAF(detail, digits = 5) {
   let genomeAN = get(detail, 'gnomad_genome.an.an');
@@ -30,6 +46,44 @@ function computeAF(detail, digits = 5) {
   }
   return 'Not reported';
 }
+
+function SnpEffEffectTable(props) {
+  if (!props.snpeff) {
+    return null;
+  }
+
+  let { ann } = props.snpeff;
+  if (!isArray(ann)) {
+    ann = [ann];
+  }
+
+  return (
+    <Table bordered size="sm" className="mb-0">
+      <thead><tr><th>Effect</th><th>Translation</th></tr></thead>
+      <tbody>
+        {ann.slice(0, props.maxDisplay).map((anAnn) => {
+          const { effect, feature_id: featureId, gene_id: geneId, hgvs_c: hgvsC, hgvs_p: hgvsP } = anAnn; // eslint-disable-line
+          return (
+            <tr key={`${featureId}:${hgvsC}`}>
+              <td>{effect}</td>
+              <td>{featureId}{geneId && `(${geneId})`}:{hgvsC}{hgvsP && ` (${hgvsP})`}</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </Table>
+  );
+}
+
+SnpEffEffectTable.propTypes = {
+  snpeff: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
+  maxDisplay: PropTypes.number,
+};
+
+SnpEffEffectTable.defaultProps = {
+  snpeff: undefined,
+  maxDisplay: Number.MAX_SAFE_INTEGER,
+};
 
 class VariantDetail extends Component {
   constructor(props) {
@@ -123,20 +177,32 @@ class VariantDetail extends Component {
           {this.renderTab('clin', 'Clinical', { disabled: true })}
           {this.renderTab('lit', 'Literature', { disabled: true })}
         </Nav>
-        <TabContent activeTab={this.state.activeTab}>
+        <TabContent activeTab={this.state.activeTab} className="pt-2">
           <TabPane tabId="sum">
-            <dl className="row">
-              <Label>VCF Filter:</Label>
-              <Value>{variant.filter || 'Unknown'}</Value>
-              <Label>dbSNP:</Label>
-              <Value><DbSnp rsId={get(detail, 'dbsnp.rsid') || variant.id} /></Value>
-              <Label>ClinVar:</Label>
-              <Value><ClinVar variantId={get(detail, 'clinvar.variant_id')} /></Value>
-              <Label>OMIM:</Label>
-              <Value><Omim mimNumber={get(detail, 'clinvar.omim')} /></Value>
-              <Label>Allele Frequency:</Label>
-              <Value>{computeAF(detail)}</Value>
-            </dl>
+            <Row>
+              <Col md={5}>
+                <DefList>
+                  <Label>VCF Filter:</Label>
+                  <Value>{variant.filter || 'Unknown'}</Value>
+                  <Label>dbSNP:</Label>
+                  <Value><DbSnp rsId={get(detail, 'dbsnp.rsid') || variant.id} /></Value>
+                  <Label>Allele Frequency:</Label>
+                  <Value>{computeAF(detail)}</Value>
+                  <Label>UCSC:</Label>
+                  <Value><GenomeBrowser variant={variant} /></Value>
+                  <Label>ClinVar:</Label>
+                  <Value><ClinVar variantId={get(detail, 'clinvar.variant_id')} /></Value>
+                  <Label>OMIM:</Label>
+                  <Value><Omim mimNumber={get(detail, 'clinvar.omim')} /></Value>
+                  <Label>gnomAD:</Label>
+                  <Value><GnomAD variant={variant} /></Value>
+                </DefList>
+              </Col>
+              <Col md={7}>
+                <SnpEffEffectTable snpeff={get(detail, 'snpeff')} maxDisplay={5} />
+                <MoreLink onClick={() => { this.switchTab('func'); }}>more...</MoreLink>
+              </Col>
+            </Row>
           </TabPane>
         </TabContent>
       </div>
