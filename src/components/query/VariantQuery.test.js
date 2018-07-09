@@ -36,7 +36,7 @@ describe('CoordinateSearchBox', () => {
   test('Uses MyGeneInfo to obtain coordiantes for genes', () => {
     global.fetch.mockResponseOnce(JSON.stringify({
       total: 1,
-      hits: [{ genomic_pos: { chr: '7', start: 141672604, end: 141672604 } }],
+      hits: [{ genomic_pos_hg19: { chr: '7', start: 141672604, end: 141672604 } }],
     }));
 
     const search = shallow(<CoordinateSearchBoxImpl coordinateQuery={jest.fn()} settings={{ external: true }} error={false} helpMessage="" />);
