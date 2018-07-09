@@ -22,12 +22,12 @@ class AnalysisSelector extends Component {
   render() {
     const activeAnalysis = this.props.analyses.find(analysis =>
       this.props.location.pathname === analysis.route);
-
+    const { category, categoryPath } = this.props;
     return (
       <div>
         <Nav>
           <NavItem>
-            <NavLink className="pl-0" tag={Link} to="/risks">Disease Risk</NavLink>
+            <NavLink className="pl-0" tag={Link} to={categoryPath}>{category}</NavLink>
           </NavItem>
           <NavItem className="nav-link">/</NavItem>
           <Dropdown nav isOpen={this.state.dropdownOpen} toggle={this.toggleDropdown}>
@@ -68,6 +68,8 @@ AnalysisSelector.propTypes = {
     route: PropTypes.string,
     component: PropTypes.func,
   })).isRequired,
+  category: PropTypes.string.isRequired,
+  categoryPath: PropTypes.string.isRequired,
   dropdownText: PropTypes.string,
   children: PropTypes.node,
 };

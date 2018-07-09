@@ -26,6 +26,6 @@ const traits = [
 
 export default function Traits(props) {
   return (
-    <AnalysisSelector {...props} analyses={traits} dropdownText="Choose trait" />
+    <AnalysisSelector {...props} analyses={traits} category="Traits" categoryPath="/traits" dropdownText="Choose trait" />
   );
 }
