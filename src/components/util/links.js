@@ -53,39 +53,47 @@ DbSnp.defaultProps = {
 };
 
 export function ClinVar(props) {
-  const { variantId } = props;
+  const { variantId, variant } = props;
   if (variantId) {
     return (<a target="_blank" rel="noreferrer noopener" href={`https://www.ncbi.nlm.nih.gov/clinvar/variation/${variantId}`}>{props.children || 'ClinVar Variant'}<Icon>launch</Icon></a>);
+  } else if (variant) {
+    // Search by coordinates
+    const searchTerm = `${variant.contig}[Chromosome] AND ${variant.position}[Base Position for Assembly GRCh37]`;
+    return (<a target="_blank" rel="noreferrer noopener" href={`https://www.ncbi.nlm.nih.gov/clinvar/?term=${encodeURIComponent(searchTerm)}`}>{props.children || 'ClinVar Search'}<Icon>launch</Icon></a>);
   }
-  // TODO: Generate search instead
   return null;
 }
 
 ClinVar.propTypes = {
   variantId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  variant: PropTypes.instanceOf(VCFVariant),
   children: PropTypes.node,
 };
 
 ClinVar.defaultProps = {
   variantId: undefined,
+  variant: undefined,
   children: null,
 };
 
 export function Omim(props) {
-  const { mimNumber } = props;
+  const { mimNumber, variant } = props;
   if (mimNumber) {
     return (<a target="_blank" rel="noreferrer noopener" href={`https://www.omim.org/entry/${mimNumber.replace('.', '#')}`}>{props.children || 'OMIM Entry'}<Icon>launch</Icon></a>);
+  } else if (variant && variant.id) {
+    return (<a target="_blank" rel="noreferrer noopener" href={`https://www.omim.org/search/?index=entry&start=1&search=${encodeURIComponent(variant.id.join(' '))}&sort=score+desc%2C+prefix_sort+desc&limit=10&date_created_from=&date_created_to=&date_updated_from=&date_updated_to=`}>{props.children || 'OMIM Search'}<Icon>launch</Icon></a>);
   }
-  // TODO: Generate search instead
   return null;
 }
 
 Omim.propTypes = {
   mimNumber: PropTypes.string,
+  variant: PropTypes.instanceOf(VCFVariant),
   children: PropTypes.node,
 };
 Omim.defaultProps = {
   mimNumber: undefined,
+  variant: undefined,
   children: null,
 };
 
@@ -154,21 +162,21 @@ GnomAD.propTypes = {
 };
 
 GnomAD.defaultProps = {
-  children: 'gnomAD Variant',
+  children: 'gnomAD Search',
 };
 
 export function GenomeBrowser(props) {
   const { variant } = props;
   const ctg = Ref.hg19Reference.normalizeContig(variant.contig);
   const { position: pos } = variant;
-
+  const region = `${ctg}:${Math.max(pos - 25, 0)}-${pos + 25}`;
   return (
     <a
       target="_blank"
       rel="noreferrer noopener"
-      href={`http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&highlight=hg19.${ctg}%3A${pos}-${pos}&position=${ctg}%3A${Math.max(pos - 25, 0)}-${pos + 25}`}
+      href={`http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&highlight=hg19.${ctg}%3A${pos}-${pos}&position=${encodeURIComponent(region)}`}
     >
-      {props.children}<Icon>launch</Icon>
+      {props.children || region}<Icon>launch</Icon>
     </a>
   );
 }
@@ -179,5 +187,5 @@ GenomeBrowser.propTypes = {
 };
 
 GenomeBrowser.defaultProps = {
-  children: 'UCSC Genome Browser',
+  children: null,
 };

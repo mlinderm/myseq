@@ -16,6 +16,6 @@ const risks = [
 
 export default function Risks(props) {
   return (
-    <AnalysisSelector {...props} analyses={risks} dropdownText="Choose disease" />
+    <AnalysisSelector {...props} analyses={risks} category="Disease Risk" categoryPath="/risks" dropdownText="Choose disease" />
   );
 }
