@@ -70,6 +70,7 @@ function SnpEffEffectTable(props) {
 
   return (
     <Table bordered size="sm" className="mb-0">
+      <caption className="pt-1">Selected variant annotations prediced by SnpEff. <MoreLink onClick={props.moreHandler}>More...</MoreLink></caption>
       <thead><tr><th>Effect</th><th>Translation</th></tr></thead>
       <tbody>
         {ann.slice(0, props.maxDisplay).map((anAnn) => {
@@ -89,6 +90,7 @@ function SnpEffEffectTable(props) {
 SnpEffEffectTable.propTypes = {
   snpeff: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
   maxDisplay: PropTypes.number,
+  moreHandler: PropTypes.func.isRequired,
 };
 
 SnpEffEffectTable.defaultProps = {
@@ -96,10 +98,10 @@ SnpEffEffectTable.defaultProps = {
   maxDisplay: Number.MAX_SAFE_INTEGER,
 };
 
-function FrequencyTable(props) {
-  const { gnomadGenome, gnomadExome } = props;
+function PopulationTab(props) {
+  const { gnomadGenome, gnomadExome, variant } = props;
   if (isEmpty(gnomadGenome) && isEmpty(gnomadExome)) {
-    return (<p>No population data available from gnomAD</p>);
+    return (<p>No population data available from gnomAD.</p>);
   }
 
   function combined(key) {
@@ -122,58 +124,64 @@ function FrequencyTable(props) {
     pops[key] = Object.assign(pops[key], { ac, an, af });
   });
 
-  const keys = Object.keys(pops).sort((a, b) => b.af - a.af);
+  const keys = Object.keys(pops).sort((a, b) => pops[b].af - pops[a].af);
 
   const totalAC = combined('ac.ac');
   const totalAN = combined('an.an');
   const totalAF = totalAN === 0 ? 0.0 : totalAC / totalAN;
 
   return (
-    <Table bordered size="sm">
-      <thead>
-        <tr>
-          <th>Population</th>
-          <th>Allele Count</th>
-          <th>Allele Number</th>
-          <th>Allele Frequency</th>
-        </tr>
-      </thead>
-      <tbody>
-        {keys.map((key) => {
-          const {
-            name, ac, an, af,
-          } = pops[key];
-          return (
-            <tr key={key}>
-              <td>{name}</td>
-              <td>{ac}</td>
-              <td>{an}</td>
-              <td>{af.toLocaleString({ maximumFractionDigits: 5 })}</td>
+    <Row>
+      <Col md={8}>
+        <Table bordered size="sm">
+          <caption>Population data derived from the combined exome and genome data available at <GnomAD variant={variant}>gnomAD</GnomAD>.</caption>
+          <thead>
+            <tr>
+              <th>Population</th>
+              <th>Allele Count</th>
+              <th>Allele Number</th>
+              <th>Allele Frequency</th>
             </tr>
-          );
-        })}
-        <tr>
-          <th>Total</th>
-          <th>{totalAC}</th>
-          <th>{totalAN}</th>
-          <th>{totalAF.toLocaleString({ maximumFractionDigits: 5 })}</th>
-        </tr>
-      </tbody>
-    </Table>
+          </thead>
+          <tbody>
+            {keys.map((key) => {
+              const {
+                name, ac, an, af,
+              } = pops[key];
+              return (
+                <tr key={key}>
+                  <td>{name}</td>
+                  <td>{ac}</td>
+                  <td>{an}</td>
+                  <td>{af.toLocaleString({ maximumFractionDigits: 5 })}</td>
+                </tr>
+              );
+            })}
+            <tr>
+              <th>Total</th>
+              <th>{totalAC}</th>
+              <th>{totalAN}</th>
+              <th>{totalAF.toLocaleString({ maximumFractionDigits: 5 })}</th>
+            </tr>
+          </tbody>
+        </Table>
+      </Col>
+    </Row>
   );
 }
 
-FrequencyTable.propTypes = {
+PopulationTab.propTypes = {
   gnomadExome: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   gnomadGenome: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+  variant: PropTypes.instanceOf(VCFVariant).isRequired,
 };
 
-FrequencyTable.defaultProps = {
+PopulationTab.defaultProps = {
   gnomadExome: {},
   gnomadGenome: {},
 };
 
-function ClinVarTable(props) {
+function ClinVarTab(props) {
   let { rcv } = props.clinvar;
   if (!rcv) {
     return (
@@ -184,49 +192,59 @@ function ClinVarTable(props) {
   if (!isArray(rcv)) {
     rcv = [rcv];
   }
+
+  const omim = get(props.clinvar, 'omim');
+
   return (
-    <Table borderd size="sm">
-      <thead>
-        <tr>
-          <th>Accession</th>
-          <th>Significance</th>
-          <th>Condition</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        {rcv.map((entry) => {
-          const {
-            accession,
-            conditions,
-            clinical_significance, review_status, // eslint-disable-line camelcase
-          } = entry;
-          const medgen = get(conditions, 'identifiers.medgen');
-          return (
-            <tr key={accession}>
-              <td><ExternalLink href={`https://www.ncbi.nlm.nih.gov/clinvar/${accession}`}>{accession}</ExternalLink></td>
-              <td>{clinical_significance}</td> {/* eslint-disable-line camelcase */}
-              <td>
-                {medgen ?
-                  (<ExternalLink href={`https://www.ncbi.nlm.nih.gov/medgen/${medgen}`}>{conditions.name}</ExternalLink>) :
-                   conditions.name
-                }
-              </td>
-              <td>{review_status}</td> {/* eslint-disable-line camelcase */}
+    <Row>
+      <Col md={10}>
+        <Table bordered size="sm">
+          <caption>
+            ClinVar records for this <ClinVar variantId={get(props.clinvar, 'variant_id')}>ClinVar variant</ClinVar>. { omim && <span>Additional information may be available in the <Omim mimNumber={omim}>OMIM database</Omim>.</span> }
+          </caption>
+          <thead>
+            <tr>
+              <th>Accession</th>
+              <th>Significance</th>
+              <th>Condition</th>
+              <th>Status</th>
             </tr>
-          );
-        })}
-      </tbody>
-    </Table>
+          </thead>
+          <tbody>
+            {rcv.map((entry) => {
+              const {
+                accession,
+                conditions,
+                clinical_significance, review_status, // eslint-disable-line camelcase
+              } = entry;
+              const medgen = get(conditions, 'identifiers.medgen');
+              return (
+                <tr key={accession}>
+                  <td><ExternalLink href={`https://www.ncbi.nlm.nih.gov/clinvar/${accession}`}>{accession}</ExternalLink></td>
+                  <td>{clinical_significance}</td> {/* eslint-disable-line camelcase */}
+                  <td>
+                    {medgen ?
+                      (<ExternalLink href={`https://www.ncbi.nlm.nih.gov/medgen/${medgen}`}>{conditions.name}</ExternalLink>) :
+                       conditions.name
+                    }
+                  </td>
+                  <td>{review_status}</td> {/* eslint-disable-line camelcase */}
+                </tr>
+              );
+            })}
+          </tbody>
+        </Table>
+      </Col>
+    </Row>
   );
 }
 
-ClinVarTable.propTypes = {
+ClinVarTab.propTypes = {
   clinvar: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   variant: PropTypes.instanceOf(VCFVariant).isRequired,
 };
 
-ClinVarTable.defaultProps = {
+ClinVarTab.defaultProps = {
   clinvar: {},
 };
 
@@ -341,7 +359,12 @@ class VariantDetail extends Component {
                   <Label>Genome Browser:</Label>
                   <Value><GenomeBrowser variant={variant} /></Value>
                   <Label>ClinVar:</Label>
-                  <Value><ClinVar variantId={get(detail, 'clinvar.variant_id')} variant={variant} /></Value>
+                  <Value>
+                    <ClinVar
+                      variantId={get(detail, 'clinvar.variant_id')}
+                      variant={variant}
+                    />
+                  </Value>
                   <Label>OMIM:</Label>
                   <Value><Omim mimNumber={get(detail, 'clinvar.omim')} variant={variant} /></Value>
                   <Label>gnomAD:</Label>
@@ -350,35 +373,24 @@ class VariantDetail extends Component {
               </Col>
               {get(detail, 'snpeff') && (
                 <Col md={7} className="d-none d-md-block">
-                  <SnpEffEffectTable snpeff={get(detail, 'snpeff')} maxDisplay={5} />
-                  <MoreLink onClick={() => { this.switchTab('func'); }}>more...</MoreLink>
+                  <SnpEffEffectTable
+                    snpeff={get(detail, 'snpeff')}
+                    maxDisplay={5}
+                    moreHandler={() => this.switchTab('func')}
+                  />
                 </Col>
               )}
             </Row>
           </TabPane>
           <TabPane tabId="pop">
-            <Row>
-              <Col md={8}>
-                <FrequencyTable
-                  gnomadExome={get(detail, 'gnomad_exome')}
-                  gnomadGenome={get(detail, 'gnomad_genome')}
-                />
-              </Col>
-              <Col md={4} className="d-none d-md-block">
-                {(get(detail, 'gnomad_exome') || get(detail, 'gnomad_genome')) && (
-                  <p>
-                    Population data derived from the <GnomAD variant={variant}>gnomAD resource</GnomAD>.
-                  </p>
-                )}
-              </Col>
-            </Row>
+            <PopulationTab
+              gnomadExome={get(detail, 'gnomad_exome')}
+              gnomadGenome={get(detail, 'gnomad_genome')}
+              variant={variant}
+            />
           </TabPane>
           <TabPane tabId="clin">
-            <Row>
-              <Col md={10}>
-                <ClinVarTable clinvar={get(detail, 'clinvar')} variant={variant} />
-              </Col>
-            </Row>
+            <ClinVarTab clinvar={get(detail, 'clinvar')} variant={variant} />
           </TabPane>
         </TabContent>
       </div>
