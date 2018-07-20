@@ -70,7 +70,7 @@ function SnpEffEffectTable(props) {
 
   return (
     <Table bordered size="sm" className="mb-0">
-      <caption className="pt-1">Selected variant annotations prediced by SnpEff. <MoreLink onClick={props.moreHandler}>More...</MoreLink></caption>
+      <caption className="pt-1">Selected variant annotations predicted by SnpEff. <MoreLink onClick={props.moreHandler}>More...</MoreLink></caption>
       <thead><tr><th>Effect</th><th>Translation</th></tr></thead>
       <tbody>
         {ann.slice(0, props.maxDisplay).map((anAnn) => {
@@ -248,6 +248,53 @@ ClinVarTab.defaultProps = {
   clinvar: {},
 };
 
+function FunctionalTab(props) {
+  if (!props.snpeff) {
+    return <p>No functional annotations available for this variant.</p>
+  }
+
+  let { ann } = props.snpeff;
+  if (!isArray(ann)) {
+    ann = [ann];
+  }
+
+  return (
+    <Table bordered size="sm" className="mb-0">
+      <caption className="pt-1">Fuctional annotations predicted by SnpEff.</caption>
+      <thead>
+        <tr>
+          <th>Effect</th>
+          <th>Gene</th>
+          <th>Transcript</th>
+          <th>DNA</th>
+          <th>Protein</th>
+        </tr>
+      </thead>
+      <tbody>
+        {ann.map((anAnn) => {
+          const {
+            effect,
+            feature_id: featureId,
+            gene_id: geneId,
+            hgvs_c: hgvsC,
+            hgvs_p: hgvsP,
+          } = anAnn;
+          return (
+            <tr key={`${featureId}:${hgvsC}`}>
+              <td>{effect}</td>
+              <td>{geneId}</td>
+              <td>{featureId}</td>
+              <td>{hgvsC}</td>
+              <td>{hgvsP}</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </Table>
+  );
+
+}
+
 class VariantDetail extends Component {
   constructor(props) {
     super(props);
@@ -326,6 +373,8 @@ class VariantDetail extends Component {
     const { variant, close } = this.props;
     const { detail } = this.state;
 
+    const snpeff = get(detail, 'snpeff');
+
     return (
       <div>
         <hr />
@@ -336,7 +385,7 @@ class VariantDetail extends Component {
         <Nav tabs>
           {this.renderTab('sum', 'Summary')}
           {this.renderTab('pop', 'Population')}
-          {this.renderTab('func', 'Functional', { disabled: true })}
+          {this.renderTab('func', 'Functional')}
           {this.renderTab('clin', 'Clinical')}
           {this.renderTab('lit', 'Literature', { disabled: true })}
         </Nav>
@@ -366,15 +415,20 @@ class VariantDetail extends Component {
                     />
                   </Value>
                   <Label>OMIM:</Label>
-                  <Value><Omim mimNumber={get(detail, 'clinvar.omim')} variant={variant} /></Value>
+                  <Value>
+                    <Omim
+                      mimNumber={get(detail, 'clinvar.omim')}
+                      variant={variant}
+                    />
+                  </Value>
                   <Label>gnomAD:</Label>
                   <Value><GnomAD variant={variant} /></Value>
                 </DefList>
               </Col>
-              {get(detail, 'snpeff') && (
+              {snpeff && (
                 <Col md={7} className="d-none d-md-block">
                   <SnpEffEffectTable
-                    snpeff={get(detail, 'snpeff')}
+                    snpeff={snpeff}
                     maxDisplay={5}
                     moreHandler={() => this.switchTab('func')}
                   />
@@ -388,6 +442,9 @@ class VariantDetail extends Component {
               gnomadGenome={get(detail, 'gnomad_genome')}
               variant={variant}
             />
+          </TabPane>
+          <TabPane tabId="func">
+            <FunctionalTab snpeff={snpeff} />
           </TabPane>
           <TabPane tabId="clin">
             <ClinVarTab clinvar={get(detail, 'clinvar')} variant={variant} />
