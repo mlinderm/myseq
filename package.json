@@ -11,7 +11,7 @@
   "dependencies": {
     "classnames": "^2.2.5",
     "lodash": "^4.17.10",
-    "myseq-vcf": "mlinderm/myseq-vcf#9cdbef0",
+    "myseq-vcf": "mlinderm/myseq-vcf#8088c66",
     "prop-types": "^15.6.1",
     "query-string": "^5.1.1",
     "react": "^16.3.2",
