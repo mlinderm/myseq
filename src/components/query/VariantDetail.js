@@ -250,7 +250,7 @@ ClinVarTab.defaultProps = {
 
 function FunctionalTab(props) {
   if (!props.snpeff) {
-    return <p>No functional annotations available for this variant.</p>
+    return <p>No functional annotations available for this variant.</p>;
   }
 
   let { ann } = props.snpeff;
@@ -292,8 +292,15 @@ function FunctionalTab(props) {
       </tbody>
     </Table>
   );
-
 }
+
+FunctionalTab.propTypes = {
+  snpeff: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+};
+
+FunctionalTab.defaultProps = {
+  snpeff: undefined,
+};
 
 class VariantDetail extends Component {
   constructor(props) {
