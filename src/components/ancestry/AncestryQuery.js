@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Progress } from 'reactstrap';
+import { Progress, Col, Row } from 'reactstrap';
 import {
   XYPlot,
   XAxis,
@@ -10,6 +10,7 @@ import {
   CustomSVGSeries,
   PolygonSeries,
 } from 'react-vis';
+import { BeatLoader } from 'react-spinners'
 import PropTypes from 'prop-types';
 import { VCFSource } from 'myseq-vcf';
 import every from 'lodash/every';
@@ -179,7 +180,7 @@ class AncestryPCA extends Component {
     this.state = {
       alleleCount: [],
       showSettingsAlert: false,
-      queryCount: 0,
+      isLoading: true,
     };
 
     this.handleAlertDismiss = this.handleAlertDismiss.bind(this);
@@ -195,11 +196,7 @@ class AncestryPCA extends Component {
       query.ref,
       query.alt,
       assumeRefRef,
-    ).then((variant) => {
-      // Update the Progress
-      this.setState(prevState => ({ queryCount: prevState.queryCount + 1 }));
-      return variant;
-    })))
+    )))
       .then((variants) => {
         const alleleCount = variants.map((variant, idx) => {
           if (!variant) {
@@ -208,7 +205,7 @@ class AncestryPCA extends Component {
           const countMatches = variant.genotype(sample).match(new RegExp(queries[idx].counted, 'g'));
           return countMatches ? countMatches.length : 0;
         });
-        this.setState({ alleleCount });
+        this.setState({ alleleCount, isLoading: false });
 
         if (!assumeRefRef && !every(variants)) {
           this.setState({ showSettingsAlert: true });
@@ -226,6 +223,7 @@ class AncestryPCA extends Component {
       alleleCount,
       showSettingsAlert,
       queryCount,
+      isLoading,
     } = this.state;
 
     let PC1 = undefined, PC2 = undefined;
@@ -247,7 +245,7 @@ class AncestryPCA extends Component {
     let myData = [];
     if (!(PC1 === undefined && PC2 === undefined)) {
       myData = [{
-        x: PC1, y: PC2, size: 10, style: { stroke: 'red', fill: 'yellow' },
+        x: PC1, y: PC2, size: 10, style: { fill: '4c4c4c' },
       }];
     }
 
@@ -257,67 +255,98 @@ class AncestryPCA extends Component {
           isOpen={showSettingsAlert && !settings.assumeRefRef}
           toggle={this.handleAlertDismiss}
         />
-        <XYPlot
-          width={300}
-          height={300}
-        >
-          <VerticalGridLines />
-          <HorizontalGridLines />
-          <XAxis />
-          <YAxis />
-          <PolygonSeries
-            className="European"
-            data={euroPoints}
-            style={{
-                opacity: 0.5,
-                fill: '12939A',
-              }}
-          />
-          <PolygonSeries
-            className="African American"
-            data={afamPoints}
-            style={{
-                opacity: 0.5,
-                fill: '79C7E3',
-              }}
-          />
-          <PolygonSeries
-            className="Latino"
-            data={latinoPoints}
-            style={{
-                opacity: 0.5,
-                fill: '1A3177',
-              }}
-          />
-          <PolygonSeries
-            className="South Asian"
-            data={southasPoints}
-            style={{
-                opacity: 0.5,
-                fill: 'FF9833',
-              }}
-          />
-          <PolygonSeries
-            className="East Asian"
-            data={eastasPoints}
-            style={{
-                opacity: 0.5,
-                fill: 'EF5D28',
-              }}
-          />
-          <CustomSVGSeries
-            customComponent="diamond"
-            data={myData}
-          />
-          { (queryCount < queryVariants.length) && (
-            <Progress bar animated color="info" value={(queryCount / queryVariants.length) * 100}>Plotting your coordinates...</Progress>
-          )}
-          <DiscreteColorLegend
-            height={200}
-            width={300}
-            items={legendItems}
-          />
-        </XYPlot>
+        <Row>
+          <Col md={6}>
+            <XYPlot
+              width={300}
+              height={300}
+            >
+              <VerticalGridLines />
+              <HorizontalGridLines />
+              <XAxis
+                title="PC1"
+                position="middle"
+              />
+              <YAxis
+                title="PC2"
+                position="middle"
+              />
+              <PolygonSeries
+                className="European"
+                data={euroPoints}
+                style={{
+                    fill: '12939A',
+                    stroke: '12939A',
+                    strokeWidth: 1.5,
+                    fillOpacity: 0.5,
+                    strokeOpacity: 0.7,
+                  }}
+              />
+              <PolygonSeries
+                className="African American"
+                data={afamPoints}
+                style={{
+                    fill: '79C7E3',
+                    stroke: '79C7E3',
+                    strokeWidth: 1.5,
+                    fillOpacity: 0.5,
+                    strokeOpacity: 0.7,
+                  }}
+              />
+              <PolygonSeries
+                className="Latino"
+                data={latinoPoints}
+                style={{
+                    fill: '1A3177',
+                    stroke: '1A3177',
+                    strokeWidth: 1.5,
+                    fillOpacity: 0.5,
+                    strokeOpacity: 0.7,
+                  }}
+              />
+              <PolygonSeries
+                className="South Asian"
+                data={southasPoints}
+                style={{
+                    fill: 'FF9833',
+                    stroke: 'FF9833',
+                    strokeWidth: 1.5,
+                    fillOpacity: 0.5,
+                    strokeOpacity: 0.7,
+                  }}
+              />
+              <PolygonSeries
+                className="East Asian"
+                data={eastasPoints}
+                style={{
+                    fill: 'EF5D28',
+                    stroke: 'EF5D28',
+                    strokeWidth: 1.5,
+                    fillOpacity: 0.5,
+                    strokeOpacity: 0.7,
+                  }}
+              />
+              <CustomSVGSeries
+                customComponent="diamond"
+                data={myData}
+              />
+              { (isLoading) && (
+                <p>
+                  Loading your coordinates...
+                </p>
+              )}
+              <BeatLoader
+                color="#11bc64"
+                loading={isLoading}
+              />
+              <DiscreteColorLegend
+                height={200}
+                width={300}
+                items={legendItems}
+              />
+            </XYPlot>
+          </Col>
+        </Row>
       </div>
     );
   }
