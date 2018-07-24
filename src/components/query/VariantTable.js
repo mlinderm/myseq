@@ -1,15 +1,34 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Table } from 'reactstrap';
+import styled from 'styled-components';
 import { VCFVariant } from 'myseq-vcf';
 
 import { DbSnp } from '../util/links';
 
+const StyledTable = styled(Table)`
+  table-layout: fixed;
+  td {
+    white-space: nowrap;
+  }
+  td.truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+`;
+
 function VariantTable(props) {
   return (
-    <Table bordered size="sm">
+    <StyledTable bordered size="sm">
       <thead>
-        <tr><th>Variant</th><th>ID(s)</th><th>Genotype</th></tr>
+        <tr>
+          <th className="minwidth">Chrom</th>
+          <th>Position</th>
+          <th>Ref</th>
+          <th>Alt</th>
+          <th>ID(s)</th>
+          <th>Genotype</th>
+        </tr>
       </thead>
       <tbody>
         {props.variants.map(variant => (
@@ -18,13 +37,16 @@ function VariantTable(props) {
             onClick={() => props.selectVariant(variant)}
             className={variant === props.selectedVariant ? 'table-primary' : undefined}
           >
-            <td>{variant.toString()}</td>
+            <td className="minwidth">{variant.contig}</td>
+            <td>{variant.position}</td>
+            <td className="truncate">{variant.ref}</td>
+            <td className="truncate">{variant.alt.join(',')}</td>
             <td><DbSnp rsId={variant.id} /></td>
-            <td>{variant.genotype()}</td>
+            <td className="truncate">{variant.genotype()}</td>
           </tr>
         ))}
       </tbody>
-    </Table>
+    </StyledTable>
   );
 }
 

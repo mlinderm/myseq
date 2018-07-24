@@ -16,6 +16,6 @@ const drugs = [
 
 export default function PGx(props) {
   return (
-    <AnalysisSelector {...props} analyses={drugs} dropdownText="Choose drug" />
+    <AnalysisSelector {...props} analyses={drugs} category="Pharmacogenomics" categoryPath="/pgx" dropdownText="Choose drug" />
   );
 }
