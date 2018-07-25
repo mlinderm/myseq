@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Progress, Col, Row } from 'reactstrap';
+import { Col, Row } from 'reactstrap';
 import {
   XYPlot,
   XAxis,
@@ -10,14 +10,25 @@ import {
   CustomSVGSeries,
   PolygonSeries,
 } from 'react-vis';
-import { BeatLoader } from 'react-spinners'
+import { BeatLoader } from 'react-spinners';
 import PropTypes from 'prop-types';
 import { VCFSource } from 'myseq-vcf';
 import every from 'lodash/every';
+import styled from 'styled-components';
 import { withSourceAndSettings, settingsPropType } from '../../contexts/context-helpers';
 import SettingsAlert from './SettingsAlert';
 import '../../../node_modules/react-vis/dist/style.css';
-import queryVariants from './popres-drineasetal.clean';
+import queryVariants from './popres-drineasetal.clean.json';
+
+const Legend = styled.div`
+  position: absolute;
+  text-align: left;
+  right: 0;
+`;
+
+const Chart = styled.div`
+  margin-right: 150;
+`;
 
 const legendItems = [
   'European',
@@ -222,11 +233,11 @@ class AncestryPCA extends Component {
     const {
       alleleCount,
       showSettingsAlert,
-      queryCount,
       isLoading,
     } = this.state;
 
-    let PC1 = undefined, PC2 = undefined;
+    let PC1;
+    let PC2;
     if (alleleCount.length === queryVariants.length) {
       PC1 = 0.0;
       PC2 = 0.0;
@@ -243,7 +254,7 @@ class AncestryPCA extends Component {
       });
     }
     let myData = [];
-    if (!(PC1 === undefined && PC2 === undefined)) {
+    if (PC1 && PC2) {
       myData = [{
         x: PC1, y: PC2, size: 10, style: { fill: '4c4c4c' },
       }];
@@ -257,96 +268,85 @@ class AncestryPCA extends Component {
         />
         <Row>
           <Col md={6}>
-            <XYPlot
-              width={300}
-              height={300}
-            >
-              <VerticalGridLines />
-              <HorizontalGridLines />
-              <XAxis
-                title="PC1"
-                position="middle"
-              />
-              <YAxis
-                title="PC2"
-                position="middle"
-              />
-              <PolygonSeries
-                className="European"
-                data={euroPoints}
-                style={{
-                    fill: '12939A',
-                    stroke: '12939A',
-                    strokeWidth: 1.5,
-                    fillOpacity: 0.5,
-                    strokeOpacity: 0.7,
-                  }}
-              />
-              <PolygonSeries
-                className="African American"
-                data={afamPoints}
-                style={{
-                    fill: '79C7E3',
-                    stroke: '79C7E3',
-                    strokeWidth: 1.5,
-                    fillOpacity: 0.5,
-                    strokeOpacity: 0.7,
-                  }}
-              />
-              <PolygonSeries
-                className="Latino"
-                data={latinoPoints}
-                style={{
-                    fill: '1A3177',
-                    stroke: '1A3177',
-                    strokeWidth: 1.5,
-                    fillOpacity: 0.5,
-                    strokeOpacity: 0.7,
-                  }}
-              />
-              <PolygonSeries
-                className="South Asian"
-                data={southasPoints}
-                style={{
-                    fill: 'FF9833',
-                    stroke: 'FF9833',
-                    strokeWidth: 1.5,
-                    fillOpacity: 0.5,
-                    strokeOpacity: 0.7,
-                  }}
-              />
-              <PolygonSeries
-                className="East Asian"
-                data={eastasPoints}
-                style={{
-                    fill: 'EF5D28',
-                    stroke: 'EF5D28',
-                    strokeWidth: 1.5,
-                    fillOpacity: 0.5,
-                    strokeOpacity: 0.7,
-                  }}
-              />
-              <CustomSVGSeries
-                customComponent="diamond"
-                data={myData}
-              />
-              { (isLoading) && (
-                <p>
-                  Loading your coordinates...
-                </p>
-              )}
-              <BeatLoader
-                color="#11bc64"
-                loading={isLoading}
-              />
+            <Legend>
               <DiscreteColorLegend
                 height={200}
-                width={300}
+                width={150}
                 items={legendItems}
               />
-            </XYPlot>
+            </Legend>
+            <Chart>
+              <XYPlot width={300} height={300}>
+                <VerticalGridLines />
+                <HorizontalGridLines />
+                <XAxis title="PC1" position="end" />
+                <YAxis title="PC2" position="end" />
+                <PolygonSeries
+                  className="European"
+                  data={euroPoints}
+                  style={{
+                      fill: '12939A',
+                      stroke: '12939A',
+                      strokeWidth: 1.5,
+                      fillOpacity: 0.5,
+                      strokeOpacity: 0.7,
+                    }}
+                />
+                <PolygonSeries
+                  className="African American"
+                  data={afamPoints}
+                  style={{
+                      fill: '79C7E3',
+                      stroke: '79C7E3',
+                      strokeWidth: 1.5,
+                      fillOpacity: 0.5,
+                      strokeOpacity: 0.7,
+                    }}
+                />
+                <PolygonSeries
+                  className="Latino"
+                  data={latinoPoints}
+                  style={{
+                      fill: '1A3177',
+                      stroke: '1A3177',
+                      strokeWidth: 1.5,
+                      fillOpacity: 0.5,
+                      strokeOpacity: 0.7,
+                    }}
+                />
+                <PolygonSeries
+                  className="South Asian"
+                  data={southasPoints}
+                  style={{
+                      fill: 'FF9833',
+                      stroke: 'FF9833',
+                      strokeWidth: 1.5,
+                      fillOpacity: 0.5,
+                      strokeOpacity: 0.7,
+                    }}
+                />
+                <PolygonSeries
+                  className="East Asian"
+                  data={eastasPoints}
+                  style={{
+                      fill: 'EF5D28',
+                      stroke: 'EF5D28',
+                      strokeWidth: 1.5,
+                      fillOpacity: 0.5,
+                      strokeOpacity: 0.7,
+                    }}
+                />
+                <CustomSVGSeries customComponent="diamond" data={myData} />
+              </XYPlot>
+            </Chart>
           </Col>
         </Row>
+        <BeatLoader color="#11bc64" loading={isLoading} />
+        {(isLoading) && (
+          <p>
+            Computing coordinates...
+          </p>
+        )}
       </div>
     );
   }
@@ -355,22 +355,6 @@ class AncestryPCA extends Component {
 AncestryPCA.propTypes = {
   settings: settingsPropType.isRequired,
   source: PropTypes.instanceOf(VCFSource).isRequired,
-  // trait: PropTypes.shape({
-  //   title: PropTypes.string,
-  //   variants: PropTypes.arrayOf(PropTypes.shape({ // hg19/b37 variant
-  //     ctg: PropTypes.string,
-  //     pos: PropTypes.number,
-  //     ref: PropTypes.string,
-  //     alt: PropTypes.string,
-  //   })),
-  //   rsId: PropTypes.arrayOf(PropTypes.string),
-  //   association: PropTypes.arrayOf(PropTypes.shape({
-  //     genotypes: PropTypes.arrayOf(String),
-  // // allele/allele (with reference allele first), e.g. C/T
-  //     phenotype: PropTypes.string,
-  //   })),
-  // }).isRequired,
-  // children: PropTypes.node.isRequired,
 };
 
 export default withSourceAndSettings(AncestryPCA);
