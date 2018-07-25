@@ -61,7 +61,11 @@ class MySeq extends Component {
                     path="/load"
                     exact
                     render={rp =>
-                      <LoadVcfFile {...rp} setSource={this.setSource} />
+                      (<LoadVcfFile
+                        {...rp}
+                        setSource={this.setSource}
+                        updateSettings={this.updateSettings}
+                      />)
                     }
                   />
                   <Route

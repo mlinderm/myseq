@@ -24,7 +24,7 @@ function VCFLink(props) {
       href={props.url}
       onClick={(evt) => {
         evt.preventDefault();
-        props.setURL(props.url, props.tbi || `${props.url}.tbi`, props.reference);
+        props.setURL(props.url, props.tbi || `${props.url}.tbi`, props.reference, props.settings);
       }}
     >
       {props.children}
@@ -38,11 +38,13 @@ VCFLink.propTypes = {
   reference: PropTypes.instanceOf(ReferenceGenome),
   setURL: PropTypes.func.isRequired,
   children: PropTypes.node.isRequired,
+  settings: PropTypes.shape({ assumeRefRef: PropTypes.bool }),
 };
 
 VCFLink.defaultProps = {
   tbi: undefined,
   reference: undefined,
+  settings: undefined,
 };
 
 class LoadVcfFile extends Component {
@@ -86,7 +88,7 @@ class LoadVcfFile extends Component {
     this.updateAndHandleURL = this.updateAndHandleURL.bind(this);
   }
 
-  setSourceFromURL(variantURL, indexURL, reference) {
+  setSourceFromURL(variantURL, indexURL, reference, settings) {
     try {
       const indexedFile = new TabixIndexedFile(
         new RemoteFileReader(variantURL),
@@ -96,6 +98,9 @@ class LoadVcfFile extends Component {
 
       // Notify application of new source
       this.props.setSource(vcfSource);
+      if (settings) {
+        this.props.updateSettings(settings); // Set any predefined settings
+      }
       this.setState({ redirectToReferrer: true });
     } catch (err) {
       this.setState({ urlError: true, urlHelpMessage: err.message });
@@ -141,9 +146,9 @@ class LoadVcfFile extends Component {
     this.setSourceFromURL(url, `${url}.tbi`);
   }
 
-  updateAndHandleURL(variantURL, indexURL, reference) {
+  updateAndHandleURL(variantURL, indexURL, reference, settings) {
     this.setState({ url: variantURL });
-    this.setSourceFromURL(variantURL, indexURL, reference);
+    this.setSourceFromURL(variantURL, indexURL, reference, settings);
   }
 
   render() {
@@ -202,6 +207,7 @@ class LoadVcfFile extends Component {
               url="http://www.cs.middlebury.edu/~mlinderman/myseq/NA12878_GIAB_highconf_CG-IllFB-IllGATKHC-Ion-Solid-10X_CHROM1-X_v3.3_highconf.vcf.gz"
               reference={b37Reference}
               setURL={this.updateAndHandleURL}
+              settings={{ assumeRefRef: true }}
             >
               NA12878
             </VCFLink>
@@ -217,6 +223,7 @@ LoadVcfFile.propTypes = {
   location: PropTypes.shape({
     state: PropTypes.shape({ from: PropTypes.object }),
   }).isRequired,
+  updateSettings: PropTypes.func.isRequired,
 };
 
 export default LoadVcfFile;

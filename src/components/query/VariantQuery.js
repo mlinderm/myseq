@@ -11,7 +11,6 @@ import { withSettings, settingsPropType } from '../../contexts/SettingsContext';
 import VariantTable from './VariantTable';
 import VariantDetail from './VariantDetail';
 
-
 const QueryExample = styled.button`
   background: none!important;
   color: #007bff;
@@ -19,6 +18,24 @@ const QueryExample = styled.button`
   padding: 0!important;
   font: inherit;
   cursor: pointer;
+`;
+
+// The height in the calc is determined by the navbar at the top
+const QueryWrapper = styled.div.attrs({
+  className: 'd-flex flex-column',
+})`
+  height: calc(100vh - 71px);
+`;
+
+// Have the query results scroll in favor of the detail view below
+const QueryTable = styled.div`
+  flex-grow: 1;
+  overflow-y: auto;
+  min-height: 100px;
+`;
+
+const QueryFixed = styled.div`
+  flex-shrink: 0;
 `;
 
 export class CoordinateSearchBoxImpl extends Component {
@@ -62,16 +79,16 @@ export class CoordinateSearchBoxImpl extends Component {
     } else { // eslint-disable-line no-else-return
       // Attempt query as a gene symbol
       if (!this.props.settings.external) {
-        return Promise.reject(new Error('Querying external services must be enabled to search by gene name'));
+        return Promise.reject(new Error('Querying external services must be enabled to search by gene'));
       }
       return fetch(
-        `http://mygene.info/v3/query?q=symbol:${region}&fields=genomic_pos&species=human`,
+        `http://mygene.info/v3/query?q=symbol:${region}&fields=genomic_pos_hg19&species=human`,
         { mode: 'cors', 'Content-Type': 'application/json' },
       )
         .then(response => ((response.ok) ? response.json() : ({ total: 0 })))
         .then((results) => {
           if (results.total === 1) {
-            const { chr, start, end } = results.hits[0].genomic_pos;
+            const { chr, start, end } = results.hits[0].genomic_pos_hg19;
             return `${chr}:${start}-${end}`;
           }
           throw new Error('Unknown or invalid gene symbol');
@@ -200,28 +217,37 @@ class VariantQuery extends Component {
   render() {
     const { region, variants, selectedVariant } = this.state;
     return (
-      <div>
-        <CoordinateSearchBox
-          coordinateQuery={this.handleCoordinateQuery}
-          error={this.state.error}
-          helpMessage={this.state.helpMessage}
-        />
+      <QueryWrapper>
+        <QueryFixed>
+          <CoordinateSearchBox
+            coordinateQuery={this.handleCoordinateQuery}
+            error={this.state.error}
+            helpMessage={this.state.helpMessage}
+          />
+        </QueryFixed>
         {region &&
-          <Row>
-            <Col sm={6}>
-              <p>Listing {variants.length} variant(s) in {region}</p>
-              <VariantTable
-                variants={variants}
-                selectVariant={this.handleSelectVariant}
-                selectedVariant={selectedVariant}
-              />
-            </Col>
-          </Row>
+          <QueryTable>
+            <Row>
+              <Col sm={12} md={8}>
+                <p className="mb-2">Listing {variants.length} variant(s) in {region}</p>
+                <VariantTable
+                  variants={variants}
+                  selectVariant={this.handleSelectVariant}
+                  selectedVariant={selectedVariant}
+                />
+              </Col>
+              <Col md={4} className="d-none d-md-block">
+                <p>Click on a row to display more detail about a specific variant.</p>
+              </Col>
+            </Row>
+          </QueryTable>
         }
         {selectedVariant &&
-          <VariantDetail variant={selectedVariant} close={this.handleCloseDetail} />
+          <QueryFixed>
+            <VariantDetail variant={selectedVariant} close={this.handleCloseDetail} />
+          </QueryFixed>
         }
-      </div>
+      </QueryWrapper>
     );
   }
 }
