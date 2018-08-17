@@ -13,7 +13,7 @@ import VariantQuery from './components/query/VariantQuery';
 import Traits from './components/traits/Traits';
 import PGx from './components/pgx/PGx';
 import Risks from './components/risks/Risks';
-import AncestryPCA from './components/ancestry/AncestryQuery';
+import AncestryPCA from './components/ancestry/AncestryPCA';
 
 class MySeq extends Component {
   constructor(props) {

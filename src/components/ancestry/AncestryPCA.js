@@ -1,7 +1,10 @@
+/* eslint-disable no-unused-vars */
 import React, { Component } from 'react';
-import { Table, Col, Row, Input } from 'reactstrap';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import { Table, Col, Row, Input, Form, FormGroup, Label } from 'reactstrap';
 import {
-  XYPlot,
+  FlexibleXYPlot,
   XAxis,
   YAxis,
   VerticalGridLines,
@@ -10,13 +13,23 @@ import {
   PolygonSeries,
 } from 'react-vis';
 import { BeatLoader } from 'react-spinners';
-import PropTypes from 'prop-types';
 import { VCFSource } from 'myseq-vcf';
 import every from 'lodash/every';
+import get from 'lodash/get';
+
 import { withSourceAndSettings, settingsPropType } from '../../contexts/context-helpers';
-import SettingsAlert from './SettingsAlert';
+import SettingsAlert from '../analyses/SettingsAlert';
 import '../../../node_modules/react-vis/dist/style.css';
-import queryVariants from './popres-drineasetal.clean';
+import queryVariants from './popres-drineasetal.clean.json';
+
+const Legend = styled(Table)`
+  td, th {
+    padding: .3rem;
+  }
+  tbody+tbody, td, th, thead th {
+    border: 0;
+  }
+`;
 
 const EuropeanCourseHull = [
   {
@@ -815,7 +828,7 @@ const UnitedKingdom = [
     x: 2.763992, y: 4.856460,
   },
   {
-    x:-3.119162, y: 2.232993,
+    x: -3.119162, y: 2.232993,
   },
   {
     x: -4.264982, y: 1.038667,
@@ -1225,7 +1238,7 @@ const backgroundMap = {
   continental: continentalView,
   european: europeanView,
   southasian: SouthAsianView,
-}
+};
 
 class AncestryPCA extends Component {
   constructor(props) {
@@ -1282,12 +1295,12 @@ class AncestryPCA extends Component {
     const {
       alleleCount,
       showSettingsAlert,
-      queryCount,
       isLoading,
       backgroundPops,
     } = this.state;
 
-    let PC1 = undefined, PC2 = undefined;
+    let PC1;
+    let PC2;
     if (alleleCount.length === queryVariants.length) {
       PC1 = 0.0;
       PC2 = 0.0;
@@ -1310,7 +1323,7 @@ class AncestryPCA extends Component {
       }];
     }
 
-    // Select background europeanView
+    // Select background view, defaulting to continental view
     const backgroundView = backgroundMap[backgroundPops] || continentalView;
 
     return (
@@ -1321,22 +1334,14 @@ class AncestryPCA extends Component {
         />
         <Row>
           <Col md={6}>
-            <XYPlot
-              width={600}
-              height={600}
-            >
+            <FlexibleXYPlot>
               <VerticalGridLines />
               <HorizontalGridLines />
-              <XAxis
-                title="PC1"
-                position="end"
-              />
-              <YAxis
-                title="PC2"
-                position="end"
-              />
+              <XAxis title="PC1" position="end" />
+              <YAxis title="PC2" position="end" />
               { backgroundView.map(country => (
                 <PolygonSeries
+                  key={country.className}
                   className={country.className}
                   data={country.data}
                   style={{
@@ -1352,51 +1357,49 @@ class AncestryPCA extends Component {
                 customComponent="diamond"
                 data={myData}
               />
-              { (isLoading) && (
-                <p>
-                  Loading your coordinates...
-                </p>
-              )}
-              <BeatLoader
-                color="#11bc64"
-                loading={isLoading}
-              />
-            </XYPlot>
+            </FlexibleXYPlot>
+            { (isLoading) && (
+              <p>
+                Loading your coordinates...
+              </p>
+            )}
+            <BeatLoader
+              color="#11bc64"
+              loading={isLoading}
+            />
           </Col>
-          <Col>
-            <Row>
-              <Col md={6}>
-                <Table borderless>
-                  <thead>
-                    <th></th>
-                    <th>Legend</th>
-                  </thead>
-                  <tbody>
-                    { backgroundView.map(country => (
-                      <tr>
-                        <td>
-                          <svg width="15" height="15">
-                            <rect
-                              width="30"
-                              height="30"
-                              style={{ fill: country.fill }}
-                            />
-                          </svg>
-                        </td>
-                        <td>{country.className}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              </Col>
-            </Row>
-          </Col>
-          <Col>
-            <Input id="backgroundView" type="select" bsSize="sm" value={backgroundPops} onChange={this.handleBackgroundChange}>
-              <option key="continental" value="continental">All Continents</option>
-              <option key="europe" value="european">European</option>
-              <option key="southasian" value="southasian">South Asian</option>
-            </Input>
+          <Col md={3}>
+            <Legend>
+              <thead>
+                <tr><th colSpan="2">Populations</th></tr>
+              </thead>
+              <tbody>
+                { backgroundView.map(country => (
+                  <tr key={country.className}>
+                    <td>
+                      <svg width="15" height="15">
+                        <rect
+                          width="15"
+                          height="15"
+                          style={{ fill: country.fill }}
+                        />
+                      </svg>
+                    </td>
+                    <td>{country.className}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Legend>
+            <Form>
+              <FormGroup>
+                <Label for="backgroundView"><b>Background Population</b></Label>
+                <Input id="backgroundView" type="select" bsSize="sm" value={backgroundPops} onChange={this.handleBackgroundChange}>
+                  <option key="continental" value="continental">All Continents</option>
+                  <option key="europe" value="european">European</option>
+                  <option key="southasian" value="southasian">South Asian</option>
+                </Input>
+              </FormGroup>
+            </Form>
           </Col>
         </Row>
       </div>
@@ -1407,22 +1410,6 @@ class AncestryPCA extends Component {
 AncestryPCA.propTypes = {
   settings: settingsPropType.isRequired,
   source: PropTypes.instanceOf(VCFSource).isRequired,
-  // trait: PropTypes.shape({
-  //   title: PropTypes.string,
-  //   variants: PropTypes.arrayOf(PropTypes.shape({ // hg19/b37 variant
-  //     ctg: PropTypes.string,
-  //     pos: PropTypes.number,
-  //     ref: PropTypes.string,
-  //     alt: PropTypes.string,
-  //   })),
-  //   rsId: PropTypes.arrayOf(PropTypes.string),
-  //   association: PropTypes.arrayOf(PropTypes.shape({
-  //     genotypes: PropTypes.arrayOf(String),
-  // // allele/allele (with reference allele first), e.g. C/T
-  //     phenotype: PropTypes.string,
-  //   })),
-  // }).isRequired,
-  // children: PropTypes.node.isRequired,
 };
 
 export default withSourceAndSettings(AncestryPCA);
