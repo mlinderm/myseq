@@ -18,26 +18,6 @@ import SettingsAlert from './SettingsAlert';
 import '../../../node_modules/react-vis/dist/style.css';
 import queryVariants from './popres-drineasetal.clean';
 
-const legendItems = [
-  'African American',
-  'Dravid Infl',
-  'European A',
-  'European B',
-  'European C',
-  'European ESE',
-  'Europe NNE',
-  'Europe NW',
-  'Europe S',
-  'Europe SW',
-  'Europe W',
-  'Indian Asian',
-  'Japan',
-  'Mexico',
-  'Mix',
-  'Non Dravid Infl',
-  'Unknown',
-];
-
 const EuropeanCourseHull = [
   {
     x: 3.914939, y: 2.138966,
