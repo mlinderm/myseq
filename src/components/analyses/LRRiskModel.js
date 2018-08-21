@@ -8,7 +8,7 @@ import { withSourceAndSettings, settingsPropType } from '../../contexts/context-
 import SettingsAlert from './SettingsAlert';
 import { DbSnp } from '../util/links';
 
-// https://fontawesome.com/license
+// https://fontawesome.com/license/free
 // Creative Commons Attribution 4.0 International license
 
 function HundredPersonFigure(props) {

@@ -14,6 +14,7 @@ import Traits from './components/traits/Traits';
 import PGx from './components/pgx/PGx';
 import Risks from './components/risks/Risks';
 import AncestryPCA from './components/ancestry/AncestryPCA';
+import Help from './components/help/Help';
 
 class MySeq extends Component {
   constructor(props) {
@@ -75,6 +76,7 @@ class MySeq extends Component {
                       <Settings {...rp} settings={settings} updateSettings={this.updateSettings} />
                     }
                   />
+                  <Route path="/help" component={Help} />
                   <SourceRoute path="/query" exact component={VariantQuery} />
                   <Route path="/traits" component={Traits} />
                   <Route path="/pgx" component={PGx} />
