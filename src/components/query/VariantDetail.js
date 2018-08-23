@@ -308,6 +308,7 @@ class VariantDetail extends Component {
     this.state = {
       detail: undefined,
       activeTab: 'sum',
+      helpMessage: undefined,
     };
     this.switchTab = this.switchTab.bind(this);
   }
@@ -346,12 +347,24 @@ class VariantDetail extends Component {
         })
         .then((results) => {
           if (results.total === 1) {
-            this.setState({ detail: results.hits[0] });
+            this.setState({ detail: results.hits[0], helpMessage: undefined });
           } else {
             throw new Error('No additional detail available for variant');
           }
         })
-        .catch(() => this.setState({ detail: undefined }));
+        .catch((err) => {
+          this.setState({ detail: undefined, helpMessage: err.message });
+        });
+    } else if (this.props.settings.external && variant.alt.length > 1) {
+      this.setState({
+        detail: undefined,
+        helpMessage: 'Variant annotation is not supported for multi-allelic variants',
+      });
+    } else if (!this.props.settings.external) {
+      this.setState({
+        detail: undefined,
+        helpMessage: 'To obtain more information about a variant enable external queries in the MySeq settings',
+      });
     }
   }
 
@@ -378,7 +391,7 @@ class VariantDetail extends Component {
 
   render() {
     const { variant, close } = this.props;
-    const { detail } = this.state;
+    const { detail, helpMessage } = this.state;
 
     const snpeff = get(detail, 'snpeff');
 
@@ -389,6 +402,9 @@ class VariantDetail extends Component {
           <span aria-hidden="true">&times;</span>
         </button>
         <h4>{variant.toString()}</h4>
+        { helpMessage && (
+          <p className="text-danger">{helpMessage}</p>
+        )}
         <Nav tabs>
           {this.renderTab('sum', 'Summary')}
           {this.renderTab('pop', 'Population')}
@@ -455,6 +471,9 @@ class VariantDetail extends Component {
           </TabPane>
           <TabPane tabId="clin">
             <ClinVarTab clinvar={get(detail, 'clinvar')} variant={variant} />
+          </TabPane>
+          <TabPane tabId="lit">
+            <p>Literature annotations will be implemented in a future releasse</p>
           </TabPane>
         </TabContent>
       </div>

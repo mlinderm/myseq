@@ -22,11 +22,16 @@ function About() {
 }
 
 function Data() {
-  // TODO: Add instructions for compressing/indexed and normalizing
   return (
     <div>
       <p>
-        MySeq requires a BGZip-compressed and Tabix-indexed VCF file as its input. This is the typical way to prepare and distribute VCF files and so it is likely that your VCF file is ready for use with MySeq. Note, that MySeq requires both the VCF file and the index file. When loading locally-stored files make sure to select both files (which must be in the same folder). You can select multiple files in the &ldquo;File Chooser&rdquo; by holding the <kbd>Shift ⇧</kbd> or <kbd>Command ⌘</kbd> on your keyboard.
+        MySeq is designed to analyzed the VCF files produced by genome analysis pipelines. VCF, or Variant Call Format, files describe genetic variants and the corresponding genotypes (how many copies of a variant) for any number of individuals. Whole genome sequencing typically identifies 4-5 million variants in an individual and thus VCF files can be very large (100s of MB), too large to analyze within the browser unless the file is specially compressed and indexed.
+      </p>
+      <p>
+        MySeq requires that the VCF file is BGZip-compressed and Tabix-indexed. This is the typical way to prepare and distribute VCF files and so it is likely that your VCF file is ready for use with MySeq without any further preparation. Note, that MySeq requires both the VCF file and the index file. When loading locally-stored files make sure to select both files (which must be in the same folder). You can select multiple files in the &ldquo;File Chooser&rdquo; by holding the <kbd>Shift ⇧</kbd> or <kbd>Command ⌘</kbd> on your keyboard.
+      </p>
+      <p>
+        If your VCF file is not BGZip-compressed and Tabix-indexed, you will need to prepare the file with the freely-available <ExternalLink href="https://www.htslib.org/doc/bgzip.html">bgzip</ExternalLink> and <ExternalLink href="https://www.htslib.org/doc/tabix.html">Tabix</ExternalLink> tools. MySeq is most effective when the VCF file has been normalized (so that the variant descriptions consistent with the available databases). The MySeq respository includes a <ExternalLink href="https://github.com/mlinderm/myseq/blob/master/scripts/normalize">script</ExternalLink> for normalizing (and compressing and indexing) a VCF file.
       </p>
     </div>
   );
