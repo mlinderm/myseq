@@ -14,6 +14,7 @@ import Traits from './components/traits/Traits';
 import PGx from './components/pgx/PGx';
 import Risks from './components/risks/Risks';
 import AncestryPCA from './components/ancestry/AncestryPCA';
+import ChromosomePainting from './components/chromosomepainting/painting';
 
 class MySeq extends Component {
   constructor(props) {
@@ -80,6 +81,7 @@ class MySeq extends Component {
                   <Route path="/pgx" component={PGx} />
                   <Route path="/risks" component={Risks} />
                   <SourceRoute path="/ancestry" exact component={AncestryPCA} />
+                  <SourceRoute path="/chromosomepainting" exact component={ChromosomePainting} />
                 </Switch>
               </Container>
             </main>
