@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+set -e -o pipefail
+
+# Normalization approach based on Gemini documentation
+# https://gemini.readthedocs.io/en/latest/
+
+VT_PATH=vt
+BGZIP_PATH=bgzip
+TABIX_PATH=tabix
+
+usage()
+{
+  cat << EOF
+usage: $(basename "$0") [options] REF_FASTA IN_VCF OUT_VCF
+
+Normalize VCF file by decomposing multi-allelic sites and left-aligning alleles
+
+This script requires that vt (https://github.com/atks/vt), bgzip and tabix are
+available.
+
+Options:
+  -h          Print this message
+  -v PATH     Path to vt executable, default: $VT_PATH
+  -b PATH     Path to bzgip executable, default: $BGZIP_PATH
+  -t PATH     Path to tabix executable, default: $TABIX_PATH
+EOF
+}
+
+while getopts "hv:b:t:" Option
+do
+  case $Option in
+    v)
+      VT_PATH=$OPTARG
+      ;;
+    b)
+      BGZIP_PATH=$OPTARG
+      ;;
+    t)
+      TABIX_PATH=$OPTARG
+      ;;
+    h)
+      usage
+      exit 0
+      ;;
+    ?)
+      usage
+      exit 85
+      ;;
+  esac
+done
+
+shift $((OPTIND-1))
+
+if [[ $# -ne 3 ]]; then
+  >&2 echo "Error: Missing positional arguments"
+  >&2 usage
+  exit 1
+fi
+
+REFERENCE=$1
+INVCF=$2
+OUTVCF=$3
+
+gzip -dc "$INVCF" | \
+   sed 's/ID=AD,Number=./ID=AD,Number=R/' | \
+   "$VT_PATH" decompose -s - | \
+   "$VT_PATH" normalize -r "$REFERENCE" - | \
+   "$BGZIP_PATH" -c > "$OUTVCF"
+
+"$TABIX_PATH" -p vcf "$OUTVCF"

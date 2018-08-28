@@ -66,6 +66,7 @@ class Navigation extends Component {
                 <DropdownItem tag={Link} to="/pgx">Pharmacogenomics</DropdownItem>
                 <DropdownItem tag={Link} to="/risks">Disease Risk</DropdownItem>
                 <DropdownItem tag={Link} to="/ancestry">Ancestry</DropdownItem>
+                <DropdownItem tag={Link} to="/chromosomepainting">Chromosome Painting</DropdownItem>
               </DropdownMenu>
             </UncontrolledDropdown>
           </Nav>
