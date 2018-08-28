@@ -13,8 +13,7 @@ import VariantQuery from './components/query/VariantQuery';
 import Traits from './components/traits/Traits';
 import PGx from './components/pgx/PGx';
 import Risks from './components/risks/Risks';
-import AncestryPCA from './components/ancestry/AncestryPCA';
-import ChromosomePainting from './components/chromosomepainting/painting';
+import Ancestry from './components/ancestry/Ancestry';
 
 class MySeq extends Component {
   constructor(props) {
@@ -80,8 +79,7 @@ class MySeq extends Component {
                   <Route path="/traits" component={Traits} />
                   <Route path="/pgx" component={PGx} />
                   <Route path="/risks" component={Risks} />
-                  <SourceRoute path="/ancestry" exact component={AncestryPCA} />
-                  <SourceRoute path="/chromosomepainting" exact component={ChromosomePainting} />
+                  <Route path="/ancestry" component={Ancestry} />
                 </Switch>
               </Container>
             </main>
