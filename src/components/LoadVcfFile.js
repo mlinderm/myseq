@@ -204,7 +204,7 @@ class LoadVcfFile extends Component {
           <Col>
             <div><Label>Load publicly available VCF files</Label></div>
             <VCFLink
-              url="http://www.cs.middlebury.edu/~mlinderman/myseq/NA12878_GIAB_highconf_CG-IllFB-IllGATKHC-Ion-Solid-10X_CHROM1-X_v3.3_highconf.vcf.gz"
+              url="https://skylight.middlebury.edu/~mlinderman/myseq/NA12878_GIAB_highconf_CG-IllFB-IllGATKHC-Ion-Solid-10X_CHROM1-X_v3.3_highconf.vcf.gz"
               reference={b37Reference}
               setURL={this.updateAndHandleURL}
               settings={{ assumeRefRef: true }}

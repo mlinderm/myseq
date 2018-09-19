@@ -82,7 +82,7 @@ export class CoordinateSearchBoxImpl extends Component {
         return Promise.reject(new Error('Querying external services must be enabled to search by gene'));
       }
       return fetch(
-        `http://mygene.info/v3/query?q=symbol:${region}&fields=genomic_pos_hg19&species=human`,
+        `https://mygene.info/v3/query?q=symbol:${region}&fields=genomic_pos_hg19&species=human`,
         { mode: 'cors', 'Content-Type': 'application/json' },
       )
         .then(response => ((response.ok) ? response.json() : ({ total: 0 })))
