@@ -3,15 +3,9 @@ import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 import { Col, Row, Form, FormGroup, Label, Input, FormFeedback, FormText, Button } from 'reactstrap';
 import styled from 'styled-components';
-import {
-  LocalFileReader,
-  RemoteFileReader,
-  TabixIndexedFile,
-  VCFSource,
-  ReferenceGenome,
-  b37Reference,
-} from 'myseq-vcf';
+import { VCFSource, ReferenceGenome, b37Reference } from 'myseq-vcf';
 import { parse } from 'query-string';
+import { createTabixFileFromURL, createTabixFileFromFile } from './TabixIndexedFileWorker';
 
 const Icon = styled.i`
   font-size: 36px
@@ -67,10 +61,8 @@ class LoadVcfFile extends Component {
       if (query.vcf) {
         const url = query.vcf.trim();
         try {
-          const indexedFile = new TabixIndexedFile(
-            new RemoteFileReader(url),
-            new RemoteFileReader(query.tbi || `${url}.tbi`),
-          );
+          // Create TabixIndexedFile on web worker thread
+          const indexedFile = createTabixFileFromURL(url, query.tbi || `${url}.tbi`);
           const vcfSource = new VCFSource(indexedFile);
 
           // Notify application of new source
@@ -90,10 +82,8 @@ class LoadVcfFile extends Component {
 
   setSourceFromURL(variantURL, indexURL, reference, settings) {
     try {
-      const indexedFile = new TabixIndexedFile(
-        new RemoteFileReader(variantURL),
-        new RemoteFileReader(indexURL),
-      );
+      // Create TabixIndexedFile on web worker thread
+      const indexedFile = createTabixFileFromURL(variantURL, indexURL);
       const vcfSource = new VCFSource(indexedFile, reference);
 
       // Notify application of new source
@@ -116,17 +106,18 @@ class LoadVcfFile extends Component {
         throw new Error('Too many files selected. Only one VCF file can be loaded at a time.');
       }
 
-      let [variantFile, indexFile] = Array.from(fileList).map(item => new LocalFileReader(item));
-      if (variantFile.name().endsWith('.tbi') && !indexFile.name().endsWith('.tbi')) {
+      let [variantFile, indexFile] = Array.from(fileList);
+      if (variantFile.name.endsWith('.tbi') && !indexFile.name.endsWith('.tbi')) {
         [variantFile, indexFile] = [indexFile, variantFile];
       }
 
-      if (!indexFile.name().endsWith('.tbi')) {
+      if (!indexFile.name.endsWith('.tbi')) {
         throw new Error('Missing index file. Did you select the VCF file (".vcf.gz") and its index file (".vcf.gz.tbi")?');
       }
 
       // We won't know if this was a valid source until well after this function returns
-      const vcfSource = new VCFSource(new TabixIndexedFile(variantFile, indexFile));
+      // Create TabixIndexedFile on web worker thread
+      const vcfSource = new VCFSource(createTabixFileFromFile(variantFile, indexFile));
 
       // Notify application of new source
       this.props.setSource(vcfSource);
