@@ -8,7 +8,7 @@ import SourceRoute from './components/SourceRoute';
 import Navigation from './components/Navigation';
 
 import Settings from './components/Settings';
-import LoadVcfFile from './components/LoadVcfFile';
+import LoadVcfFile from './components/load/LoadVcfFile';
 import VariantQuery from './components/query/VariantQuery';
 import Traits from './components/traits/Traits';
 import PGx from './components/pgx/PGx';
