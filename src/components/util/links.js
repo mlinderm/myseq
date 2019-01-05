@@ -39,7 +39,10 @@ export function DbSnp(props) {
   if (rsId && isString(rsId)) {
     return (<a target="_blank" rel="noreferrer noopener" href={`https://www.ncbi.nlm.nih.gov/snp/${rsId}`}>{rsId}<Icon>launch</Icon></a>);
   } else if (rsId && isArrayLikeObject(rsId)) {
-    return props.rsId.map(anRsId => (<DbSnp key={anRsId} rsId={anRsId} />));
+    return props.rsId.map((anRsId, i) => [
+      i > 0 && ', ',
+      <DbSnp key={anRsId} rsId={anRsId} />,
+    ]);
   }
   return null;
 }

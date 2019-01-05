@@ -15,6 +15,10 @@ const StyledTable = styled(Table)`
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  td.scrollable {
+    overflow: scroll;
+    overflow-y: hidden;
+  }
 `;
 
 function VariantTable(props) {
@@ -41,7 +45,7 @@ function VariantTable(props) {
             <td>{variant.position}</td>
             <td className="truncate">{variant.ref}</td>
             <td className="truncate">{variant.alt.join(',')}</td>
-            <td><DbSnp rsId={variant.id} /></td>
+            <td className="scrollable"><DbSnp rsId={variant.id} /></td>
             <td className="truncate">{variant.genotype()}</td>
           </tr>
         ))}
