@@ -72,6 +72,9 @@ class LoadVcfFile extends Component {
           Object.assign(this.state, { url, urlError: true, urlHelpMessage: err.message });
         }
       }
+      if (query.assumeRefRef) {
+        this.props.updateSettings({ assumeRefRef: true });
+      }
     }
 
     this.handleFiles = this.handleFiles.bind(this);
