@@ -67,7 +67,7 @@ export class CoordinateSearchBoxImpl extends Component {
       )
         .then(response => ((response.ok) ? response.json() : ({ total: 0 })))
         .then((results) => {
-          if (results.total === 1) {
+          if (results.total >= 1) {
             const { chrom, hg19 } = results.hits[0].dbsnp;
             return `${chrom}:${hg19.start}-${hg19.end}`;
           }

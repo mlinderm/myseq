@@ -152,7 +152,7 @@ export function GnomAD(props) {
     <a
       target="_blank"
       rel="noreferrer noopener"
-      href={`http://gnomad.broadinstitute.org/awesome?query=${variant.contig}-${variant.position}-${variant.ref}-${variant.alt[0]}`}
+      href={`http://gnomad.broadinstitute.org/variant/${variant.contig}-${variant.position}-${variant.ref}-${variant.alt[0]}`}
     >
       {props.children}<Icon>launch</Icon>
     </a>
