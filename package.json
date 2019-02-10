@@ -66,5 +66,6 @@
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/mlinderm/myseq/issues"
-  }
+  },
+  "homepage": "http://skylight.middlebury.edu/~mlinderman/myseq"
 }

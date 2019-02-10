@@ -48,7 +48,7 @@ class MySeq extends Component {
     return (
       <SettingsContext.Provider value={settings}>
         <SourceContext.Provider value={source}>
-          <BrowserRouter>
+          <BrowserRouter basename={process.env.PUBLIC_URL}>
             <main>
               <Navigation
                 samples={samples}
