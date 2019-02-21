@@ -45,13 +45,13 @@ function Acknowledgements() {
       </p>
       <p>
         Variant annotations in the <Link to="/query">query</Link> interface are provided by the <ExternalLink href="https://myvariant.info">MyVariant.info</ExternalLink> service. Many of the annotations are governed by their own specific licensing terms:
-        <ul className="list-unstyled">
-          <li><ExternalLink href="https://www.ncbi.nlm.nih.gov/clinvar/intro/">ClinVar</ExternalLink></li>
-          <li><ExternalLink href="https://sites.google.com/site/jpopgen/dbNSFP">dbNSFP</ExternalLink></li>
-          <li><ExternalLink href="http://gnomad.broadinstitute.org/terms">gnomAD</ExternalLink></li>
-          <li><ExternalLink href="http://snpeff.sourceforge.net/download.html">SnpEff</ExternalLink></li>
-        </ul>
       </p>
+      <ul className="list-unstyled">
+        <li><ExternalLink href="https://www.ncbi.nlm.nih.gov/clinvar/intro/">ClinVar</ExternalLink></li>
+        <li><ExternalLink href="https://sites.google.com/site/jpopgen/dbNSFP">dbNSFP</ExternalLink></li>
+        <li><ExternalLink href="http://gnomad.broadinstitute.org/terms">gnomAD</ExternalLink></li>
+        <li><ExternalLink href="http://snpeff.sourceforge.net/download.html">SnpEff</ExternalLink></li>
+      </ul>
     </div>
   );
 }

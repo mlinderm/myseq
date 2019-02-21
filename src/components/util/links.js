@@ -39,7 +39,10 @@ export function DbSnp(props) {
   if (rsId && isString(rsId)) {
     return (<a target="_blank" rel="noreferrer noopener" href={`https://www.ncbi.nlm.nih.gov/snp/${rsId}`}>{rsId}<Icon>launch</Icon></a>);
   } else if (rsId && isArrayLikeObject(rsId)) {
-    return props.rsId.map(anRsId => (<DbSnp key={anRsId} rsId={anRsId} />));
+    return props.rsId.map((anRsId, i) => [
+      i > 0 && ', ',
+      <DbSnp key={anRsId} rsId={anRsId} />,
+    ]);
   }
   return null;
 }
@@ -149,7 +152,7 @@ export function GnomAD(props) {
     <a
       target="_blank"
       rel="noreferrer noopener"
-      href={`http://gnomad.broadinstitute.org/awesome?query=${variant.contig}-${variant.position}-${variant.ref}-${variant.alt[0]}`}
+      href={`http://gnomad.broadinstitute.org/variant/${variant.contig}-${variant.position}-${variant.ref}-${variant.alt[0]}`}
     >
       {props.children}<Icon>launch</Icon>
     </a>

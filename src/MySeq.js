@@ -8,12 +8,12 @@ import SourceRoute from './components/SourceRoute';
 import Navigation from './components/Navigation';
 
 import Settings from './components/Settings';
-import LoadVcfFile from './components/LoadVcfFile';
+import LoadVcfFile from './components/load/LoadVcfFile';
 import VariantQuery from './components/query/VariantQuery';
 import Traits from './components/traits/Traits';
 import PGx from './components/pgx/PGx';
 import Risks from './components/risks/Risks';
-import AncestryPCA from './components/ancestry/AncestryPCA';
+import Ancestry from './components/ancestry/Ancestry';
 import Help from './components/help/Help';
 
 class MySeq extends Component {
@@ -48,7 +48,7 @@ class MySeq extends Component {
     return (
       <SettingsContext.Provider value={settings}>
         <SourceContext.Provider value={source}>
-          <BrowserRouter>
+          <BrowserRouter basename={process.env.PUBLIC_URL}>
             <main>
               <Navigation
                 samples={samples}
@@ -81,7 +81,7 @@ class MySeq extends Component {
                   <Route path="/traits" component={Traits} />
                   <Route path="/pgx" component={PGx} />
                   <Route path="/risks" component={Risks} />
-                  <SourceRoute path="/ancestry" exact component={AncestryPCA} />
+                  <Route path="/ancestry" component={Ancestry} />
                 </Switch>
               </Container>
             </main>

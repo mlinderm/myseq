@@ -67,7 +67,7 @@ export class CoordinateSearchBoxImpl extends Component {
       )
         .then(response => ((response.ok) ? response.json() : ({ total: 0 })))
         .then((results) => {
-          if (results.total === 1) {
+          if (results.total >= 1) {
             return this.props.source.reference().then((reference) => {
               const { shortName } = reference;
               if (shortName === 'hg19' || shortName === 'b37') {
@@ -91,7 +91,7 @@ export class CoordinateSearchBoxImpl extends Component {
         return Promise.reject(new Error('Querying external services must be enabled to search by gene'));
       }
       return fetch(
-        `http://mygene.info/v3/query?q=symbol:${region}&fields=genomic_pos,genomic_pos_hg19&species=human`,
+        `https://mygene.info/v3/query?q=symbol:${region}&fields=genomic_pos,genomic_pos_hg19&species=human`,
         { mode: 'cors', 'Content-Type': 'application/json' },
       )
         .then(response => ((response.ok) ? response.json() : ({ total: 0 })))
