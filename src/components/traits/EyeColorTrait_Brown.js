@@ -5,7 +5,7 @@ import { PubMed, SNPedia } from '../util/links';
 const eyecolor = {
   title: 'Eye Color: Brown/Blue',
   variant: {
-    ctg: '15', pos: 28365618, ref: 'A', alt: 'G',
+    ctg: '15', pos: 28365618, pos_hg38: 28120472, ref: 'A', alt: 'G',
   },
   rsId: 'rs12913832',
   association: [

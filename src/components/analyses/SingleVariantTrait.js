@@ -4,7 +4,9 @@ import { Table, Row, Col } from 'reactstrap';
 import { VCFSource } from 'myseq-vcf';
 import { withSourceAndSettings, settingsPropType } from '../../contexts/context-helpers';
 import SettingsAlert from './SettingsAlert';
+import ReferenceAlert from './ReferenceAlert';
 import { DbSnp } from '../util/links';
+import { refAwareVariantQuery, variantPropType } from '../util/query';
 
 class SingleVariantTrait extends Component {
   constructor(props) {
@@ -13,45 +15,44 @@ class SingleVariantTrait extends Component {
     this.state = {
       genotype: undefined,
       showSettingsAlert: false,
+      showReferenceAlert: false,
     };
-
-    this.handleAlertDismiss = this.handleAlertDismiss.bind(this);
   }
 
   componentDidMount() {
     const { sample, assumeRefRef } = this.props.settings;
     const query = this.props.trait.variant;
 
-    this.props.source.variant(query.ctg, query.pos, query.ref, query.alt, assumeRefRef)
+    refAwareVariantQuery(this.props.source, query, assumeRefRef)
       .then((variant) => {
         if (variant) {
           this.setState({ genotype: variant.genotype(sample) });
         } else if (!assumeRefRef) {
           this.setState({ showSettingsAlert: true });
         }
+      }).catch(() => {
+        // TODO: Differentiate error types
+        this.setState({ showReferenceAlert: true });
       });
-  }
-
-  handleAlertDismiss() {
-    this.setState({ showSettingsAlert: false });
   }
 
   render() {
     const { settings, trait, children } = this.props;
     const {
-      showSettingsAlert,
+      showSettingsAlert, showReferenceAlert,
     } = this.state;
     const { variant: query } = trait;
     return (
       <div>
         <h3>{ trait.title }</h3>
+        <ReferenceAlert isOpen={showReferenceAlert} />
         <SettingsAlert
           isOpen={showSettingsAlert && !settings.assumeRefRef}
-          toggle={this.handleAlertDismiss}
+          toggle={() => this.setState({ showSettingsAlert: false })}
         />
         <Row>
           <Col md={6}>
-            Querying for variant {`${query.ctg}:g.${query.pos}${query.ref}>${query.alt}`} {trait.rsId && (<span>(<DbSnp rsId={trait.rsId} />)</span>)}:
+            Querying for variant {`${query.ctg}:g.${query.pos}${query.ref}>${query.alt}`}{trait.rsId && (<span> (<DbSnp rsId={trait.rsId} />)</span>)}:
             <Table bordered>
               <thead>
                 <tr><th>Genotype</th><th>Phenotype</th></tr>
@@ -99,12 +100,7 @@ SingleVariantTrait.propTypes = {
   source: PropTypes.instanceOf(VCFSource).isRequired,
   trait: PropTypes.shape({
     title: PropTypes.string,
-    variant: PropTypes.shape({ // hg19/b37 variant with VCF ctg, pos, ref, alt fields
-      ctg: PropTypes.string,
-      pos: PropTypes.number,
-      ref: PropTypes.string,
-      alt: PropTypes.string,
-    }),
+    variant: variantPropType,
     rsId: PropTypes.string,
     association: PropTypes.arrayOf(PropTypes.shape({
       genotype: PropTypes.string, // allele/allele (with reference allele first), e.g. C/T

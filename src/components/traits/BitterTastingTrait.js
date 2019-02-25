@@ -5,7 +5,7 @@ import { PubMed } from '../util/links';
 const bitter = {
   title: 'Bitter Tasting (of PTC)',
   variant: {
-    ctg: '7', pos: 141673345, ref: 'C', alt: 'G',
+    ctg: '7', pos: 141673345, pos_hg38: 141973545, ref: 'C', alt: 'G',
   },
   rsID: 'rs713598',
   association: [

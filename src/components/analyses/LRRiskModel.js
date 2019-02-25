@@ -6,7 +6,9 @@ import every from 'lodash/every';
 import range from 'lodash/range';
 import { withSourceAndSettings, settingsPropType } from '../../contexts/context-helpers';
 import SettingsAlert from './SettingsAlert';
+import ReferenceAlert from './ReferenceAlert';
 import { DbSnp } from '../util/links';
+import { refAwareVariantQuery, variantPropType } from '../util/query';
 
 // https://fontawesome.com/license/free
 // Creative Commons Attribution 4.0 International license
@@ -70,19 +72,18 @@ class LRRiskModel extends Component {
 
     this.state = {
       showSettingsAlert: false,
+      showReferenceAlert: false,
       preTestRisk: props.preTestRisk,
       cumulativeLR: 1.0,
       riskVariants: [],
     };
-
-    this.handleAlertDismiss = this.handleAlertDismiss.bind(this);
   }
 
   componentDidMount() {
     const { sample, assumeRefRef } = this.props.settings;
     Promise.all(this.props.riskVariants.map((riskVariant) => {
       const { variant: query, rsId } = riskVariant;
-      return this.props.source.variant(query.ctg, query.pos, query.ref, query.alt, assumeRefRef)
+      return refAwareVariantQuery(this.props.source, query, assumeRefRef)
         .then((variant) => {
           if (!variant) {
             return ({
@@ -116,17 +117,16 @@ class LRRiskModel extends Component {
       if (!assumeRefRef && !every(riskVariants.map(variant => variant.genotype))) {
         this.setState({ showSettingsAlert: true });
       }
+    }).catch(() => {
+      // TODO: Differentiate error types
+      this.setState({ showReferenceAlert: true });
     });
-  }
-
-  handleAlertDismiss() {
-    this.setState({ showSettingsAlert: false });
   }
 
   render() {
     const { settings, title, children } = this.props;
     const {
-      preTestRisk, cumulativeLR, riskVariants, showSettingsAlert,
+      preTestRisk, cumulativeLR, riskVariants, showSettingsAlert, showReferenceAlert,
     } = this.state;
 
     const preTestOdds = preTestRisk / (1 - preTestRisk);
@@ -140,9 +140,10 @@ class LRRiskModel extends Component {
     return (
       <div>
         <h3>{ title }</h3>
+        <ReferenceAlert isOpen={showReferenceAlert} />
         <SettingsAlert
           isOpen={showSettingsAlert && !settings.assumeRefRef}
-          toggle={this.handleAlertDismiss}
+          toggle={() => this.setState({ showSettingsAlert: false })}
         />
         <Row className="mb-3">
           <RiskCard risk={preTestRisk} title="Average Risk" disease={title} />
@@ -186,12 +187,7 @@ LRRiskModel.propTypes = {
   title: PropTypes.string.isRequired,
   preTestRisk: PropTypes.number.isRequired,
   riskVariants: PropTypes.arrayOf(PropTypes.shape({
-    variant: PropTypes.shape({ // hg19/b37 variant with VCF ctg, pos, ref, alt fields
-      ctg: PropTypes.string,
-      pos: PropTypes.number,
-      ref: PropTypes.string,
-      alt: PropTypes.string,
-    }),
+    variant: variantPropType,
     rsId: PropTypes.string,
     LR: PropTypes.object,
   })).isRequired,

@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable no-unused-vars, max-len */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
@@ -20,6 +20,8 @@ import { PubMed, ExternalLink } from '../util/links';
 
 import { withSourceAndSettings, settingsPropType } from '../../contexts/context-helpers';
 import SettingsAlert from '../analyses/SettingsAlert';
+import ReferenceAlert from '../analyses/ReferenceAlert';
+import { refAwareVariantQuery } from '../util/query';
 import '../../../node_modules/react-vis/dist/style.css';
 
 // AIMs from https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3073397/
@@ -115,21 +117,14 @@ class ChromosomePainting extends Component {
     this.state = {
       alleleCount: [],
       showSettingsAlert: false,
+      showReferenceAlert: false,
     };
-
-    this.handleAlertDismiss = this.handleAlertDismiss.bind(this);
   }
 
   componentDidMount() {
     const { sample, assumeRefRef } = this.props.settings;
 
-    Promise.all(paintingVariants.map(query => this.props.source.variant(
-      query.ctg,
-      query.pos,
-      query.ref,
-      query.alt,
-      assumeRefRef,
-    )))
+    Promise.all(paintingVariants.map(query => refAwareVariantQuery(this.props.source, query, assumeRefRef)))
       .then((variants) => {
         const alleleCount = variants.map((variant, idx) => {
           if (!variant) {
@@ -143,6 +138,9 @@ class ChromosomePainting extends Component {
         if (!assumeRefRef && !every(variants)) {
           this.setState({ showSettingsAlert: true });
         }
+      }).catch(() => {
+        // TODO: Differentiate error types
+        this.setState({ showReferenceAlert: true });
       });
   }
 
@@ -154,7 +152,7 @@ class ChromosomePainting extends Component {
     const { settings } = this.props;
     const {
       alleleCount,
-      showSettingsAlert,
+      showSettingsAlert, showReferenceAlert,
     } = this.state;
 
     const probPosterior = {
@@ -185,9 +183,10 @@ class ChromosomePainting extends Component {
     )), ['y'], ['desc']);
     return (
       <div>
+        <ReferenceAlert isOpen={showReferenceAlert} />
         <SettingsAlert
           isOpen={showSettingsAlert && !settings.assumeRefRef}
-          toggle={this.handleAlertDismiss}
+          toggle={() => this.setState({ showSettingsAlert: false })}
         />
         <Row>
           <Col md={4}>

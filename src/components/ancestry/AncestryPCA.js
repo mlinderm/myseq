@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable no-unused-vars, max-len */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
@@ -19,6 +19,8 @@ import get from 'lodash/get';
 
 import { withSourceAndSettings, settingsPropType } from '../../contexts/context-helpers';
 import SettingsAlert from '../analyses/SettingsAlert';
+import ReferenceAlert from '../analyses/ReferenceAlert';
+import { refAwareVariantQuery } from '../util/query';
 import '../../../node_modules/react-vis/dist/style.css';
 import queryVariants from './popres-drineasetal.clean.json';
 import { continentalView, europeanView, southAsianView } from './AncestryPCABackgrounds';
@@ -49,24 +51,18 @@ class AncestryPCA extends Component {
     this.state = {
       alleleCount: [],
       showSettingsAlert: false,
+      showReferenceAlert: false,
       isLoading: true,
       backgroundPops: 'continental',
     };
 
-    this.handleAlertDismiss = this.handleAlertDismiss.bind(this);
     this.handleBackgroundChange = this.handleBackgroundChange.bind(this);
   }
 
   componentDidMount() {
     const { sample, assumeRefRef } = this.props.settings;
 
-    Promise.all(queryVariants.map(query => this.props.source.variant(
-      query.ctg,
-      query.pos,
-      query.ref,
-      query.alt,
-      assumeRefRef,
-    )))
+    Promise.all(queryVariants.map(query => refAwareVariantQuery(this.props.source, query, assumeRefRef)))
       .then((variants) => {
         const alleleCount = variants.map((variant, idx) => {
           if (!variant) {
@@ -80,6 +76,9 @@ class AncestryPCA extends Component {
         if (!assumeRefRef && !every(variants)) {
           this.setState({ showSettingsAlert: true });
         }
+      }).catch(() => {
+        // TODO: Differentiate error types
+        this.setState({ showReferenceAlert: true, isLoading: false });
       });
   }
 
@@ -118,6 +117,7 @@ class AncestryPCA extends Component {
     const {
       alleleCount,
       showSettingsAlert,
+      showReferenceAlert,
       isLoading,
       backgroundPops,
     } = this.state;
@@ -134,9 +134,10 @@ class AncestryPCA extends Component {
 
     return (
       <div>
+        <ReferenceAlert isOpen={showReferenceAlert} />
         <SettingsAlert
           isOpen={showSettingsAlert && !settings.assumeRefRef}
-          toggle={this.handleAlertDismiss}
+          toggle={() => this.setState({ showSettingsAlert: false })}
         />
         { (isLoading) && (
           <div>

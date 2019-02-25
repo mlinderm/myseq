@@ -6,10 +6,10 @@ const alzheimer = {
   title: "Alzheimer's Disease",
   variants: [
     {
-      ctg: '19', pos: 45411941, ref: 'T', alt: 'C',
+      ctg: '19', pos: 45411941, pos_hg38: 44908684, ref: 'T', alt: 'C',
     },
     {
-      ctg: '19', pos: 45412079, ref: 'C', alt: 'T',
+      ctg: '19', pos: 45412079, pos_hg38: 44908822, ref: 'C', alt: 'T',
     },
   ],
   rsId: ['rs429358', 'rs7412'],
