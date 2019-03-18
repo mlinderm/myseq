@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { Table, Col, Row, Input, Form, FormGroup, Label } from 'reactstrap';
 import {
   FlexibleXYPlot,
+  XYPlot,
   XAxis,
   YAxis,
   VerticalGridLines,
@@ -148,8 +149,8 @@ class AncestryPCA extends Component {
           </div>
         )}
         <Row>
-          <Col md={6}>
-            <FlexibleXYPlot>
+          <Col md="auto">
+            <XYPlot width={360} height={360}>
               <VerticalGridLines />
               <HorizontalGridLines />
               <XAxis title="PC1" position="end" />
@@ -169,7 +170,7 @@ class AncestryPCA extends Component {
                 />
               ))}
               <MarkSeries data={myData} size={5} color="4c4c4c" />
-            </FlexibleXYPlot>
+            </XYPlot>
           </Col>
           <Col md={3}>
             <Legend>

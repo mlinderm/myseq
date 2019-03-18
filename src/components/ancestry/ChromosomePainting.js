@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Table, Col, Row, Input, Form, FormGroup, Label } from 'reactstrap';
 import {
-  FlexibleWidthXYPlot,
+  XYPlot,
   XAxis,
   YAxis,
   VerticalGridLines,
@@ -189,14 +189,14 @@ class ChromosomePainting extends Component {
           toggle={() => this.setState({ showSettingsAlert: false })}
         />
         <Row>
-          <Col md={4}>
-            <FlexibleWidthXYPlot height={400} xType="ordinal" stackBy="y">
+          <Col md="auto">
+            <XYPlot width={300} height={400} xType="ordinal" stackBy="y">
               <VerticalGridLines />
               <HorizontalGridLines />
               <XAxis />
               <YAxis title="Probability of Ancestry (%)" position="middle" />
               <VerticalBarSeries data={plotData} colorType="literal" />
-            </FlexibleWidthXYPlot>
+            </XYPlot>
           </Col>
           <Col md={3}>
             <Legend>
