@@ -5,7 +5,7 @@ import { PubMed } from '../util/links';
 const asparagus = {
   title: 'Asparagus Asnomia',
   variant: {
-    ctg: '1', pos: 248496863, ref: 'A', alt: 'G',
+    ctg: '1', pos: 248496863, pos_hg38: 248333561, ref: 'A', alt: 'G',
   },
   rsId: 'rs4481887',
   association: [

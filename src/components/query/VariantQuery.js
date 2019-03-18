@@ -7,7 +7,7 @@ import { VCFSource } from 'myseq-vcf';
 import flatten from 'lodash/flatten';
 import identity from 'lodash/identity';
 
-import { withSettings, settingsPropType } from '../../contexts/SettingsContext';
+import { withSourceAndSettings, settingsPropType } from '../../contexts/context-helpers';
 import VariantTable from './VariantTable';
 import VariantDetail from './VariantDetail';
 
@@ -62,14 +62,23 @@ export class CoordinateSearchBoxImpl extends Component {
         return Promise.reject(new Error('Querying external services must be enabled to search by rsID'));
       }
       return fetch(
-        `https://myvariant.info/v1/query?q=dbsnp.rsid:${region}&fields=dbsnp.chrom,dbsnp.hg19`,
+        `https://myvariant.info/v1/query?q=dbsnp.rsid:${region}&fields=dbsnp.chrom,dbsnp.hg19,dbnsfp.chrom,dbnsfp.hg38`,
         { mode: 'cors', 'Content-Type': 'application/json' },
       )
         .then(response => ((response.ok) ? response.json() : ({ total: 0 })))
         .then((results) => {
           if (results.total >= 1) {
-            const { chrom, hg19 } = results.hits[0].dbsnp;
-            return `${chrom}:${hg19.start}-${hg19.end}`;
+            return this.props.source.reference().then((reference) => {
+              const { shortName } = reference;
+              if (shortName === 'hg19' || shortName === 'b37') {
+                const { chrom, hg19 } = results.hits[0].dbsnp;
+                return `${chrom}:${hg19.start}-${hg19.end}`;
+              } else if (shortName === 'hg38' && results.hits[0].dbnsfp) {
+                const { chrom, hg38 } = results.hits[0].dbnsfp;
+                return `${chrom}:${hg38.start}-${hg38.end}`;
+              }
+              throw new Error('Unable to obtain coordinates for current reference');
+            });
           }
           throw new Error('Unknown or invalid rsID');
         });
@@ -82,14 +91,23 @@ export class CoordinateSearchBoxImpl extends Component {
         return Promise.reject(new Error('Querying external services must be enabled to search by gene'));
       }
       return fetch(
-        `https://mygene.info/v3/query?q=symbol:${region}&fields=genomic_pos_hg19&species=human`,
+        `https://mygene.info/v3/query?q=symbol:${region}&fields=genomic_pos,genomic_pos_hg19&species=human`,
         { mode: 'cors', 'Content-Type': 'application/json' },
       )
         .then(response => ((response.ok) ? response.json() : ({ total: 0 })))
         .then((results) => {
           if (results.total === 1) {
-            const { chr, start, end } = results.hits[0].genomic_pos_hg19;
-            return `${chr}:${start}-${end}`;
+            return this.props.source.reference().then((reference) => {
+              const { shortName } = reference;
+              if (shortName === 'hg19' || shortName === 'b37') {
+                const { chr, start, end } = results.hits[0].genomic_pos_hg19;
+                return `${chr}:${start}-${end}`;
+              } else if (shortName === 'hg38') {
+                const { chr, start, end } = results.hits[0].genomic_pos;
+                return `${chr}:${start}-${end}`;
+              }
+              throw new Error('Unable to obtain coordinates for current reference');
+            });
           }
           throw new Error('Unknown or invalid gene symbol');
         });
@@ -142,13 +160,14 @@ export class CoordinateSearchBoxImpl extends Component {
 }
 
 CoordinateSearchBoxImpl.propTypes = {
+  source: PropTypes.instanceOf(VCFSource).isRequired,
   settings: settingsPropType.isRequired,
   coordinateQuery: PropTypes.func.isRequired,
   error: PropTypes.bool.isRequired,
   helpMessage: PropTypes.string.isRequired,
 };
 
-const CoordinateSearchBox = withSettings(CoordinateSearchBoxImpl);
+const CoordinateSearchBox = withSourceAndSettings(CoordinateSearchBoxImpl);
 
 class VariantQuery extends Component {
   constructor(props) {

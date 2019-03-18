@@ -1,27 +1,29 @@
 /* eslint-disable react/no-multi-comp */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Table, Row, Col, Alert } from 'reactstrap';
+import { Table, Row, Col } from 'reactstrap';
 import { VCFSource } from 'myseq-vcf';
-import { Link } from 'react-router-dom';
 import isEqual from 'lodash/isEqual';
 import every from 'lodash/every';
 import classNames from 'classnames';
 import { withSourceAndSettings, settingsPropType } from '../../contexts/context-helpers';
+import SettingsAlert from '../analyses/SettingsAlert';
+import ReferenceAlert from '../analyses/ReferenceAlert';
 import { PharmGKB, PubMed, ExternalLink } from '../util/links';
 import { flipStrand } from '../util/alleles';
+import { refAwareVariantQuery } from '../util/query';
 
 const warfarinFDA = {
-  title: 'Warfarin',
+  title: 'Warfarin FDA Label',
   variants: [
     {
-      ctg: '16', pos: 31107689, ref: 'C', alt: 'T', flip: true,
+      ctg: '16', pos: 31107689, pos_hg38: 3109636, ref: 'C', alt: 'T', flip: true,
     }, // VKORC1 (flip to be consistent with external tables, etc.)
     {
-      ctg: '10', pos: 96702047, ref: 'C', alt: 'T',
+      ctg: '10', pos: 96702047, pos_hg38: 94942290, ref: 'C', alt: 'T',
     }, // CYP2C9 *2
     {
-      ctg: '10', pos: 96741053, ref: 'A', alt: 'C',
+      ctg: '10', pos: 96741053, pos_hg38: 94981296, ref: 'A', alt: 'C',
     }, // CYP2C9 *3
   ],
   rsId: ['rs9923231', 'rs1799853', 'rs1057910'],
@@ -46,28 +48,28 @@ const warfarinFDA = {
 };
 
 const warfarinAlg = {
-  title: 'Warfarin',
+  title: 'Warfarin Dosing Algorithm',
   variants: [
     {
-      ctg: '16', pos: 31107689, ref: 'C', alt: 'T', flip: true,
+      ctg: '16', pos: 31107689, pos_hg38: 31096368, ref: 'C', alt: 'T', flip: true,
     }, // VKORC1 (flip to be consistent with external tables, etc.)
     {
-      ctg: '19', pos: 15990431, ref: 'C', alt: 'T',
+      ctg: '19', pos: 15990431, pos_hg38: 15879621, ref: 'C', alt: 'T',
     }, // CYP4F2
     {
-      ctg: '2', pos: 85777633, ref: 'C', alt: 'G',
+      ctg: '2', pos: 85777633, pos_hg38: 85550510, ref: 'C', alt: 'G',
     }, // GGCX
     {
-      ctg: '10', pos: 96702047, ref: 'C', alt: 'T',
+      ctg: '10', pos: 96702047, pos_hg38: 94942290, ref: 'C', alt: 'T',
     }, // CYP2C9 *2
     {
-      ctg: '10', pos: 96741053, ref: 'A', alt: 'C',
+      ctg: '10', pos: 96741053, pos_hg38: 94981296, ref: 'A', alt: 'C',
     }, // CYP2C9 *3
     {
-      ctg: '10', pos: 96741058, ref: 'C', alt: 'G',
+      ctg: '10', pos: 96741058, pos_hg38: 94981301, ref: 'C', alt: 'G',
     }, // CYP2C9 *5
     {
-      ctg: '10', pos: 96709038, ref: 'GA', alt: 'G',
+      ctg: '10', pos: 96709038, pos_hg38: 94949281, ref: 'GA', alt: 'G',
     }, // CYP2C9 *6
 
   ],
@@ -88,13 +90,7 @@ class WarfarinFDA extends Component {
     const { sample, assumeRefRef } = this.props.settings;
     const queries = warfarinFDA.variants;
 
-    Promise.all(queries.map(query => this.props.source.variant(
-      query.ctg,
-      query.pos,
-      query.ref,
-      query.alt,
-      assumeRefRef,
-    )))
+    Promise.all(queries.map(query => refAwareVariantQuery(this.props.source, query, assumeRefRef)))
       .then((variants) => {
         this.setState({
           genotypes: variants.map((variant, idx) => {
@@ -109,6 +105,10 @@ class WarfarinFDA extends Component {
         if (!assumeRefRef && !every(variants)) {
           this.props.missingGenotype();
         }
+      })
+      .catch(() => {
+        // TODO: Differentiate error types
+        this.props.referenceError();
       });
   }
 
@@ -118,7 +118,7 @@ class WarfarinFDA extends Component {
         <thead>
           <tr>
             <th>VKORC1-1639</th>
-            { warfarinFDA.starName.map(name => (<th>{name}</th>)) }
+            { warfarinFDA.starName.map(name => (<th key={name}>{name}</th>)) }
           </tr>
         </thead>
         <tbody>
@@ -148,6 +148,7 @@ WarfarinFDA.propTypes = {
   settings: settingsPropType.isRequired,
   source: PropTypes.instanceOf(VCFSource).isRequired,
   missingGenotype: PropTypes.func.isRequired,
+  referenceError: PropTypes.func.isRequired,
 };
 
 class WarfarinAlg extends Component {
@@ -163,13 +164,7 @@ class WarfarinAlg extends Component {
     const { sample, assumeRefRef } = this.props.settings;
     const queries = warfarinAlg.variants;
 
-    Promise.all(queries.map(query => this.props.source.variant(
-      query.ctg,
-      query.pos,
-      query.ref,
-      query.alt,
-      assumeRefRef,
-    )))
+    Promise.all(queries.map(query => refAwareVariantQuery(this.props.source, query, assumeRefRef)))
       .then((variants) => {
         this.setState({
           genotypes: variants.map((variant, idx) => {
@@ -184,6 +179,9 @@ class WarfarinAlg extends Component {
         if (!assumeRefRef && !every(variants)) {
           this.props.missingGenotype();
         }
+      }).catch(() => {
+        // TODO: Differentiate error types
+        this.props.referenceError();
       });
   }
 
@@ -198,7 +196,7 @@ class WarfarinAlg extends Component {
         </thead>
         <tbody>
           { warfarinAlg.name.map((name, index) => (
-            <tr>
+            <tr key={name}>
               <td>{name}</td>
               <td>{this.state.genotypes[index]}</td>
             </tr>
@@ -213,6 +211,7 @@ WarfarinAlg.propTypes = {
   settings: settingsPropType.isRequired,
   source: PropTypes.instanceOf(VCFSource).isRequired,
   missingGenotype: PropTypes.func.isRequired,
+  referenceError: PropTypes.func.isRequired,
 };
 
 class WarfarinDrug extends Component {
@@ -221,30 +220,30 @@ class WarfarinDrug extends Component {
 
     this.state = {
       showSettingsAlert: false,
+      showReferenceAlert: false,
     };
 
-    this.handleAlertDismiss = this.handleAlertDismiss.bind(this);
     this.handleMissingGenotype = this.handleMissingGenotype.bind(this);
-  }
-
-  handleAlertDismiss() {
-    this.setState({ showSettingsAlert: false });
+    this.handleReferenceError = this.handleReferenceError.bind(this);
   }
 
   handleMissingGenotype() {
     this.setState({ showSettingsAlert: true });
   }
 
+  handleReferenceError() {
+    this.setState({ showReferenceAlert: true });
+  }
+
   render() {
     return (
       <div>
-        <h3>{ warfarinAlg.title }</h3>
-        <Alert color="info" isOpen={this.state.showSettingsAlert} toggle={this.handleAlertDismiss}>
-          <h4>Nothing highlighted?</h4>
-          <p>
-            If you are analyzing whole genome sequencing (WGS) data consider setting MySeq to assume the genotype of missing variants is the same as the reference genome. You can do so on the <Link to="/settings">settings</Link> page.
-          </p>
-        </Alert>
+        <h3>Warfarin</h3>
+        <ReferenceAlert isOpen={this.state.showReferenceAlert} />
+        <SettingsAlert
+          isOpen={this.state.showSettingsAlert && !this.props.settings.assumeRefRef}
+          toggle={() => this.setState({ showSettingsAlert: false })}
+        />
         <p>
           Warfarin is a widely used anticoagulant therapy with a narrow therapeutic range and large variability in the dose required for a patient to achieve the target anticoagulation. The <PubMed pubmedId={28198005}>CPIC Guidelines</PubMed> provides a multi-tier set of guidelines (implemented as a decision-tree). These analyses reproduce the dosage table from the FDA label and extract the genotypes needed by the <ExternalLink href="http://warfarindosing.org">WarfarinDosing.org</ExternalLink> genetics-based dosing algorithm.
         </p>
@@ -255,6 +254,7 @@ class WarfarinDrug extends Component {
               source={this.props.source}
               settings={this.props.settings}
               missingGenotype={this.handleMissingGenotype}
+              referenceError={this.handleReferenceError}
             />
           </Col>
           <Col md={4}>
@@ -270,6 +270,7 @@ class WarfarinDrug extends Component {
               source={this.props.source}
               settings={this.props.settings}
               missingGenotype={this.handleMissingGenotype}
+              referenceError={this.handleReferenceError}
             />
           </Col>
           <Col md={6}>

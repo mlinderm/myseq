@@ -5,7 +5,7 @@ import { PubMed, PharmGKB } from '../util/links';
 const simvastatin = {
   title: 'Simvastatin',
   variant: {
-    ctg: '12', pos: 21331549, ref: 'T', alt: 'C',
+    ctg: '12', pos: 21331549, pos_hg38: 21178615, ref: 'T', alt: 'C',
   },
   rsId: 'rs4149056',
   association: [

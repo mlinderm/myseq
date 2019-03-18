@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 import { Col, Row, Form, FormGroup, Label, Input, FormFeedback, FormText, Button } from 'reactstrap';
 import styled from 'styled-components';
-import { VCFSource, ReferenceGenome, b37Reference } from 'myseq-vcf';
+import { VCFSource, Ref } from 'myseq-vcf';
 import { parse } from 'query-string';
 import { createTabixFileFromURL, createTabixFileFromFile } from './TabixIndexedFileWorker';
 
@@ -29,7 +29,7 @@ function VCFLink(props) {
 VCFLink.propTypes = {
   url: PropTypes.string.isRequired,
   tbi: PropTypes.string,
-  reference: PropTypes.instanceOf(ReferenceGenome),
+  reference: PropTypes.instanceOf(Ref.ReferenceGenome).isRequired,
   setURL: PropTypes.func.isRequired,
   children: PropTypes.node.isRequired,
   settings: PropTypes.shape({ assumeRefRef: PropTypes.bool }),
@@ -37,7 +37,6 @@ VCFLink.propTypes = {
 
 VCFLink.defaultProps = {
   tbi: undefined,
-  reference: undefined,
   settings: undefined,
 };
 
@@ -199,11 +198,19 @@ class LoadVcfFile extends Component {
             <div><Label>Load publicly available VCF files</Label></div>
             <VCFLink
               url="https://skylight.middlebury.edu/~mlinderman/data/NA12878_GIAB_highconf_CG-IllFB-IllGATKHC-Ion-Solid-10X_CHROM1-X_v3.3_highconf.vcf.gz"
-              reference={b37Reference}
+              reference={Ref.b37Reference}
               setURL={this.updateAndHandleURL}
               settings={{ assumeRefRef: true }}
             >
               NA12878
+            </VCFLink><br />
+            <VCFLink
+              url="https://skylight.middlebury.edu/~mlinderman/data/HG001_GRCh38_GIAB_highconf_CG-IllFB-IllGATKHC-Ion-10X-SOLID_CHROM1-X_v.3.3.2_highconf_PGandRTGphasetransfer.vcf.gz"
+              reference={Ref.hg38Reference}
+              setURL={this.updateAndHandleURL}
+              settings={{ assumeRefRef: true }}
+            >
+              NA12878 (hg38)
             </VCFLink>
           </Col>
         </Row>

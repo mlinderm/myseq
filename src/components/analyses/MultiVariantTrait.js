@@ -6,7 +6,9 @@ import isEqual from 'lodash/isEqual';
 import every from 'lodash/every';
 import { withSourceAndSettings, settingsPropType } from '../../contexts/context-helpers';
 import SettingsAlert from './SettingsAlert';
+import ReferenceAlert from './ReferenceAlert';
 import { DbSnp } from '../util/links';
+import { refAwareVariantQuery, variantPropType } from '../util/query';
 
 class MultiVariantTrait extends Component {
   constructor(props) {
@@ -15,22 +17,15 @@ class MultiVariantTrait extends Component {
     this.state = {
       genotypes: [],
       showSettingsAlert: false,
+      showReferenceAlert: false,
     };
-
-    this.handleAlertDismiss = this.handleAlertDismiss.bind(this);
   }
 
   componentDidMount() {
     const { sample, assumeRefRef } = this.props.settings;
     const queries = this.props.trait.variants;
 
-    Promise.all(queries.map(query => this.props.source.variant(
-      query.ctg,
-      query.pos,
-      query.ref,
-      query.alt,
-      assumeRefRef,
-    )))
+    Promise.all(queries.map(query => refAwareVariantQuery(this.props.source, query, assumeRefRef)))
       .then((variants) => {
         this.setState({
           genotypes: variants.map(variant => (variant ? variant.genotype(sample) : undefined)),
@@ -39,24 +34,24 @@ class MultiVariantTrait extends Component {
         if (!assumeRefRef && !every(variants)) {
           this.setState({ showSettingsAlert: true });
         }
+      }).catch(() => {
+        // TODO: Differentiate error types
+        this.setState({ showReferenceAlert: true });
       });
-  }
-
-  handleAlertDismiss() {
-    this.setState({ showSettingsAlert: false });
   }
 
   render() {
     const { settings, trait, children } = this.props;
     const {
-      showSettingsAlert,
+      showSettingsAlert, showReferenceAlert,
     } = this.state;
     return (
       <div>
         <h3>{ trait.title }</h3>
+        <ReferenceAlert isOpen={showReferenceAlert} />
         <SettingsAlert
           isOpen={showSettingsAlert && !settings.assumeRefRef}
-          toggle={this.handleAlertDismiss}
+          toggle={() => this.setState({ showSettingsAlert: false })}
         />
         <Row>
           <Col md={6}>
@@ -95,12 +90,7 @@ MultiVariantTrait.propTypes = {
   source: PropTypes.instanceOf(VCFSource).isRequired,
   trait: PropTypes.shape({
     title: PropTypes.string,
-    variants: PropTypes.arrayOf(PropTypes.shape({ // hg19/b37 variant
-      ctg: PropTypes.string,
-      pos: PropTypes.number,
-      ref: PropTypes.string,
-      alt: PropTypes.string,
-    })),
+    variants: PropTypes.arrayOf(variantPropType),
     rsId: PropTypes.arrayOf(PropTypes.string),
     association: PropTypes.arrayOf(PropTypes.shape({
       genotypes: PropTypes.arrayOf(String), // allele/allele (with reference allele first), e.g. C/T

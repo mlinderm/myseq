@@ -8,8 +8,8 @@ import get from 'lodash/get';
 import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 
-import { VCFVariant } from 'myseq-vcf';
-import { settingsPropType, withSettings } from '../../contexts/SettingsContext';
+import { VCFVariant, VCFSource, b37Reference } from 'myseq-vcf';
+import { settingsPropType, withSourceAndSettings } from '../../contexts/context-helpers';
 import { DbSnp, ClinVar, Omim, GnomAD, GenomeBrowser, ExternalLink } from '../util/links';
 
 const DefList = styled.dl.attrs({
@@ -50,7 +50,7 @@ function GlobalAF(props) {
 
 GlobalAF.propTypes = {
   gnomadExome: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-  gnomadGenome: PropTypes.obect, // eslint-disable-line react/forbid-prop-types
+  gnomadGenome: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 GlobalAF.defaultProps = {
@@ -302,7 +302,7 @@ FunctionalTab.defaultProps = {
   snpeff: undefined,
 };
 
-class VariantDetail extends Component {
+export class VariantDetailImpl extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -325,20 +325,32 @@ class VariantDetail extends Component {
 
   updateVariantDetail(variant) {
     // Only fetch detail if permitted to access external services
-    if (this.props.settings.external && variant.alt.length === 1) {
-      let chrom = variant.contig;
-      if (chrom.startsWith('chr')) {
-        chrom = chrom.slice(3);
-      }
-      if (chrom === 'M') {
-        chrom = 'MT';
-      }
-      const alt = variant.alt[0];
+    if (!this.props.settings.external) {
+      this.setState({
+        detail: undefined,
+        helpMessage: 'To obtain more information about a variant enable external queries in the MySeq settings',
+      });
+    } else if (variant.alt.length !== 1) {
+      this.setState({
+        detail: undefined,
+        helpMessage: 'Variant annotation is only supported for bi-allelic variants',
+      });
+    } else {
+      this.props.source.reference().then((reference) => {
+        const { shortName } = reference.shortName;
+        if (shortName !== 'b37' && shortName !== 'hg19') {
+          // TODO: Query by rsID if available
+          throw new Error('Variant annotation is only supported for the hg19/b37 reference genome');
+        }
 
-      fetch(
-        `https://myvariant.info/v1/query?q=chrom:${chrom} AND vcf.position:${variant.position} AND vcf.ref:${variant.ref} AND vcf.alt:${alt}`,
-        { mode: 'cors', 'Content-Type': 'application/json' },
-      )
+        const chrom = b37Reference.normalizeContig(variant.contig);
+        const alt = variant.alt[0];
+
+        return fetch(
+          `https://myvariant.info/v1/query?q=chrom:${chrom} AND vcf.position:${variant.position} AND vcf.ref:${variant.ref} AND vcf.alt:${alt}`,
+          { mode: 'cors', 'Content-Type': 'application/json' },
+        );
+      })
         .then((response) => {
           if (response.ok) {
             return response.json();
@@ -355,16 +367,6 @@ class VariantDetail extends Component {
         .catch((err) => {
           this.setState({ detail: undefined, helpMessage: err.message });
         });
-    } else if (this.props.settings.external && variant.alt.length > 1) {
-      this.setState({
-        detail: undefined,
-        helpMessage: 'Variant annotation is not supported for multi-allelic variants',
-      });
-    } else if (!this.props.settings.external) {
-      this.setState({
-        detail: undefined,
-        helpMessage: 'To obtain more information about a variant enable external queries in the MySeq settings',
-      });
     }
   }
 
@@ -481,10 +483,11 @@ class VariantDetail extends Component {
   }
 }
 
-VariantDetail.propTypes = {
+VariantDetailImpl.propTypes = {
   variant: PropTypes.instanceOf(VCFVariant).isRequired,
   close: PropTypes.func.isRequired,
   settings: settingsPropType.isRequired,
+  source: PropTypes.instanceOf(VCFSource).isRequired,
 };
 
-export default withSettings(VariantDetail);
+export default withSourceAndSettings(VariantDetailImpl);
