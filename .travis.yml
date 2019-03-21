@@ -1,13 +1,8 @@
 language: node_js
 node_js:
-  - "lts/carbon"
+  - "lts/dubnium"
 before_script:
   - export TZ=America/New_York
-install:
-    - npm install
-cache:
-  directories:
-    - node_modules
 script:
   - npm run build
   - npm test
