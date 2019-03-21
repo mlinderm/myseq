@@ -1,24 +1,41 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
-import { Col, Row, Form, FormGroup, Label, Input, FormFeedback, FormText, Button } from 'reactstrap';
+import {
+  Col,
+  Row,
+  Form,
+  FormGroup,
+  Label,
+  Input,
+  FormFeedback,
+  FormText,
+  Button
+} from 'reactstrap';
 import styled from 'styled-components';
 import { VCFSource, Ref } from 'myseq-vcf';
 import { parse } from 'query-string';
-import { createTabixFileFromURL, createTabixFileFromFile } from './TabixIndexedFileWorker';
+import {
+  createTabixFileFromURL,
+  createTabixFileFromFile
+} from './TabixIndexedFileWorker';
 
 const Icon = styled.i`
-  font-size: 36px
+  font-size: 36px;
 `;
-
 
 function VCFLink(props) {
   return (
     <a
       href={props.url}
-      onClick={(evt) => {
+      onClick={evt => {
         evt.preventDefault();
-        props.setURL(props.url, props.tbi || `${props.url}.tbi`, props.reference, props.settings);
+        props.setURL(
+          props.url,
+          props.tbi || `${props.url}.tbi`,
+          props.reference,
+          props.settings
+        );
       }}
     >
       {props.children}
@@ -32,12 +49,12 @@ VCFLink.propTypes = {
   reference: PropTypes.instanceOf(Ref.ReferenceGenome).isRequired,
   setURL: PropTypes.func.isRequired,
   children: PropTypes.node.isRequired,
-  settings: PropTypes.shape({ assumeRefRef: PropTypes.bool }),
+  settings: PropTypes.shape({ assumeRefRef: PropTypes.bool })
 };
 
 VCFLink.defaultProps = {
   tbi: undefined,
-  settings: undefined,
+  settings: undefined
 };
 
 class LoadVcfFile extends Component {
@@ -50,7 +67,7 @@ class LoadVcfFile extends Component {
       fileError: false,
       fileHelpMessage: '',
       urlError: false,
-      urlHelpMessage: '',
+      urlHelpMessage: ''
     };
 
     const { from } = this.props.location.state || { from: { pathname: '/' } };
@@ -61,14 +78,21 @@ class LoadVcfFile extends Component {
         const url = query.vcf.trim();
         try {
           // Create TabixIndexedFile on web worker thread
-          const indexedFile = createTabixFileFromURL(url, query.tbi || `${url}.tbi`);
+          const indexedFile = createTabixFileFromURL(
+            url,
+            query.tbi || `${url}.tbi`
+          );
           const vcfSource = new VCFSource(indexedFile);
 
           // Notify application of new source
           this.props.setSource(vcfSource);
           Object.assign(this.state, { url, redirectToReferrer: true });
         } catch (err) {
-          Object.assign(this.state, { url, urlError: true, urlHelpMessage: err.message });
+          Object.assign(this.state, {
+            url,
+            urlError: true,
+            urlHelpMessage: err.message
+          });
         }
       }
       if (query.assumeRefRef) {
@@ -103,23 +127,34 @@ class LoadVcfFile extends Component {
     try {
       const fileList = evt.target.files;
       if (fileList.length < 2) {
-        throw new Error('Only 1 file selected. Did you select both the VCF and its index file?');
+        throw new Error(
+          'Only 1 file selected. Did you select both the VCF and its index file?'
+        );
       } else if (fileList.length > 2) {
-        throw new Error('Too many files selected. Only one VCF file can be loaded at a time.');
+        throw new Error(
+          'Too many files selected. Only one VCF file can be loaded at a time.'
+        );
       }
 
       let [variantFile, indexFile] = Array.from(fileList);
-      if (variantFile.name.endsWith('.tbi') && !indexFile.name.endsWith('.tbi')) {
+      if (
+        variantFile.name.endsWith('.tbi') &&
+        !indexFile.name.endsWith('.tbi')
+      ) {
         [variantFile, indexFile] = [indexFile, variantFile];
       }
 
       if (!indexFile.name.endsWith('.tbi')) {
-        throw new Error('Missing index file. Did you select the VCF file (".vcf.gz") and its index file (".vcf.gz.tbi")?');
+        throw new Error(
+          'Missing index file. Did you select the VCF file (".vcf.gz") and its index file (".vcf.gz.tbi")?'
+        );
       }
 
       // We won't know if this was a valid source until well after this function returns
       // Create TabixIndexedFile on web worker thread
-      const vcfSource = new VCFSource(createTabixFileFromFile(variantFile, indexFile));
+      const vcfSource = new VCFSource(
+        createTabixFileFromFile(variantFile, indexFile)
+      );
 
       // Notify application of new source
       this.props.setSource(vcfSource);
@@ -146,8 +181,8 @@ class LoadVcfFile extends Component {
 
   render() {
     if (this.state.redirectToReferrer) {
-      const { from } = (this.props.location.state || { from: { pathname: '/' } });
-      return (<Redirect to={from} />);
+      const { from } = this.props.location.state || { from: { pathname: '/' } };
+      return <Redirect to={from} />;
     }
 
     return (
@@ -159,11 +194,20 @@ class LoadVcfFile extends Component {
               <Icon className="material-icons">folder</Icon>
             </Col>
             <Col>
-              <Label for="local-file">Load variants from a local VCF file</Label>
-              <Input id="local-file" type="file" multiple onChange={this.handleFiles} invalid={this.state.fileError} />
+              <Label for="local-file">
+                Load variants from a local VCF file
+              </Label>
+              <Input
+                id="local-file"
+                type="file"
+                multiple
+                onChange={this.handleFiles}
+                invalid={this.state.fileError}
+              />
               <FormFeedback>{this.state.fileHelpMessage}</FormFeedback>
               <FormText>
-                Select both the &ldquo;.vcf.gz&rdquo; and &ldquo;.vcf.gz.tbi&rdquo; files
+                Select both the &ldquo;.vcf.gz&rdquo; and
+                &ldquo;.vcf.gz.tbi&rdquo; files
               </FormText>
             </Col>
           </FormGroup>
@@ -174,10 +218,17 @@ class LoadVcfFile extends Component {
               <Icon className="material-icons">cloud</Icon>
             </Col>
             <Col xs={8} lg={6}>
-              <Label for="remote-file">Load variants from a remote VCF file</Label>
+              <Label for="remote-file">
+                Load variants from a remote VCF file
+              </Label>
               <Row>
                 <Col>
-                  <Input id="remote-file" type="text" onChange={this.updateURL} invalid={this.state.urlError} />
+                  <Input
+                    id="remote-file"
+                    type="text"
+                    onChange={this.updateURL}
+                    invalid={this.state.urlError}
+                  />
                   <FormFeedback>{this.state.urlHelpMessage}</FormFeedback>
                 </Col>
                 <Col xs="auto">
@@ -185,7 +236,8 @@ class LoadVcfFile extends Component {
                 </Col>
               </Row>
               <FormText>
-                The &ldquo;.tbi&rdquo; extension is added to obtain the URL of the index file
+                The &ldquo;.tbi&rdquo; extension is added to obtain the URL of
+                the index file
               </FormText>
             </Col>
           </FormGroup>
@@ -195,7 +247,9 @@ class LoadVcfFile extends Component {
             <Icon className="material-icons">public</Icon>
           </Col>
           <Col>
-            <div><Label>Load publicly available VCF files</Label></div>
+            <div>
+              <Label>Load publicly available VCF files</Label>
+            </div>
             <VCFLink
               url="https://skylight.middlebury.edu/~mlinderman/data/NA12878_GIAB_highconf_CG-IllFB-IllGATKHC-Ion-Solid-10X_CHROM1-X_v3.3_highconf.vcf.gz"
               reference={Ref.b37Reference}
@@ -203,7 +257,8 @@ class LoadVcfFile extends Component {
               settings={{ assumeRefRef: true }}
             >
               NA12878
-            </VCFLink><br />
+            </VCFLink>
+            <br />
             <VCFLink
               url="https://skylight.middlebury.edu/~mlinderman/data/HG001_GRCh38_GIAB_highconf_CG-IllFB-IllGATKHC-Ion-10X-SOLID_CHROM1-X_v.3.3.2_highconf_PGandRTGphasetransfer.vcf.gz"
               reference={Ref.hg38Reference}
@@ -222,9 +277,9 @@ class LoadVcfFile extends Component {
 LoadVcfFile.propTypes = {
   setSource: PropTypes.func.isRequired,
   location: PropTypes.shape({
-    state: PropTypes.shape({ from: PropTypes.object }),
+    state: PropTypes.shape({ from: PropTypes.object })
   }).isRequired,
-  updateSettings: PropTypes.func.isRequired,
+  updateSettings: PropTypes.func.isRequired
 };
 
 export default LoadVcfFile;

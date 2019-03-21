@@ -10,12 +10,26 @@ list below.
 */
 
 const risks = [
-  { title: 'Type 2 Diabetes', route: '/risks/t2d', component: Type2DiabetesRisk },
-  { title: "Alzheimer's Disease", route: '/risks/alzheimers', component: AlzheimersRisk },
+  {
+    title: 'Type 2 Diabetes',
+    route: '/risks/t2d',
+    component: Type2DiabetesRisk
+  },
+  {
+    title: "Alzheimer's Disease",
+    route: '/risks/alzheimers',
+    component: AlzheimersRisk
+  }
 ];
 
 export default function Risks(props) {
   return (
-    <AnalysisSelector {...props} analyses={risks} category="Disease Risk" categoryPath="/risks" dropdownText="Choose disease" />
+    <AnalysisSelector
+      {...props}
+      analyses={risks}
+      category="Disease Risk"
+      categoryPath="/risks"
+      dropdownText="Choose disease"
+    />
   );
 }

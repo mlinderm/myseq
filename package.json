@@ -3,48 +3,45 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": "8.9.x"
+    "node": "10.15.x"
   },
   "cacheDirectories": [
     "node_modules"
   ],
   "dependencies": {
     "classnames": "^2.2.6",
+    "husky": "^1.3.1",
+    "lint-staged": "^8.1.5",
     "lodash": "^4.17.11",
-    "mathjs": "^5.4.2",
     "myseq-vcf": "^1.1.2",
-    "promise-worker": "^2.0.0",
-    "prop-types": "^15.7.1",
-    "query-string": "^5.1.1",
-    "react": "^16.8.1",
-    "react-dom": "^16.8.1",
-    "react-router-dom": "^4.3.1",
-    "react-scripts": "1.1.4",
-    "react-spinners": "^0.4.8",
-    "react-test-renderer": "^16.8.1",
+    "prettier": "^1.16.4",
+    "promise-worker": "^2.0.1",
+    "prop-types": "^15.7.2",
+    "query-string": "^6.4.0",
+    "react": "^16.8.4",
+    "react-dom": "^16.8.4",
+    "react-router-dom": "^5.0.0",
+    "react-scripts": "2.1.8",
+    "react-spinners": "^0.5.3",
+    "react-test-renderer": "^16.8.4",
     "react-vis": "^1.11.6",
-    "reactstrap": "^6.5.0",
-    "styled-components": "^3.4.10"
+    "reactstrap": "^7.1.0",
+    "styled-components": "^4.1.3"
   },
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test --env=jsdom",
     "eject": "react-scripts eject",
-    "build:embed": "react-app-rewired build --embed",
     "lint": "eslint ."
   },
   "devDependencies": {
-    "enzyme": "^3.8.0",
-    "enzyme-adapter-react-16": "^1.9.1",
+    "enzyme": "^3.9.0",
+    "enzyme-adapter-react-16": "^1.11.2",
     "enzyme-async-helpers": "^0.9.1",
-    "eslint": "^4.19.1",
-    "eslint-config-airbnb": "^16.1.0",
-    "eslint-plugin-import": "^2.16.0",
-    "eslint-plugin-jsx-a11y": "^6.2.1",
-    "eslint-plugin-react": "^7.12.4",
-    "jest-fetch-mock": "^1.7.5",
-    "react-app-rewired": "^1.6.2",
+    "eslint-config-prettier": "^4.1.0",
+    "jest-fetch-mock": "^2.1.1",
+    "react-app-rewired": "^2.1.1",
     "worker-loader": "^2.0.0"
   },
   "description": "MySeq is a web-application for interactive analysis of personal genomes.",
@@ -66,5 +63,22 @@
   "bugs": {
     "url": "https://github.com/mlinderm/myseq/issues"
   },
-  "homepage": "http://skylight.middlebury.edu/~mlinderman/myseq"
+  "homepage": "http://skylight.middlebury.edu/~mlinderman/myseq",
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --single-quote --write",
+      "git add"
+    ]
+  }
 }

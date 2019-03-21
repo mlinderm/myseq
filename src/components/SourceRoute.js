@@ -8,17 +8,18 @@ const SourceRoute = ({ component: Component, ...rest }) => (
     {source => (
       <Route
         {...rest}
-        render={props =>
-          (source ? (
+        render={props => {
+          return source ? (
             <Component source={source} {...props} />
           ) : (
-            <Redirect to={{
-              pathname: '/load',
-              state: { from: props.location },
-            }}
+            <Redirect
+              to={{
+                pathname: '/load',
+                state: { from: props.location }
+              }}
             />
-          ))
-        }
+          );
+        }}
       />
     )}
   </SourceContext.Consumer>
@@ -26,7 +27,7 @@ const SourceRoute = ({ component: Component, ...rest }) => (
 
 SourceRoute.propTypes = {
   component: PropTypes.func.isRequired,
-  location: PropTypes.object, // eslint-disable-line
+  location: PropTypes.object // eslint-disable-line
 };
 
 export default SourceRoute;

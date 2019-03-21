@@ -11,26 +11,37 @@ import {
   VerticalGridLines,
   HorizontalGridLines,
   PolygonSeries,
-  MarkSeries,
+  MarkSeries
 } from 'react-vis';
 import { BeatLoader } from 'react-spinners';
 import { VCFSource } from 'myseq-vcf';
 import every from 'lodash/every';
 import get from 'lodash/get';
 
-import { withSourceAndSettings, settingsPropType } from '../../contexts/context-helpers';
+import {
+  withSourceAndSettings,
+  settingsPropType
+} from '../../contexts/context-helpers';
 import SettingsAlert from '../analyses/SettingsAlert';
 import ReferenceAlert from '../analyses/ReferenceAlert';
 import { refAwareVariantQuery } from '../util/query';
 import '../../../node_modules/react-vis/dist/style.css';
 import queryVariants from './popres-drineasetal.clean.json';
-import { continentalView, europeanView, southAsianView } from './AncestryPCABackgrounds';
+import {
+  continentalView,
+  europeanView,
+  southAsianView
+} from './AncestryPCABackgrounds';
 
 const Legend = styled(Table)`
-  td, th {
-    padding: .3rem;
+  td,
+  th {
+    padding: 0.3rem;
   }
-  tbody+tbody, td, th, thead th {
+  tbody + tbody,
+  td,
+  th,
+  thead th {
     border: 0;
   }
 `;
@@ -42,7 +53,7 @@ const InlineLoader = styled(BeatLoader)`
 const backgroundMap = {
   continental: continentalView,
   european: europeanView,
-  southasian: southAsianView,
+  southasian: southAsianView
 };
 
 class AncestryPCA extends Component {
@@ -54,7 +65,7 @@ class AncestryPCA extends Component {
       showSettingsAlert: false,
       showReferenceAlert: false,
       isLoading: true,
-      backgroundPops: 'continental',
+      backgroundPops: 'continental'
     };
 
     this.handleBackgroundChange = this.handleBackgroundChange.bind(this);
@@ -63,13 +74,19 @@ class AncestryPCA extends Component {
   componentDidMount() {
     const { sample, assumeRefRef } = this.props.settings;
 
-    Promise.all(queryVariants.map(query => refAwareVariantQuery(this.props.source, query, assumeRefRef)))
-      .then((variants) => {
+    Promise.all(
+      queryVariants.map(query =>
+        refAwareVariantQuery(this.props.source, query, assumeRefRef)
+      )
+    )
+      .then(variants => {
         const alleleCount = variants.map((variant, idx) => {
           if (!variant) {
             return undefined;
           }
-          const countMatches = variant.genotype(sample).match(new RegExp(queryVariants[idx].counted, 'g'));
+          const countMatches = variant
+            .genotype(sample)
+            .match(new RegExp(queryVariants[idx].counted, 'g'));
           return countMatches ? countMatches.length : 0;
         });
         this.setState({ alleleCount, isLoading: false });
@@ -77,7 +94,8 @@ class AncestryPCA extends Component {
         if (!assumeRefRef && !every(variants)) {
           this.setState({ showSettingsAlert: true });
         }
-      }).catch(() => {
+      })
+      .catch(() => {
         // TODO: Differentiate error types
         this.setState({ showReferenceAlert: true, isLoading: false });
       });
@@ -99,12 +117,7 @@ class AncestryPCA extends Component {
       PC1 = 0.0;
       PC2 = 0.0;
       alleleCount.forEach((ac, idx) => {
-        const {
-          avg,
-          denom,
-          PC1: coeff1,
-          PC2: coeff2,
-        } = queryVariants[idx];
+        const { avg, denom, PC1: coeff1, PC2: coeff2 } = queryVariants[idx];
         const normAC = ac ? (ac - avg) / denom : 0.0;
         PC1 += normAC * coeff1;
         PC2 += normAC * coeff2;
@@ -120,7 +133,7 @@ class AncestryPCA extends Component {
       showSettingsAlert,
       showReferenceAlert,
       isLoading,
-      backgroundPops,
+      backgroundPops
     } = this.state;
 
     const { PC1, PC2 } = this.computePCACoordinates();
@@ -140,7 +153,7 @@ class AncestryPCA extends Component {
           isOpen={showSettingsAlert && !settings.assumeRefRef}
           toggle={() => this.setState({ showSettingsAlert: false })}
         />
-        { (isLoading) && (
+        {isLoading && (
           <div>
             <span className="text-info" style={{ verticalAlign: 'top' }}>
               Loading genomic data and computing coordinates...{' '}
@@ -155,18 +168,18 @@ class AncestryPCA extends Component {
               <HorizontalGridLines />
               <XAxis title="PC1" position="end" />
               <YAxis title="PC2" position="end" />
-              { backgroundView.map(country => (
+              {backgroundView.map(country => (
                 <PolygonSeries
                   key={country.className}
                   className={country.className}
                   data={country.data}
                   style={{
-                      fill: country.fill,
-                      stroke: country.fill,
-                      strokeWidth: 1.5,
-                      fillOpacity: 0.5,
-                      strokeOpacity: 0.7,
-                    }}
+                    fill: country.fill,
+                    stroke: country.fill,
+                    strokeWidth: 1.5,
+                    fillOpacity: 0.5,
+                    strokeOpacity: 0.7
+                  }}
                 />
               ))}
               <MarkSeries data={myData} size={5} color="4c4c4c" />
@@ -175,14 +188,20 @@ class AncestryPCA extends Component {
           <Col md={3}>
             <Legend>
               <thead>
-                <tr><th colSpan="2">Populations</th></tr>
+                <tr>
+                  <th colSpan="2">Populations</th>
+                </tr>
               </thead>
               <tbody>
-                { backgroundView.map(country => (
+                {backgroundView.map(country => (
                   <tr key={country.className}>
                     <td>
                       <svg width="15" height="15">
-                        <rect width="15" height="15" style={{ fill: country.fill }} />
+                        <rect
+                          width="15"
+                          height="15"
+                          style={{ fill: country.fill }}
+                        />
                       </svg>
                     </td>
                     <td>{country.className}</td>
@@ -192,11 +211,25 @@ class AncestryPCA extends Component {
             </Legend>
             <Form>
               <FormGroup>
-                <Label for="backgroundView"><b>Background Population</b></Label>
-                <Input id="backgroundView" type="select" bsSize="sm" value={backgroundPops} onChange={this.handleBackgroundChange}>
-                  <option key="continental" value="continental">All Continents</option>
-                  <option key="europe" value="european">European</option>
-                  <option key="southasian" value="southasian">South Asian</option>
+                <Label for="backgroundView">
+                  <b>Background Population</b>
+                </Label>
+                <Input
+                  id="backgroundView"
+                  type="select"
+                  bsSize="sm"
+                  value={backgroundPops}
+                  onChange={this.handleBackgroundChange}
+                >
+                  <option key="continental" value="continental">
+                    All Continents
+                  </option>
+                  <option key="europe" value="european">
+                    European
+                  </option>
+                  <option key="southasian" value="southasian">
+                    South Asian
+                  </option>
                 </Input>
               </FormGroup>
             </Form>
@@ -209,7 +242,7 @@ class AncestryPCA extends Component {
 
 AncestryPCA.propTypes = {
   settings: settingsPropType.isRequired,
-  source: PropTypes.instanceOf(VCFSource).isRequired,
+  source: PropTypes.instanceOf(VCFSource).isRequired
 };
 
 export default withSourceAndSettings(AncestryPCA);

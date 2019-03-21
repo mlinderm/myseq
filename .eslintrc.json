@@ -1,16 +1,101 @@
 {
-  "extends": "airbnb",
-  "env": {
-    "browser": true,
-    "jest": true
-  },
+  "extends": ["react-app", "prettier"],
   "rules": {
-    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
-    "jsx-a11y/anchor-is-valid": ["error", {
-      "components": ["Link"],
-      "specialLink": ["to"],
-      "aspects": ["noHref", "invalidHref", "preferButton"]
-    }],
-    "import/no-extraneous-dependencies": ["error", {"devDependencies": true}]
+    "constructor-super": "error",
+    "no-class-assign": "error",
+    "no-confusing-arrow": "error",
+    "no-dupe-class-members": "error",
+    "no-this-before-super": "error",
+    "no-useless-constructor": "error",
+    "no-var": "error",
+    "prefer-arrow-callback": [
+      "warn",
+      {
+        "allowNamedFunctions": false,
+        "allowUnboundThis": true
+      }
+    ],
+    "prefer-const": [
+      "warn",
+      {
+        "destructuring": "any",
+        "ignoreReadBeforeAssign": true
+      }
+    ],
+    "prefer-template": "warn",
+    "prefer-destructuring": [
+      "warn",
+      {
+        "VariableDeclarator": {
+          "array": false,
+          "object": true
+        },
+        "AssignmentExpression": {
+          "array": true,
+          "object": true
+        }
+      },
+      {
+        "enforceForRenamedProperties": false
+      }
+    ],
+    "no-shadow-restricted-names": "error",
+    "no-unused-vars": [
+      "error",
+      {
+        "vars": "all",
+        "args": "after-used",
+        "ignoreRestSiblings": true
+      }
+    ],
+    "no-shadow": "error",
+    "no-use-before-define": [
+      "error",
+      {
+        "functions": true,
+        "classes": true,
+        "variables": true
+      }
+    ],
+    "curly": [
+      "error",
+      "multi-line"
+    ],
+    "eqeqeq": [
+      "error",
+      "always",
+      {
+        "null": "ignore"
+      }
+    ],
+    "jsx-quotes": [
+      "error",
+      "prefer-double"
+    ],
+    "react/jsx-boolean-value": [
+      "error",
+      "never",
+      {
+        "always": []
+      }
+    ],
+    "react/no-deprecated": [
+      "error"
+    ],
+    "react/prefer-es6-class": [
+      "error",
+      "always"
+    ],
+    "react/prefer-stateless-function": [
+      "warn",
+      {
+        "ignorePureComponents": true
+      }
+    ],
+    "react/require-render-return": "error",
+    "react/self-closing-comp": "error",
+    "react/no-array-index-key": "error",
+    "react/no-unused-state": "warn",
+    "react/no-typos": "error"
   }
 }

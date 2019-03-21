@@ -39,13 +39,17 @@ function VariantTable(props) {
           <tr
             key={variant.toString()}
             onClick={() => props.selectVariant(variant)}
-            className={variant === props.selectedVariant ? 'table-primary' : undefined}
+            className={
+              variant === props.selectedVariant ? 'table-primary' : undefined
+            }
           >
             <td className="minwidth">{variant.contig}</td>
             <td>{variant.position}</td>
             <td className="truncate">{variant.ref}</td>
             <td className="truncate">{variant.alt.join(',')}</td>
-            <td className="scrollable"><DbSnp rsId={variant.id} /></td>
+            <td className="scrollable">
+              <DbSnp rsId={variant.id} />
+            </td>
             <td className="truncate">{variant.genotype()}</td>
           </tr>
         ))}
@@ -57,11 +61,11 @@ function VariantTable(props) {
 VariantTable.propTypes = {
   variants: PropTypes.arrayOf(PropTypes.instanceOf(VCFVariant)).isRequired,
   selectVariant: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
-  selectedVariant: PropTypes.instanceOf(VCFVariant),
+  selectedVariant: PropTypes.instanceOf(VCFVariant)
 };
 
 VariantTable.defaultProps = {
-  selectedVariant: undefined,
+  selectedVariant: undefined
 };
 
 export default VariantTable;

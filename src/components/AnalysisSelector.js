@@ -1,7 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Nav, NavItem, NavLink, Dropdown, DropdownToggle, DropdownItem, DropdownMenu } from 'reactstrap';
+import {
+  Nav,
+  NavItem,
+  NavLink,
+  Dropdown,
+  DropdownToggle,
+  DropdownItem,
+  DropdownMenu
+} from 'reactstrap';
 import SourceRoute from './SourceRoute';
 
 class AnalysisSelector extends Component {
@@ -9,7 +17,7 @@ class AnalysisSelector extends Component {
     super(props);
 
     this.state = {
-      dropdownOpen: false,
+      dropdownOpen: false
     };
 
     this.toggleDropdown = this.toggleDropdown.bind(this);
@@ -20,17 +28,24 @@ class AnalysisSelector extends Component {
   }
 
   render() {
-    const activeAnalysis = this.props.analyses.find(analysis =>
-      this.props.location.pathname === analysis.route);
+    const activeAnalysis = this.props.analyses.find(
+      analysis => this.props.location.pathname === analysis.route
+    );
     const { category, categoryPath } = this.props;
     return (
       <div>
         <Nav>
           <NavItem>
-            <NavLink className="pl-0" tag={Link} to={categoryPath}>{category}</NavLink>
+            <NavLink className="pl-0" tag={Link} to={categoryPath}>
+              {category}
+            </NavLink>
           </NavItem>
           <NavItem className="nav-link">/</NavItem>
-          <Dropdown nav isOpen={this.state.dropdownOpen} toggle={this.toggleDropdown}>
+          <Dropdown
+            nav
+            isOpen={this.state.dropdownOpen}
+            toggle={this.toggleDropdown}
+          >
             <DropdownToggle nav caret>
               {activeAnalysis ? activeAnalysis.title : this.props.dropdownText}
             </DropdownToggle>
@@ -55,7 +70,7 @@ class AnalysisSelector extends Component {
             component={analysis.component}
           />
         ))}
-        { this.props.children }
+        {this.props.children}
       </div>
     );
   }
@@ -63,20 +78,22 @@ class AnalysisSelector extends Component {
 
 AnalysisSelector.propTypes = {
   location: PropTypes.shape({ pathname: PropTypes.string }).isRequired,
-  analyses: PropTypes.arrayOf(PropTypes.shape({
-    title: PropTypes.string,
-    route: PropTypes.string,
-    component: PropTypes.func,
-  })).isRequired,
+  analyses: PropTypes.arrayOf(
+    PropTypes.shape({
+      title: PropTypes.string,
+      route: PropTypes.string,
+      component: PropTypes.func
+    })
+  ).isRequired,
   category: PropTypes.string.isRequired,
   categoryPath: PropTypes.string.isRequired,
   dropdownText: PropTypes.string,
-  children: PropTypes.node,
+  children: PropTypes.node
 };
 
 AnalysisSelector.defaultProps = {
   dropdownText: 'Choose analysis',
-  children: null,
+  children: null
 };
 
 export default AnalysisSelector;
