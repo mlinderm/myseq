@@ -1,27 +1,29 @@
+/* eslint-disable no-restricted-globals */
 import registerPromiseWorker from 'promise-worker/register';
 import { LocalFileReader, RemoteFileReader, TabixIndexedFile } from 'myseq-vcf';
 
 // TabixIndexedFile owned by the worker
 let tabixFile;
 
-self.addEventListener('message', (event) => { // eslint-disable-line no-restricted-globals
+self.addEventListener('message', event => {
+  // eslint-disable-line no-restricted-globals
   const { kind, data } = event.data;
   if (kind === 'construct-url') {
     tabixFile = new TabixIndexedFile(
       new RemoteFileReader(data.variant),
-      new RemoteFileReader(data.index),
+      new RemoteFileReader(data.index)
     );
   } else if (kind === 'construct-file') {
     tabixFile = new TabixIndexedFile(
       new LocalFileReader(data.variant),
-      new LocalFileReader(data.index),
+      new LocalFileReader(data.index)
     );
   }
 });
 
 // Use promise worker to maintain per-message post and response link for
 // TabixIndexedFile methods
-registerPromiseWorker((message) => {
+registerPromiseWorker(message => {
   if (!tabixFile) {
     throw new Error('TabixFile not yet initialized');
   }

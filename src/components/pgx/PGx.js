@@ -10,12 +10,22 @@ list below.
 */
 
 const drugs = [
-  { title: 'Simvastatin', route: '/pgx/simvastatin', component: SimvastatinDrug },
-  { title: 'Warfarin', route: '/pgx/warfarin', component: WarfarinDrug },
+  {
+    title: 'Simvastatin',
+    route: '/pgx/simvastatin',
+    component: SimvastatinDrug
+  },
+  { title: 'Warfarin', route: '/pgx/warfarin', component: WarfarinDrug }
 ];
 
 export default function PGx(props) {
   return (
-    <AnalysisSelector {...props} analyses={drugs} category="Pharmacogenomics" categoryPath="/pgx" dropdownText="Choose drug" />
+    <AnalysisSelector
+      {...props}
+      analyses={drugs}
+      category="Pharmacogenomics"
+      categoryPath="/pgx"
+      dropdownText="Choose drug"
+    />
   );
 }

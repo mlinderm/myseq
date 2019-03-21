@@ -17,20 +17,19 @@ import {
   Form,
   FormGroup,
   Label,
-  Input,
+  Input
 } from 'reactstrap';
 
 const Icon = styled.i`
-  font-size: 24px
+  font-size: 24px;
 `;
-
 
 class Navigation extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      isOpen: false,
+      isOpen: false
     };
 
     this.handleMenuToggle = this.handleMenuToggle.bind(this);
@@ -51,40 +50,72 @@ class Navigation extends Component {
 
     return (
       <Navbar color="light" light expand="md" className="mb-3">
-        <NavbarBrand tag={Link} to="/">MySeq</NavbarBrand>
+        <NavbarBrand tag={Link} to="/">
+          MySeq
+        </NavbarBrand>
         <NavbarToggler onClick={this.handleMenuToggle} />
         <Collapse isOpen={isOpen} navbar>
           <Nav className="mr-auto" navbar>
             <NavItem>
-              <NavLink tag={Link} to="/load">New VCF</NavLink>
+              <NavLink tag={Link} to="/load">
+                New VCF
+              </NavLink>
             </NavItem>
             <UncontrolledDropdown nav inNavbar>
-              <DropdownToggle nav caret>Analyses</DropdownToggle>
+              <DropdownToggle nav caret>
+                Analyses
+              </DropdownToggle>
               <DropdownMenu right>
-                <DropdownItem tag={Link} to="/query">Query Variants</DropdownItem>
-                <DropdownItem tag={Link} to="/traits">Physical Traits</DropdownItem>
-                <DropdownItem tag={Link} to="/pgx">Pharmacogenomics</DropdownItem>
-                <DropdownItem tag={Link} to="/risks">Disease Risk</DropdownItem>
-                <DropdownItem tag={Link} to="/ancestry">Ancestry</DropdownItem>
+                <DropdownItem tag={Link} to="/query">
+                  Query Variants
+                </DropdownItem>
+                <DropdownItem tag={Link} to="/traits">
+                  Physical Traits
+                </DropdownItem>
+                <DropdownItem tag={Link} to="/pgx">
+                  Pharmacogenomics
+                </DropdownItem>
+                <DropdownItem tag={Link} to="/risks">
+                  Disease Risk
+                </DropdownItem>
+                <DropdownItem tag={Link} to="/ancestry">
+                  Ancestry
+                </DropdownItem>
               </DropdownMenu>
             </UncontrolledDropdown>
           </Nav>
-          { samples.length > 0 &&
+          {samples.length > 0 && (
             <Form inline className="mr-sm-2">
               <FormGroup>
-                <Label for="sample" className="mr-sm-2">Sample</Label>
-                <Input id="sample" type="select" bsSize="sm" value={settings.sample || samples[0]} onChange={this.handleSampleChange}>
-                  {samples.map(sample => (<option key={sample} value={sample}>{sample}</option>))}
+                <Label for="sample" className="mr-sm-2">
+                  Sample
+                </Label>
+                <Input
+                  id="sample"
+                  type="select"
+                  bsSize="sm"
+                  value={settings.sample || samples[0]}
+                  onChange={this.handleSampleChange}
+                >
+                  {samples.map(sample => (
+                    <option key={sample} value={sample}>
+                      {sample}
+                    </option>
+                  ))}
                 </Input>
               </FormGroup>
             </Form>
-          }
+          )}
           <Nav navbar>
             <NavItem>
-              <NavLink tag={Link} to="/help"><Icon className="material-icons">help</Icon></NavLink>
+              <NavLink tag={Link} to="/help">
+                <Icon className="material-icons">help</Icon>
+              </NavLink>
             </NavItem>
             <NavItem>
-              <NavLink tag={Link} to="/settings"><Icon className="material-icons">settings</Icon></NavLink>
+              <NavLink tag={Link} to="/settings">
+                <Icon className="material-icons">settings</Icon>
+              </NavLink>
             </NavItem>
           </Nav>
         </Collapse>
@@ -96,9 +127,9 @@ class Navigation extends Component {
 Navigation.propTypes = {
   samples: PropTypes.arrayOf(PropTypes.string).isRequired,
   settings: PropTypes.shape({
-    sample: PropTypes.string,
+    sample: PropTypes.string
   }).isRequired,
-  updateSettings: PropTypes.func.isRequired,
+  updateSettings: PropTypes.func.isRequired
 };
 
 export default Navigation;

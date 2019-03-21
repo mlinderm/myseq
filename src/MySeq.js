@@ -3,7 +3,10 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { Container } from 'reactstrap';
 
 import SourceContext from './contexts/SourceContext';
-import SettingsContext, { defaultSettings, settingsPropType } from './contexts/SettingsContext';
+import SettingsContext, {
+  defaultSettings,
+  settingsPropType
+} from './contexts/SettingsContext';
 import SourceRoute from './components/SourceRoute';
 import Navigation from './components/Navigation';
 
@@ -23,7 +26,7 @@ class MySeq extends Component {
     this.state = {
       source: null,
       samples: [],
-      settings: Object.assign({}, defaultSettings, props.settings),
+      settings: Object.assign({}, defaultSettings, props.settings)
     };
 
     this.setSource = this.setSource.bind(this);
@@ -32,14 +35,16 @@ class MySeq extends Component {
 
   setSource(source) {
     this.setState({ source });
-    source.samples().then((samples) => {
+    source.samples().then(samples => {
       this.setState({ samples });
       this.updateSettings({ sample: samples[0] });
     });
   }
 
   updateSettings(settings) {
-    this.setState({ settings: Object.assign({}, this.state.settings, settings) });
+    this.setState({
+      settings: Object.assign({}, this.state.settings, settings)
+    });
   }
 
   render() {
@@ -61,20 +66,24 @@ class MySeq extends Component {
                   <Route
                     path="/load"
                     exact
-                    render={rp =>
-                      (<LoadVcfFile
+                    render={rp => (
+                      <LoadVcfFile
                         {...rp}
                         setSource={this.setSource}
                         updateSettings={this.updateSettings}
-                      />)
-                    }
+                      />
+                    )}
                   />
                   <Route
                     path="/settings"
                     exact
-                    render={rp =>
-                      <Settings {...rp} settings={settings} updateSettings={this.updateSettings} />
-                    }
+                    render={rp => (
+                      <Settings
+                        {...rp}
+                        settings={settings}
+                        updateSettings={this.updateSettings}
+                      />
+                    )}
                   />
                   <Route path="/help" component={Help} />
                   <SourceRoute path="/query" exact component={VariantQuery} />
@@ -93,11 +102,11 @@ class MySeq extends Component {
 }
 
 MySeq.propTypes = {
-  settings: settingsPropType,
+  settings: settingsPropType
 };
 
 MySeq.defaultProps = {
-  settings: {},
+  settings: {}
 };
 
 export default MySeq;

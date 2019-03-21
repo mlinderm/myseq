@@ -3,17 +3,36 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import styled from 'styled-components';
-import { Nav, NavItem, NavLink, TabPane, TabContent, Row, Col, Table } from 'reactstrap';
+import {
+  Nav,
+  NavItem,
+  NavLink,
+  TabPane,
+  TabContent,
+  Row,
+  Col,
+  Table
+} from 'reactstrap';
 import get from 'lodash/get';
 import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 
 import { VCFVariant, VCFSource, b37Reference } from 'myseq-vcf';
-import { settingsPropType, withSourceAndSettings } from '../../contexts/context-helpers';
-import { DbSnp, ClinVar, Omim, GnomAD, GenomeBrowser, ExternalLink } from '../util/links';
+import {
+  settingsPropType,
+  withSourceAndSettings
+} from '../../contexts/context-helpers';
+import {
+  DbSnp,
+  ClinVar,
+  Omim,
+  GnomAD,
+  GenomeBrowser,
+  ExternalLink
+} from '../util/links';
 
 const DefList = styled.dl.attrs({
-  className: 'row',
+  className: 'row'
 })`
   line-height: 1;
   dd {
@@ -22,18 +41,18 @@ const DefList = styled.dl.attrs({
 `;
 
 const Label = styled.dt.attrs({
-  className: 'col-sm-5',
+  className: 'col-sm-5'
 })``;
 
 const Value = styled.dd.attrs({
-  className: 'col-sm-7',
+  className: 'col-sm-7'
 })``;
 
 const MoreLink = styled.button`
-  background: none!important;
+  background: none !important;
   color: #007bff;
   border: none;
-  padding: 0!important;
+  padding: 0 !important;
   font: inherit;
   cursor: pointer;
 `;
@@ -45,17 +64,19 @@ function GlobalAF(props) {
   }
   const ac = get(gnomadExome, 'ac.ac', 0) + get(gnomadGenome, 'ac.ac', 0);
   const an = get(gnomadExome, 'an.an', 0) + get(gnomadGenome, 'an.an', 0);
-  return (an === 0 ? 0.0 : (ac / an)).toLocaleString({ maximumFractionDigits: 5 });
+  return (an === 0 ? 0.0 : ac / an).toLocaleString({
+    maximumFractionDigits: 5
+  });
 }
 
 GlobalAF.propTypes = {
   gnomadExome: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-  gnomadGenome: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+  gnomadGenome: PropTypes.object // eslint-disable-line react/forbid-prop-types
 };
 
 GlobalAF.defaultProps = {
   gnomadExome: {},
-  gnomadGenome: {},
+  gnomadGenome: {}
 };
 
 function SnpEffEffectTable(props) {
@@ -70,15 +91,33 @@ function SnpEffEffectTable(props) {
 
   return (
     <Table bordered size="sm" className="mb-0">
-      <caption className="pt-1">Selected variant annotations predicted by SnpEff. <MoreLink onClick={props.moreHandler}>More...</MoreLink></caption>
-      <thead><tr><th>Effect</th><th>Translation</th></tr></thead>
+      <caption className="pt-1">
+        Selected variant annotations predicted by SnpEff.{' '}
+        <MoreLink onClick={props.moreHandler}>More...</MoreLink>
+      </caption>
+      <thead>
+        <tr>
+          <th>Effect</th>
+          <th>Translation</th>
+        </tr>
+      </thead>
       <tbody>
-        {ann.slice(0, props.maxDisplay).map((anAnn) => {
-          const { effect, feature_id: featureId, gene_id: geneId, hgvs_c: hgvsC, hgvs_p: hgvsP } = anAnn; // eslint-disable-line
+        {ann.slice(0, props.maxDisplay).map(anAnn => {
+          const {
+            effect,
+            feature_id: featureId,
+            gene_id: geneId,
+            hgvs_c: hgvsC,
+            hgvs_p: hgvsP
+          } = anAnn; // eslint-disable-line
           return (
             <tr key={`${featureId}:${hgvsC}`}>
               <td>{effect}</td>
-              <td>{featureId}{geneId && `(${geneId})`}:{hgvsC}{hgvsP && ` (${hgvsP})`}</td>
+              <td>
+                {featureId}
+                {geneId && `(${geneId})`}:{hgvsC}
+                {hgvsP && ` (${hgvsP})`}
+              </td>
             </tr>
           );
         })}
@@ -90,18 +129,18 @@ function SnpEffEffectTable(props) {
 SnpEffEffectTable.propTypes = {
   snpeff: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
   maxDisplay: PropTypes.number,
-  moreHandler: PropTypes.func.isRequired,
+  moreHandler: PropTypes.func.isRequired
 };
 
 SnpEffEffectTable.defaultProps = {
   snpeff: undefined,
-  maxDisplay: Number.MAX_SAFE_INTEGER,
+  maxDisplay: Number.MAX_SAFE_INTEGER
 };
 
 function PopulationTab(props) {
   const { gnomadGenome, gnomadExome, variant } = props;
   if (isEmpty(gnomadGenome) && isEmpty(gnomadExome)) {
-    return (<p>No population data available from gnomAD.</p>);
+    return <p>No population data available from gnomAD.</p>;
   }
 
   function combined(key) {
@@ -115,9 +154,9 @@ function PopulationTab(props) {
     eas: { name: 'East Asian' },
     fin: { name: 'European (Finnish)' },
     nfe: { name: 'European (Non-Finnish)' },
-    oth: { name: 'Other' },
+    oth: { name: 'Other' }
   };
-  Object.keys(pops).forEach((key) => {
+  Object.keys(pops).forEach(key => {
     const ac = combined(`ac.ac_${key}`);
     const an = combined(`an.an_${key}`);
     const af = an === 0 ? 0.0 : ac / an;
@@ -134,7 +173,10 @@ function PopulationTab(props) {
     <Row>
       <Col md={8}>
         <Table bordered size="sm">
-          <caption>Population data derived from the combined exome and genome data available at <GnomAD variant={variant}>gnomAD</GnomAD>.</caption>
+          <caption>
+            Population data derived from the combined exome and genome data
+            available at <GnomAD variant={variant}>gnomAD</GnomAD>.
+          </caption>
           <thead>
             <tr>
               <th>Population</th>
@@ -144,10 +186,8 @@ function PopulationTab(props) {
             </tr>
           </thead>
           <tbody>
-            {keys.map((key) => {
-              const {
-                name, ac, an, af,
-              } = pops[key];
+            {keys.map(key => {
+              const { name, ac, an, af } = pops[key];
               return (
                 <tr key={key}>
                   <td>{name}</td>
@@ -173,19 +213,22 @@ function PopulationTab(props) {
 PopulationTab.propTypes = {
   gnomadExome: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   gnomadGenome: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-  variant: PropTypes.instanceOf(VCFVariant).isRequired,
+  variant: PropTypes.instanceOf(VCFVariant).isRequired
 };
 
 PopulationTab.defaultProps = {
   gnomadExome: {},
-  gnomadGenome: {},
+  gnomadGenome: {}
 };
 
 function ClinVarTab(props) {
   let { rcv } = props.clinvar;
   if (!rcv) {
     return (
-      <p>No ClinVar annotations availabe for this variant; <ClinVar variant={props.variant}>search ClinVar instead</ClinVar>.</p>
+      <p>
+        No ClinVar annotations availabe for this variant;{' '}
+        <ClinVar variant={props.variant}>search ClinVar instead</ClinVar>.
+      </p>
     );
   }
 
@@ -200,7 +243,17 @@ function ClinVarTab(props) {
       <Col md={10}>
         <Table bordered size="sm">
           <caption>
-            ClinVar records for this <ClinVar variantId={get(props.clinvar, 'variant_id')}>ClinVar variant</ClinVar>. { omim && <span>Additional information may be available in the <Omim mimNumber={omim}>OMIM database</Omim>.</span> }
+            ClinVar records for this{' '}
+            <ClinVar variantId={get(props.clinvar, 'variant_id')}>
+              ClinVar variant
+            </ClinVar>
+            .{' '}
+            {omim && (
+              <span>
+                Additional information may be available in the{' '}
+                <Omim mimNumber={omim}>OMIM database</Omim>.
+              </span>
+            )}
           </caption>
           <thead>
             <tr>
@@ -211,22 +264,35 @@ function ClinVarTab(props) {
             </tr>
           </thead>
           <tbody>
-            {rcv.map((entry) => {
+            {rcv.map(entry => {
               const {
                 accession,
                 conditions,
-                clinical_significance, review_status, // eslint-disable-line camelcase
+                clinical_significance,
+                review_status // eslint-disable-line camelcase
               } = entry;
               const medgen = get(conditions, 'identifiers.medgen');
               return (
                 <tr key={accession}>
-                  <td><ExternalLink href={`https://www.ncbi.nlm.nih.gov/clinvar/${accession}`}>{accession}</ExternalLink></td>
-                  <td>{clinical_significance}</td> {/* eslint-disable-line camelcase */}
                   <td>
-                    {medgen ?
-                      (<ExternalLink href={`https://www.ncbi.nlm.nih.gov/medgen/${medgen}`}>{conditions.name}</ExternalLink>) :
-                       conditions.name
-                    }
+                    <ExternalLink
+                      href={`https://www.ncbi.nlm.nih.gov/clinvar/${accession}`}
+                    >
+                      {accession}
+                    </ExternalLink>
+                  </td>
+                  <td>{clinical_significance}</td>{' '}
+                  {/* eslint-disable-line camelcase */}
+                  <td>
+                    {medgen ? (
+                      <ExternalLink
+                        href={`https://www.ncbi.nlm.nih.gov/medgen/${medgen}`}
+                      >
+                        {conditions.name}
+                      </ExternalLink>
+                    ) : (
+                      conditions.name
+                    )}
                   </td>
                   <td>{review_status}</td> {/* eslint-disable-line camelcase */}
                 </tr>
@@ -241,11 +307,11 @@ function ClinVarTab(props) {
 
 ClinVarTab.propTypes = {
   clinvar: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-  variant: PropTypes.instanceOf(VCFVariant).isRequired,
+  variant: PropTypes.instanceOf(VCFVariant).isRequired
 };
 
 ClinVarTab.defaultProps = {
-  clinvar: {},
+  clinvar: {}
 };
 
 function FunctionalTab(props) {
@@ -260,7 +326,9 @@ function FunctionalTab(props) {
 
   return (
     <Table bordered size="sm" className="mb-0">
-      <caption className="pt-1">Fuctional annotations predicted by SnpEff.</caption>
+      <caption className="pt-1">
+        Fuctional annotations predicted by SnpEff.
+      </caption>
       <thead>
         <tr>
           <th>Effect</th>
@@ -271,13 +339,13 @@ function FunctionalTab(props) {
         </tr>
       </thead>
       <tbody>
-        {ann.map((anAnn) => {
+        {ann.map(anAnn => {
           const {
             effect,
             feature_id: featureId,
             gene_id: geneId,
             hgvs_c: hgvsC,
-            hgvs_p: hgvsP,
+            hgvs_p: hgvsP
           } = anAnn;
           return (
             <tr key={`${featureId}:${hgvsC}`}>
@@ -295,11 +363,11 @@ function FunctionalTab(props) {
 }
 
 FunctionalTab.propTypes = {
-  snpeff: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+  snpeff: PropTypes.object // eslint-disable-line react/forbid-prop-types
 };
 
 FunctionalTab.defaultProps = {
-  snpeff: undefined,
+  snpeff: undefined
 };
 
 export class VariantDetailImpl extends Component {
@@ -308,7 +376,7 @@ export class VariantDetailImpl extends Component {
     this.state = {
       detail: undefined,
       activeTab: 'sum',
-      helpMessage: undefined,
+      helpMessage: undefined
     };
     this.switchTab = this.switchTab.bind(this);
   }
@@ -328,43 +396,51 @@ export class VariantDetailImpl extends Component {
     if (!this.props.settings.external) {
       this.setState({
         detail: undefined,
-        helpMessage: 'To obtain more information about a variant enable external queries in the MySeq settings',
+        helpMessage:
+          'To obtain more information about a variant enable external queries in the MySeq settings'
       });
     } else if (variant.alt.length !== 1) {
       this.setState({
         detail: undefined,
-        helpMessage: 'Variant annotation is only supported for bi-allelic variants',
+        helpMessage:
+          'Variant annotation is only supported for bi-allelic variants'
       });
     } else {
-      this.props.source.reference().then((reference) => {
-        const { shortName } = reference.shortName;
-        if (shortName !== 'b37' && shortName !== 'hg19') {
-          // TODO: Query by rsID if available
-          throw new Error('Variant annotation is only supported for the hg19/b37 reference genome');
-        }
+      this.props.source
+        .reference()
+        .then(reference => {
+          const { shortName } = reference.shortName;
+          if (shortName !== 'b37' && shortName !== 'hg19') {
+            // TODO: Query by rsID if available
+            throw new Error(
+              'Variant annotation is only supported for the hg19/b37 reference genome'
+            );
+          }
 
-        const chrom = b37Reference.normalizeContig(variant.contig);
-        const alt = variant.alt[0];
+          const chrom = b37Reference.normalizeContig(variant.contig);
+          const alt = variant.alt[0];
 
-        return fetch(
-          `https://myvariant.info/v1/query?q=chrom:${chrom} AND vcf.position:${variant.position} AND vcf.ref:${variant.ref} AND vcf.alt:${alt}`,
-          { mode: 'cors', 'Content-Type': 'application/json' },
-        );
-      })
-        .then((response) => {
+          return fetch(
+            `https://myvariant.info/v1/query?q=chrom:${chrom} AND vcf.position:${
+              variant.position
+            } AND vcf.ref:${variant.ref} AND vcf.alt:${alt}`,
+            { mode: 'cors', 'Content-Type': 'application/json' }
+          );
+        })
+        .then(response => {
           if (response.ok) {
             return response.json();
           }
           throw new Error('No additional detail available for variant');
         })
-        .then((results) => {
+        .then(results => {
           if (results.total === 1) {
             this.setState({ detail: results.hits[0], helpMessage: undefined });
           } else {
             throw new Error('No additional detail available for variant');
           }
         })
-        .catch((err) => {
+        .catch(err => {
           this.setState({ detail: undefined, helpMessage: err.message });
         });
     }
@@ -380,10 +456,14 @@ export class VariantDetailImpl extends Component {
     return (
       <NavItem>
         <NavLink
-          className={classNames(Object.assign(klasses, {
-            active: this.state.activeTab === name,
-          }))}
-          onClick={() => { this.switchTab(name); }}
+          className={classNames(
+            Object.assign(klasses, {
+              active: this.state.activeTab === name
+            })
+          )}
+          onClick={() => {
+            this.switchTab(name);
+          }}
         >
           {label}
         </NavLink>
@@ -400,13 +480,16 @@ export class VariantDetailImpl extends Component {
     return (
       <div>
         <hr />
-        <button type="button" className="close" aria-label="Close" onClick={close}>
+        <button
+          type="button"
+          className="close"
+          aria-label="Close"
+          onClick={close}
+        >
           <span aria-hidden="true">&times;</span>
         </button>
         <h4>{variant.toString()}</h4>
-        { helpMessage && (
-          <p className="text-danger">{helpMessage}</p>
-        )}
+        {helpMessage && <p className="text-danger">{helpMessage}</p>}
         <Nav tabs>
           {this.renderTab('sum', 'Summary')}
           {this.renderTab('pop', 'Population')}
@@ -422,7 +505,9 @@ export class VariantDetailImpl extends Component {
                   <Label>VCF Filter:</Label>
                   <Value>{variant.filter || 'Undefined'}</Value>
                   <Label>dbSNP:</Label>
-                  <Value><DbSnp rsId={get(detail, 'dbsnp.rsid') || variant.id} /></Value>
+                  <Value>
+                    <DbSnp rsId={get(detail, 'dbsnp.rsid') || variant.id} />
+                  </Value>
                   <Label>Allele Frequency:</Label>
                   <Value>
                     <GlobalAF
@@ -431,7 +516,9 @@ export class VariantDetailImpl extends Component {
                     />
                   </Value>
                   <Label>Genome Browser:</Label>
-                  <Value><GenomeBrowser variant={variant} /></Value>
+                  <Value>
+                    <GenomeBrowser variant={variant} />
+                  </Value>
                   <Label>ClinVar:</Label>
                   <Value>
                     <ClinVar
@@ -447,7 +534,9 @@ export class VariantDetailImpl extends Component {
                     />
                   </Value>
                   <Label>gnomAD:</Label>
-                  <Value><GnomAD variant={variant} /></Value>
+                  <Value>
+                    <GnomAD variant={variant} />
+                  </Value>
                 </DefList>
               </Col>
               {snpeff && (
@@ -475,7 +564,9 @@ export class VariantDetailImpl extends Component {
             <ClinVarTab clinvar={get(detail, 'clinvar')} variant={variant} />
           </TabPane>
           <TabPane tabId="lit">
-            <p>Literature annotations will be implemented in a future releasse</p>
+            <p>
+              Literature annotations will be implemented in a future releasse
+            </p>
           </TabPane>
         </TabContent>
       </div>
@@ -487,7 +578,7 @@ VariantDetailImpl.propTypes = {
   variant: PropTypes.instanceOf(VCFVariant).isRequired,
   close: PropTypes.func.isRequired,
   settings: settingsPropType.isRequired,
-  source: PropTypes.instanceOf(VCFSource).isRequired,
+  source: PropTypes.instanceOf(VCFSource).isRequired
 };
 
 export default withSourceAndSettings(VariantDetailImpl);

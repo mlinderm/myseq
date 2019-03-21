@@ -27,17 +27,19 @@ class TabixIndexedFileWorker {
    * @return {Array<string>} Array of record lines
    */
   records(ctg, pos, end) {
-    return this.worker.postMessage({
-      kind: 'records',
-      data: { ctg, pos, end },
-    }).catch((err) => {
-      if (err.message.startsWith('Unknown contig')) {
-        // Since Error can't be cloned we lose the custom error classes, specifically
-        // ContigNotInIndexError. Match on message to convert to empty array.
-        return [];
-      }
-      throw err;
-    });
+    return this.worker
+      .postMessage({
+        kind: 'records',
+        data: { ctg, pos, end }
+      })
+      .catch(err => {
+        if (err.message.startsWith('Unknown contig')) {
+          // Since Error can't be cloned we lose the custom error classes, specifically
+          // ContigNotInIndexError. Match on message to convert to empty array.
+          return [];
+        }
+        throw err;
+      });
   }
 }
 

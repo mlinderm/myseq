@@ -13,19 +13,17 @@ import PropTypes from 'prop-types';
  * @returns {VCFVariant} Variant object
  */
 export function refAwareVariantQuery(source, variant, assumeRefRef = false) {
-  return source.reference().then((reference) => {
+  return source.reference().then(reference => {
     const { shortName } = reference;
     if (shortName === 'hg19' || shortName === 'b37') {
-      const {
-        ctg, pos, ref, alt,
-      } = variant;
+      const { ctg, pos, ref, alt } = variant;
       return source.variant(ctg, pos, ref, alt, assumeRefRef);
     } else if (shortName === 'hg38') {
-      const {
-        ctg, pos_hg38: pos, ref, alt,
-      } = variant;
+      const { ctg, pos_hg38: pos, ref, alt } = variant;
       if (!pos) {
-        throw new Error('Source uses hg38 but query is not defined for that reference genome');
+        throw new Error(
+          'Source uses hg38 but query is not defined for that reference genome'
+        );
       }
       return source.variant(ctg, pos, ref, alt, assumeRefRef);
     }
@@ -38,5 +36,5 @@ export const variantPropType = PropTypes.shape({
   pos: PropTypes.number.isRequired,
   pos_hg38: PropTypes.number,
   ref: PropTypes.string.isRequired,
-  alt: PropTypes.string.isRequired,
+  alt: PropTypes.string.isRequired
 });
