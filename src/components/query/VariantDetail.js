@@ -17,7 +17,7 @@ import get from 'lodash/get';
 import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 
-import { VCFVariant, VCFSource, b37Reference } from 'myseq-vcf';
+import { VCFVariant, VCFSource, Ref } from 'myseq-vcf';
 import {
   settingsPropType,
   withSourceAndSettings
@@ -281,8 +281,7 @@ function ClinVarTab(props) {
                       {accession}
                     </ExternalLink>
                   </td>
-                  <td>{clinical_significance}</td>{' '}
-                  {/* eslint-disable-line camelcase */}
+                  <td>{clinical_significance}</td>
                   <td>
                     {medgen ? (
                       <ExternalLink
@@ -294,7 +293,7 @@ function ClinVarTab(props) {
                       conditions.name
                     )}
                   </td>
-                  <td>{review_status}</td> {/* eslint-disable-line camelcase */}
+                  <td>{review_status}</td>
                 </tr>
               );
             })}
@@ -409,7 +408,7 @@ export class VariantDetailImpl extends Component {
       this.props.source
         .reference()
         .then(reference => {
-          const { shortName } = reference.shortName;
+          const { shortName } = reference;
           if (shortName !== 'b37' && shortName !== 'hg19') {
             // TODO: Query by rsID if available
             throw new Error(
@@ -417,7 +416,8 @@ export class VariantDetailImpl extends Component {
             );
           }
 
-          const chrom = b37Reference.normalizeContig(variant.contig);
+          // MyVariantInfo uses b37-style chromosome names
+          const chrom = Ref.b37Reference.normalizeContig(variant.contig);
           const alt = variant.alt[0];
 
           return fetch(

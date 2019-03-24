@@ -16,7 +16,7 @@ import {
 import { VCFSource } from 'myseq-vcf';
 import flatten from 'lodash/flatten';
 import identity from 'lodash/identity';
-
+import { parse } from 'query-string';
 import {
   withSourceAndSettings,
   settingsPropType
@@ -62,6 +62,18 @@ export class CoordinateSearchBoxImpl extends Component {
     this.handleQueries = this.handleQueries.bind(this);
     this.handleQuery = this.handleQuery.bind(this);
     this.createSearch = this.createSearch.bind(this);
+  }
+
+  componentDidMount() {
+    const { search } = this.props.location;
+    if (search) {
+      // Look for query in the query string to automatically create query
+      const query = parse(search);
+      if (query.query) {
+        this.setState({ region: query.query });
+        this.handleQueries(query.query);
+      }
+    }
   }
 
   handleSearchChange(evt) {
@@ -144,10 +156,9 @@ export class CoordinateSearchBoxImpl extends Component {
     }
   }
 
-  handleQueries(evt) {
-    evt.preventDefault();
+  handleQueries(region) {
     Promise.all(
-      this.state.region
+      region
         .split(/[ ,]/)
         .filter(identity)
         .map(this.handleQuery)
@@ -160,12 +171,7 @@ export class CoordinateSearchBoxImpl extends Component {
         onClick={evt => {
           evt.preventDefault();
           this.setState({ region: search });
-          Promise.all(
-            search
-              .split(/[ ,]/)
-              .filter(identity)
-              .map(this.handleQuery)
-          ).then(this.props.coordinateQuery, this.props.coordinateQuery);
+          this.handleQueries(search);
         }}
       >
         {search}
@@ -176,7 +182,12 @@ export class CoordinateSearchBoxImpl extends Component {
   render() {
     // TODO: Auto load example queries
     return (
-      <Form onSubmit={this.handleQueries}>
+      <Form
+        onSubmit={evt => {
+          evt.preventDefault();
+          this.handleQueries(this.state.region);
+        }}
+      >
         <FormGroup row>
           <Col sm={12} md={6}>
             <Label for="query-text" hidden>
@@ -297,6 +308,7 @@ class VariantQuery extends Component {
       <QueryWrapper>
         <QueryFixed>
           <CoordinateSearchBox
+            location={this.props.location}
             coordinateQuery={this.handleCoordinateQuery}
             error={this.state.error}
             helpMessage={this.state.helpMessage}
