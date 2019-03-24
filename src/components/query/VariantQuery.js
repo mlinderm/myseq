@@ -225,7 +225,14 @@ CoordinateSearchBoxImpl.propTypes = {
   settings: settingsPropType.isRequired,
   coordinateQuery: PropTypes.func.isRequired,
   error: PropTypes.bool.isRequired,
-  helpMessage: PropTypes.string.isRequired
+  helpMessage: PropTypes.string.isRequired,
+  location: PropTypes.shape({
+    search: PropTypes.string
+  })
+};
+
+CoordinateSearchBoxImpl.defaultProps = {
+  location: {}
 };
 
 const CoordinateSearchBox = withSourceAndSettings(CoordinateSearchBoxImpl);
