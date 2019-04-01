@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+        <title>MySeq example: Bitter tasting phenotype</title>
+        <script src="https://cdn.jsdelivr.net/npm/igv@2.2.5/dist/igv.min.js"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+            integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+        <style>
+            .table-auto {
+                width: auto;
+            }
+            iframe.myseq {
+                border: 1px solid lightgray;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Analyzing the PTC Tasting Phenotype with MySeq</h1>
+            <p><em>
+                This page is an example analysis of the "bitter tasting" trait using the <a href="https://github.com/mlinderm/myseq">MySeq</a> application in an embedded context. Here MySeq is used to both query a whole genome VCF for NA12878 (from <a href="https://jimb.stanford.edu/giab">Genome in a Bottle</a>) by genomic coordinates and predict the bitter tasting phenotype directly. All of the queries demonstrated here are performed "live" in the browser, that is these are not pre-generated results.
+            </em></p>
+            <p>
+                Kim et al. <a href="https://www.ncbi.nlm.nih.gov/pubmed/12595690">identified</a> a 3 variant haplotype in the <em>TAS2R38</em> gene associated with the ability to taste the substance phenylthiocarbamide (PTC). The haplotype variants are described in the paper as <span class="text-monospace">A49P</span>, <span class="text-monospace">V262A</span>, and <span class="text-monospace">I296V</span>, with "PAV" the dominant tasting haplotype. A little work is required to (reverse) translate that specification into genomic coordinates. We can translate those amino acid substitutions to nucleotide substitutions using the protein accession obtained from the <a href="https://www.ncbi.nlm.nih.gov/gene/5726#reference-sequences">NCBI</a> and the Mutalzyer "back translator", e.g. <a href="https://mutalyzer.nl/back-translator?description=NP_789787.4%28TAS2R38%29%3Ap.A49P"><span class="text-monospace"></span>NP_789787.4(TAS2R38):p.A49P</span></a>. We take the coding nomenclature Mutalyzer reports <a href="https://mutalyzer.nl/position-converter?assembly_name_or_alias=GRCh37&description=NM_176817.4%3Ac.145G%3EC"><span class="text-monospace">NM_176817.4:c.145G>C</span></a> to its position converter to obtain the GRCh37 genomic coordinates, <span class="text-monospace">NC_000007.13:g.141673345C>G</span>, or <span class="text-monospace">chr7:141673345C>G</span>.
+            </p>
+            <table class="table table-sm table-bordered table-auto">
+                <thead>
+                    <th>Paper Variant</th><th>Genomic Variant (GRCh37/hg19)</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="text-monospace">A49P</span></td>
+                        <td><span class="text-monospace">chr7:141673345C>G</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="text-monospace">V262A</span></td>
+                        <td><span class="text-monospace">chr7:141672705G>A</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="text-monospace">I296V</span></td>
+                        <td><span class="text-monospace">chr7:141672604T>C</span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>
+                We can use MySeq to query for those variants in NA12878 by genomic position, e.g. <span class="text-monospace">chr7:141673345</span>. Clicking on any of the variant rows will bring up additional annotations, including "Functional" annotations that we can use to verify our reverse translation.
+            </p>
+            <iframe class="myseq" width=760 height=300 src="http://localhost:3000/query?vcf=https%3A%2F%2Fskylight.middlebury.edu%2F~mlinderman%2Fdata%2FNA12878.gatk-haplotype-annotated.vcf.gz&assumeRefRef=1&query=chr7%3A141673345%2C%20chr7%3A141672705%2C%20chr7%3A141672604"></iframe>
+            <p>
+                The heterozygous <span class="text-monospace">T/C</span>, <span class="text-monospace">G/A</span> and <span class="text-monospace">C/G</span> genotypes are very suggestive that NA12878 carries one copy of the tasting haplotype. The latter two variants are only 101bp apart. Thus we can verify that those variants are indeed on the same chromosome by looking to see if the alternate alleles are on same fragment.
+            </p>
+            <div id="igv-div" style="padding-top: 10px; padding-bottom: 10px; border:1px solid lightgray"></div>
+            <p>
+                However, when we review the pileup of the 1000 Genomes Phase 3 exome data (shown above) in this region we don't see any fragments with the <span class="text-monospace">C</span> ("blue") and <span class="text-monospace">A</span> ("green") alleles. However, when we review the GenBank <a href="https://www.ncbi.nlm.nih.gov/nuccore/NG_016141">entry</a> for <em>TAS2R38</em>, we see the following <span class="text-monospace">misc_difference</span>.
+            </p>
+            <pre>
+                5869
+                /gene="TAS2R38"
+                /gene_synonym="PTC; T2R38; T2R61; THIOT"
+                /note="This sequence differs from the reference genome
+                assembly (NCBI Build 37) at this position. C was replaced
+                by T to represent the more common allele."
+                /replace="c"
+            </pre>
+            <p>
+                The reference <span class="text-monospace">G</span> allele in <span class="text-monospace">chr7:141672705G>A</span> is the alternate <span class="text-monospace">Ala<sup>262</sup></span> amino acid. Thus the "taster" haplotype PAV described in the paper corresponds to bolded alleles shown below. As we see above, those alleles do appear to be on the same chromosome in NA12878.
+            </p>
+            <p>
+                <span class="text-monospace">chr7:141673345C>G C/<b>G</b></span><br/>
+                <span class="text-monospace">chr7:141672705G>A <b>G</b>/A</span><br />
+                <span class="text-monospace">chr7:141672604T>C T/<b>C</span></b>
+            </p>
+            <p>
+                Having verified the haplotype structure, we can now predict that NA12878, who carries one copy of the dominant taster haplotype, tastes PTC as bitter.
+            </p>
+            <p>
+                In addition to query and annotation, MySeq implements a number of analyses including predicting physical traits like bitter tasting. This analysis, based on just the <span class="text-monospace">A49P</span> variant, shows the same results we derived above. 
+            </p>
+            <iframe class="myseq" width=760 height=450
+                src="http://localhost:3000/traits/bitter?vcf=https%3A%2F%2Fskylight.middlebury.edu%2F~mlinderman%2Fdata%2FNA12878.gatk-haplotype-annotated.vcf.gz&assumeRefRef=1"></iframe>
+        </div>
+        <script type="text/javascript">
+            document.addEventListener("DOMContentLoaded", function () {
+                const options =
+                {
+                    genome: "hg19",
+                    locus: "chr7:141,672,598-141,672,710",
+                    tracks: [
+                        {
+                            type: 'alignment',
+                            format: 'bam',
+                            url: 'https://s3.amazonaws.com/1000genomes/phase3/data/NA12878/exome_alignment/NA12878.mapped.ILLUMINA.bwa.CEU.exome.20121211.bam',
+                            indexURL: 'https://s3.amazonaws.com/1000genomes/phase3/data/NA12878/exome_alignment/NA12878.mapped.ILLUMINA.bwa.CEU.exome.20121211.bam.bai',
+                            name: 'NA12878',
+                            viewAsPairs: true
+                        }
+                    ]
+                };
+
+                const igvDiv = document.getElementById("igv-div");
+                igv.createBrowser(igvDiv, options);
+            });
+        </script>
+    </body>
+</html>

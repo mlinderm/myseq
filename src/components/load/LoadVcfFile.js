@@ -70,7 +70,16 @@ class LoadVcfFile extends Component {
       urlHelpMessage: ''
     };
 
-    const { from } = this.props.location.state || { from: { pathname: '/' } };
+    this.handleFiles = this.handleFiles.bind(this);
+    this.updateURL = this.updateURL.bind(this);
+    this.handleURL = this.handleURL.bind(this);
+    this.updateAndHandleURL = this.updateAndHandleURL.bind(this);
+  }
+
+  componentDidMount() {
+    const { from } = this.props.location.state || {
+      from: { pathname: '/' }
+    };
     if (from.search) {
       // Look for vcf and tbi keys in in the query string to automatically load source
       const query = parse(from.search);
@@ -80,15 +89,15 @@ class LoadVcfFile extends Component {
           // Create TabixIndexedFile on web worker thread
           const indexedFile = createTabixFileFromURL(
             url,
-            query.tbi || `${url}.tbi`
+            (query.tbi || `${url}.tbi`).trim()
           );
           const vcfSource = new VCFSource(indexedFile);
 
           // Notify application of new source
           this.props.setSource(vcfSource);
-          Object.assign(this.state, { url, redirectToReferrer: true });
+          this.setState({ url, redirectToReferrer: true });
         } catch (err) {
-          Object.assign(this.state, {
+          this.setState({
             url,
             urlError: true,
             urlHelpMessage: err.message
@@ -99,11 +108,6 @@ class LoadVcfFile extends Component {
         this.props.updateSettings({ assumeRefRef: true });
       }
     }
-
-    this.handleFiles = this.handleFiles.bind(this);
-    this.updateURL = this.updateURL.bind(this);
-    this.handleURL = this.handleURL.bind(this);
-    this.updateAndHandleURL = this.updateAndHandleURL.bind(this);
   }
 
   setSourceFromURL(variantURL, indexURL, reference, settings) {
