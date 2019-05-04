@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Table, Col, Row, Input, Form, FormGroup, Label } from 'reactstrap';
+import { Table, Col, Row } from 'reactstrap';
 import {
   XYPlot,
   XAxis,
@@ -11,10 +11,8 @@ import {
   HorizontalGridLines,
   VerticalBarSeries
 } from 'react-vis';
-import { BeatLoader } from 'react-spinners';
 import { VCFSource } from 'myseq-vcf';
 import every from 'lodash/every';
-import get from 'lodash/get';
 import orderBy from 'lodash/orderBy';
 import { PubMed, ExternalLink } from '../util/links';
 

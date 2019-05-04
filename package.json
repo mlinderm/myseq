@@ -22,7 +22,6 @@
     "react-dom": "^16.8.6",
     "react-router-dom": "^5.0.0",
     "react-scripts": "2.1.8",
-    "react-spinners": "^0.5.4",
     "react-test-renderer": "^16.8.6",
     "react-vis": "^1.11.7",
     "reactstrap": "^7.1.0",

@@ -2,9 +2,17 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Table, Col, Row, Input, Form, FormGroup, Label } from 'reactstrap';
 import {
-  FlexibleXYPlot,
+  Table,
+  Col,
+  Row,
+  Input,
+  Form,
+  FormGroup,
+  Label,
+  Spinner
+} from 'reactstrap';
+import {
   XYPlot,
   XAxis,
   YAxis,
@@ -13,10 +21,8 @@ import {
   PolygonSeries,
   MarkSeries
 } from 'react-vis';
-import { BeatLoader } from 'react-spinners';
 import { VCFSource } from 'myseq-vcf';
 import every from 'lodash/every';
-import get from 'lodash/get';
 
 import {
   withSourceAndSettings,
@@ -44,10 +50,6 @@ const Legend = styled(Table)`
   thead th {
     border: 0;
   }
-`;
-
-const InlineLoader = styled(BeatLoader)`
-  display: inline-block;
 `;
 
 const backgroundMap = {
@@ -155,10 +157,10 @@ class AncestryPCA extends Component {
         />
         {isLoading && (
           <div>
-            <span className="text-info" style={{ verticalAlign: 'top' }}>
-              Loading genomic data and computing coordinates...{' '}
-            </span>
-            <InlineLoader color="#17a2b8" loading={isLoading} />
+            <span className="text-primary" style={{ verticalAlign: 'top' }}>
+              Loading genomic data and computing coordinates...
+            </span>{' '}
+            <Spinner size="sm" color="primary" />
           </div>
         )}
         <Row>
