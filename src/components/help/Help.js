@@ -15,7 +15,7 @@ function About() {
           Michael Linderman
         </ExternalLink>{' '}
         and Middlebury students Leo McElroy and Laura Chang. MySeq was inspired
-        by <PubMed pubmedId={22174289}>Interpretome</PubMed> and{' '}
+        by the <PubMed pubmedId={22174289}>Interpretome</PubMed> and{' '}
         <PubMed pubmedId={28334237}>DNA.LAND Compass</PubMed>.
       </p>
       <p>
@@ -25,9 +25,16 @@ function About() {
         MySeq <b>never</b> sends the genotype to an external service (that is
         how many copies of a variant), only the variant description (that is the
         &ldquo;edit&rdquo; to the reference genome). However, a combination of
-        rare variants, even without genoytpes, may still be identifiable. You
+        rare variants, even without genotypes, may still be identifiable. You
         can disable external queries via the{' '}
         <Link to="/settings">Settings</Link>.
+      </p>
+      <p>
+        MySeq works by only loading the small portions of otherwise large (100
+        MBs) variant call files needed for a particular analysis. As a result
+        MySeq can efficiently analyze whole genome-scale data files stored
+        locally or available online. Read more about how to{' '}
+        <Link to="/help/data">prepare data for use with MySeq</Link>.
       </p>
       <p>
         MySeq is open-source software available on{' '}
@@ -73,8 +80,8 @@ function Data() {
           Tabix
         </ExternalLink>{' '}
         tools. MySeq is most effective when the VCF file has been normalized (so
-        that the variant descriptions consistent with the available databases).
-        The MySeq respository includes a{' '}
+        that the variant descriptions are consistent with the available
+        databases). The MySeq repository includes a{' '}
         <ExternalLink href="https://github.com/mlinderm/myseq/blob/master/scripts/normalize">
           script
         </ExternalLink>{' '}
