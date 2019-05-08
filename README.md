@@ -1,6 +1,6 @@
 # MySeq [![Build Status](https://travis-ci.org/mlinderm/myseq.svg?branch=master)](https://travis-ci.org/mlinderm/myseq)
 
-MySeq is a web-application for interactive analysis of personal genomes (distributed as compressed-and-indexed VCF files) inspired by the [Interpretome](http://www.interpretome.com) and [DNA.LAND Compass](http://compass.dna.land). MySeq is ultimately intended for use as a genomics educational platform.
+MySeq is a web-application for interactive analysis of personal genomes (distributed as compressed-and-indexed VCF files) inspired by [GENOtation (previously the Interpretome)](http://genotation.stanford.edu) and [DNA.LAND Compass](http://compass.dna.land). MySeq is intended for use as a genomics educational platform.
 
 MySeq can load and analyze [Tabix-indexed](http://www.htslib.org/doc/tabix.html) [VCF](https://samtools.github.io/hts-specs/) files stored locally on the user's computer or available remotely. Queries and other analyses will only load the necessary blocks of the compressed VCF file, enabling efficient analysis of whole-genome-scale VCF files.
 
