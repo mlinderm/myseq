@@ -149,10 +149,6 @@ const t2d = [
   }
 ];
 
-// TODO: Add information about T2D
-
-// Default pretest risk is average of male/female lifetime risk from Narayan et al.
-
 export default function Type2DiabetesRisk() {
   return (
     <LRRiskModel title="Type 2 Diabetes" preTestRisk={0.345} riskVariants={t2d}>

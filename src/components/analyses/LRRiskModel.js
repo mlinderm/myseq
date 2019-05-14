@@ -18,7 +18,7 @@ import {
 } from '../../contexts/context-helpers';
 import SettingsAlert from './SettingsAlert';
 import ReferenceAlert from './ReferenceAlert';
-import { DbSnp } from '../util/links';
+import { DbSnp, PubMed } from '../util/links';
 import { refAwareVariantQuery, variantPropType } from '../util/query';
 
 // https://fontawesome.com/license/free
@@ -174,7 +174,6 @@ class LRRiskModel extends Component {
     const postTestOdds = preTestOdds * cumulativeLR;
     const postTestRisk = postTestOdds / (1 + postTestOdds);
 
-    // TODO: Add 23&Me like descriptor of risk calculation
     // TODO: Support form for changing pre-test risk
     // TODO: Add link to source paper (other information)
 
@@ -195,8 +194,6 @@ class LRRiskModel extends Component {
             modifier="with the same genetic makeup"
             color="limegreen"
           />
-        </Row>
-        <Row>
           <Col md={6}>
             <Table bordered size="sm">
               <thead>
@@ -228,7 +225,21 @@ class LRRiskModel extends Component {
               </tbody>
             </Table>
           </Col>
-          <Col md={6}>{children}</Col>
+        </Row>
+        <Row>
+          <Col>{children}</Col>
+        </Row>
+        <Row>
+          <Col>
+            This analysis, modeled on <PubMed pubmedId="20435227" />, uses a{' '}
+            <PubMed pubmedId="20497613">likelihood ratio-based approach</PubMed>{' '}
+            to predict an individual's genetically-informed risk of developing
+            disease. A total likelihood ratio (LR) of greater than 1 implies
+            that an individual with the same genetic makeup is at increased risk
+            compared the average person. The overall LR is the product the LRs
+            of the individual variants. The LR for a variant is computed from
+            the odds ratio reported in the GWAS study.
+          </Col>
         </Row>
       </div>
     );

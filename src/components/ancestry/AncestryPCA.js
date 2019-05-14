@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars, max-len */
+/* eslint-disable max-len */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
@@ -132,7 +132,6 @@ class AncestryPCA extends Component {
   render() {
     const { settings } = this.props;
     const {
-      alleleCount,
       showSettingsAlert,
       showReferenceAlert,
       isLoading,

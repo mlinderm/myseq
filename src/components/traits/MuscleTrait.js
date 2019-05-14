@@ -1,6 +1,7 @@
 import React from 'react';
 import SingleVariantTrait from '../analyses/SingleVariantTrait';
 import { PubMed, SNPedia } from '../util/links';
+import { MonoSpan } from '../util/style';
 
 const muscle = {
   title: 'Muscle Performance',
@@ -25,11 +26,11 @@ export default function MuscleTrait() {
       <p>
         This <abbr title="Single Nucleotide Polymorphism">SNP</abbr> in the{' '}
         <i>ACTN3</i> gene has been associated with muscle performance in elite
-        athletes. The T allele (termed the &lsquo;X&rsquo; allele) is reported
-        to be underrepresented in elite endurance athletes. [
-        <PubMed pubmedId={18043716} />] Subsequent studies have not replicated
-        the originally reported association. Adapted from{' '}
-        <SNPedia title="Rs1815739" oldid={1536618} />.
+        athletes. The <MonoSpan>T</MonoSpan> allele (termed the &lsquo;X&rsquo;
+        allele) is reported to be underrepresented in elite endurance athletes [
+        <PubMed pubmedId={18043716} />
+        ]. Subsequent studies have not replicated the originally reported
+        association. Adapted from <SNPedia title="Rs1815739" oldid={1536618} />.
       </p>
     </SingleVariantTrait>
   );

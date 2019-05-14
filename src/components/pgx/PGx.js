@@ -1,4 +1,6 @@
 import React from 'react';
+import { Link, Route } from 'react-router-dom';
+import { ExternalLink } from '../util/links';
 import AnalysisSelector from '../AnalysisSelector';
 
 import SimvastatinDrug from './SimvastatinDrug';
@@ -20,12 +22,45 @@ const drugs = [
 
 export default function PGx(props) {
   return (
-    <AnalysisSelector
-      {...props}
-      analyses={drugs}
-      category="Pharmacogenomics"
-      categoryPath="/pgx"
-      dropdownText="Choose drug"
-    />
+    <React.Fragment>
+      <AnalysisSelector
+        {...props}
+        analyses={drugs}
+        category="Pharmacogenomics"
+        categoryPath="/pgx"
+        dropdownText="Choose drug"
+      />
+      <Route
+        path="/pgx"
+        exact
+        render={() => (
+          <div>
+            <p>
+              Explore genomic analyses for drug safety and efficacy for the
+              following drugs:
+            </p>
+            <ul>
+              {drugs.map(drug => (
+                <li key={drug.route}>
+                  <Link to={drug.route}>{drug.title}</Link>
+                </li>
+              ))}
+            </ul>
+            <p>
+              The gene-drug relationships and associated clinical guidelines are
+              sourced from{' '}
+              <ExternalLink href="https://www.pharmgkb.org">
+                PharmGKB
+              </ExternalLink>{' '}
+              and the{' '}
+              <ExternalLink href="https://cpicpgx.org/guidelines/">
+                CPIC guidlines
+              </ExternalLink>
+              .
+            </p>
+          </div>
+        )}
+      />
+    </React.Fragment>
   );
 }

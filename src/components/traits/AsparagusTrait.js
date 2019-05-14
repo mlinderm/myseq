@@ -34,8 +34,9 @@ export default function AsparagusTrait() {
       <p>
         This <abbr title="Single Nucleotide Polymorphism">SNP</abbr> near the{' '}
         <i>OR2M7</i> gene is associated with the ability to smell the
-        methanethiol produced after eating asparagus. [
-        <PubMed pubmedId={20876394} />]
+        methanethiol produced after eating asparagus [
+        <PubMed pubmedId={20876394} />
+        ].
       </p>
     </SingleVariantTrait>
   );
