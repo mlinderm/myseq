@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-
+/* Hulls for PCA components for POPRES datasets using PCA loadings computed from AIMs in Drineas et al. */
 const EuropeanCourseHull = [
   { x: 3.914939, y: 2.138966 },
   // { // outlier

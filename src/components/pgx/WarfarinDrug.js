@@ -221,10 +221,13 @@ class WarfarinFDA extends Component {
               [assoc.vkorcGenotype].concat(cyp2c9Genotype)
             );
             return (
-              <tr key={assoc.genotypes}>
+              <tr key={assoc.vkorcGenotype}>
                 <td>{flipStrand(assoc.vkorcGenotype)}</td>
                 {assoc.phenotype.map((phenotype, index) => (
                   <td
+                    key={`${assoc.vkorcGenotype}-${
+                      warfarinFDA.starName[index]
+                    }`}
                     className={classNames({
                       'table-primary': isEqual(
                         genotypes[index],
@@ -377,7 +380,7 @@ class WarfarinDrug extends Component {
           <Col md={4}>
             <p>
               FDA suggested daily Warfarin dosage (in mg/day) in order to
-              achieve an optimal theraputic effect. Adapted from{' '}
+              achieve an optimal therapeutic effect. Adapted from{' '}
               <PharmGKB PAid="PA451906" PAidGuide="PA166104949" />.
             </p>
           </Col>

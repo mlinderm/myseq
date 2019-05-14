@@ -1,6 +1,11 @@
 import React from 'react';
+import styled from 'styled-components';
 import MultiVariantTrait from '../analyses/MultiVariantTrait';
 import { SNPedia } from '../util/links';
+
+const MonoSpan = styled.span.attrs({
+  className: 'text-monospace'
+})``;
 
 const alzheimer = {
   title: "Alzheimer's Disease",
@@ -47,8 +52,9 @@ export default function AlzheimersRisk() {
         risk of developing Alzheimer&apos;s Disease. The ε2 allele is rare and
         may have protective effects. The ε2, ε3, and ε4 alleles are determined
         by the combination of these two variants on the same chromosome. Since
-        the rs429358(C) + rs7412(T) haplotype is extremely rare, individuals
-        with C/T genotypes at both SNPs are assumed to be ε2/ε4. Adapted from{' '}
+        the <MonoSpan>rs429358(C)</MonoSpan> + <MonoSpan>rs7412(T)</MonoSpan>{' '}
+        haplotype is extremely rare, individuals with <MonoSpan>C/T</MonoSpan>{' '}
+        genotypes at both SNPs are assumed to be ε2/ε4. Adapted from{' '}
         <SNPedia title="APOE-ε4" oldid={1536640} />.
       </p>
     </MultiVariantTrait>

@@ -1,4 +1,6 @@
 import React from 'react';
+import { Link, Route } from 'react-router-dom';
+import { PubMed } from '../util/links';
 import AnalysisSelector from '../AnalysisSelector';
 
 import Type2DiabetesRisk from './Type2DiabetesRisk';
@@ -24,12 +26,39 @@ const risks = [
 
 export default function Risks(props) {
   return (
-    <AnalysisSelector
-      {...props}
-      analyses={risks}
-      category="Disease Risk"
-      categoryPath="/risks"
-      dropdownText="Choose disease"
-    />
+    <React.Fragment>
+      <AnalysisSelector
+        {...props}
+        analyses={risks}
+        category="Disease Risk"
+        categoryPath="/risks"
+        dropdownText="Choose disease"
+      />
+      <Route
+        path="/risks"
+        exact
+        render={() => (
+          <div>
+            <p>
+              Explore genomic analyses for the risk of developing the following
+              diseases:
+            </p>
+            <ul>
+              {risks.map(risk => (
+                <li key={risk.route}>
+                  <Link to={risk.route}>{risk.title}</Link>
+                </li>
+              ))}
+            </ul>
+            <p>
+              These analyses employ multiple methods including polygenic risk
+              prediction using{' '}
+              <PubMed pubmedId="20497613">likelihood ratios</PubMed> and
+              genotype-phenotype lookup.
+            </p>
+          </div>
+        )}
+      />
+    </React.Fragment>
   );
 }

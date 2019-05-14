@@ -1,6 +1,7 @@
 import React from 'react';
 import SingleVariantTrait from '../analyses/SingleVariantTrait';
 import { PubMed, SNPedia } from '../util/links';
+import { MonoSpan } from '../util/style';
 
 const eyecolor = {
   title: 'Eye Color: Blue-Gray/Green',
@@ -24,10 +25,11 @@ export default function EyeColorTraitGreen() {
     <SingleVariantTrait trait={eyecolor}>
       <p>
         This <abbr title="Single Nucleotide Polymorphism">SNP</abbr> in the{' '}
-        <i>OCA2</i> gene has been associated with eye color. The A allele often
-        produces blue or green eye color in Caucasians. [
-        <PubMed pubmedId={17236130} />] Adapted from{' '}
-        <SNPedia title="Rs7495174" oldid={1529684} />.
+        <i>OCA2</i> gene has been associated with eye color. The{' '}
+        <MonoSpan>A</MonoSpan> allele often produces blue or green eye color in
+        Caucasians [
+        <PubMed pubmedId={17236130} />
+        ]. Adapted from <SNPedia title="Rs7495174" oldid={1529684} />.
       </p>
     </SingleVariantTrait>
   );

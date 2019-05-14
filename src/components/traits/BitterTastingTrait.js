@@ -27,8 +27,9 @@ export default function BitterTastingTrait() {
         three variants comprising a halpotype in the <i>TAS2R38</i> gene
         associated with the ability to taste the compound phenylthiocarbamide
         (PTC) as bitter. A person who is a &ldquo;taster&rdquo; likely also
-        carries two other variants that make up the haplotype. [
-        <PubMed pubmedId={12595690} />]
+        carries two other variants that make up the haplotype [
+        <PubMed pubmedId={12595690} />
+        ].
       </p>
     </SingleVariantTrait>
   );

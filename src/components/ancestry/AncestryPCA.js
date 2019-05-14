@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars, max-len */
+/* eslint-disable max-len */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
@@ -38,6 +38,7 @@ import {
   europeanView,
   southAsianView
 } from './AncestryPCABackgrounds';
+import { PubMed } from '../util/links';
 
 const Legend = styled(Table)`
   td,
@@ -131,7 +132,6 @@ class AncestryPCA extends Component {
   render() {
     const { settings } = this.props;
     const {
-      alleleCount,
       showSettingsAlert,
       showReferenceAlert,
       isLoading,
@@ -235,6 +235,19 @@ class AncestryPCA extends Component {
                 </Input>
               </FormGroup>
             </Form>
+          </Col>
+          <Col>
+            <p>
+              PCA analysis is based on {queryVariants.length} ancestry
+              informative markers (AIMs) obtained from{' '}
+              <PubMed pubmedId="20805874" /> and loadings generated from the{' '}
+              <PubMed pubmedId="18760391">POPRES</PubMed> dataset. The PCA
+              coordinates for the sample being analyzed are computed using the
+              pre-determined loadings and projected onto coordinates
+              pre-computed for the individuals in the POPRES dataset. The
+              background shapes are the "hulls" of the different population
+              groups in the POPRES dataset.
+            </p>
           </Col>
         </Row>
       </div>

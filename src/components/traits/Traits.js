@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link, Route } from 'react-router-dom';
 import AnalysisSelector from '../AnalysisSelector';
 
 import EarwaxTrait from './EarwaxTrait';
@@ -49,12 +50,30 @@ const traits = [
 
 export default function Traits(props) {
   return (
-    <AnalysisSelector
-      {...props}
-      analyses={traits}
-      category="Traits"
-      categoryPath="/traits"
-      dropdownText="Choose trait"
-    />
+    <React.Fragment>
+      <AnalysisSelector
+        {...props}
+        analyses={traits}
+        category="Traits"
+        categoryPath="/traits"
+        dropdownText="Choose trait"
+      />
+      <Route
+        path="/traits"
+        exact
+        render={() => (
+          <div>
+            <p>Explore genomic analyses for the following physical traits:</p>
+            <ul>
+              {traits.map(trait => (
+                <li key={trait.route}>
+                  <Link to={trait.route}>{trait.title}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      />
+    </React.Fragment>
   );
 }
