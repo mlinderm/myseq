@@ -3,15 +3,9 @@ import { Link, Route } from 'react-router-dom';
 import AnalysisSelector from '../AnalysisSelector';
 
 import AncestryPCA from './AncestryPCA';
-import ChromosomePainting from './ChromosomePainting';
 
 const ancestries = [
-  { title: 'PCA Analysis', route: '/ancestry/pca', component: AncestryPCA },
-  {
-    title: 'Bayesian Analysis',
-    route: '/ancestry/painting',
-    component: ChromosomePainting
-  }
+  { title: 'PCA Analysis', route: '/ancestry/pca', component: AncestryPCA }
 ];
 
 export default function Ancestry(props) {

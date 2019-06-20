@@ -13,7 +13,7 @@
     "husky": "^1.3.1",
     "lint-staged": "^8.1.6",
     "lodash": "^4.17.11",
-    "myseq-vcf": "^1.1.4",
+    "myseq-vcf": "^1.1.6",
     "prettier": "^1.17.0",
     "promise-worker": "^2.0.1",
     "prop-types": "^15.7.2",

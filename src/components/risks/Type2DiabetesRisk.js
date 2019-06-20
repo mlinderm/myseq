@@ -155,10 +155,13 @@ export default function Type2DiabetesRisk() {
       <p>
         Type 2 diabetes mellitus is the most common type of diabetes, with an
         overall prevalence in the population in the tens of percent. Pre-test,
-        or average risk, is computed from the overall lifetime risks for Type 2
-        Diabetes for different demographic groups reported in [
+        or population average risk, is computed from the overall lifetime risks
+        for Type 2 Diabetes for different demographic groups reported in [
         <PubMed pubmedId={14532317} />
-        ].
+        ]. The risk variants are curated from previously reported genetic risk
+        predictors [<PubMed pubmedId={24618965} />,{' '}
+        <PubMed pubmedId={24520119} />, <PubMed pubmedId={19020323} />] and
+        replicated GWAS findings.
       </p>
     </LRRiskModel>
   );

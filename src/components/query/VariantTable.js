@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { VCFVariant } from 'myseq-vcf';
 
 import { DbSnp } from '../util/links';
+import { withSettings, settingsPropType } from '../../contexts/SettingsContext';
 
 const StyledTable = styled(Table)`
   table-layout: fixed;
@@ -22,6 +23,7 @@ const StyledTable = styled(Table)`
 `;
 
 function VariantTable(props) {
+  const { sample } = props.settings;
   return (
     <StyledTable bordered size="sm">
       <thead>
@@ -50,7 +52,7 @@ function VariantTable(props) {
             <td className="scrollable">
               <DbSnp rsId={variant.id} />
             </td>
-            <td className="truncate">{variant.genotype()}</td>
+            <td className="truncate">{variant.genotype(sample)}</td>
           </tr>
         ))}
       </tbody>
@@ -59,6 +61,7 @@ function VariantTable(props) {
 }
 
 VariantTable.propTypes = {
+  settings: settingsPropType.isRequired,
   variants: PropTypes.arrayOf(PropTypes.instanceOf(VCFVariant)).isRequired,
   selectVariant: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
   selectedVariant: PropTypes.instanceOf(VCFVariant)
@@ -68,4 +71,4 @@ VariantTable.defaultProps = {
   selectedVariant: undefined
 };
 
-export default VariantTable;
+export default withSettings(VariantTable);

@@ -33,7 +33,7 @@ class Navigation extends Component {
     };
 
     this.handleMenuToggle = this.handleMenuToggle.bind(this);
-    this.handleSampleChang = this.handleSampleChange.bind(this);
+    this.handleSampleChange = this.handleSampleChange.bind(this);
   }
 
   handleMenuToggle() {
