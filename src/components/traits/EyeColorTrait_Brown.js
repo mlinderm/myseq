@@ -27,10 +27,9 @@ export default function EyeColorTraitBrown() {
         This <abbr title="Single Nucleotide Polymorphism">SNP</abbr>, upstream
         of the <i>OCA2</i> gene, has been associated with eye color.
         Specifically, blue eye color is associated with the{' '}
-        <MonoSpan>GG</MonoSpan>
-        genotype. rs12913832 is part of a haplotype that is found in almost all
-        Caucasians with blue eyes. rs12913832 is common in individuals of
-        Caucasian descent, but rare in other groups [
+        <MonoSpan>GG</MonoSpan> genotype. rs12913832 is part of a haplotype that
+        is found in almost all Caucasians with blue eyes. rs12913832 is common
+        in individuals of Caucasian descent, but rare in other groups [
         <PubMed pubmedId={18172690} />
         ], [<PubMed pubmedId={18252222} />
         ]. Adapted from <SNPedia title="Rs12913832" oldid={1533213} />.

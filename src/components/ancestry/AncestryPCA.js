@@ -229,9 +229,11 @@ class AncestryPCA extends Component {
                   <option key="europe" value="european">
                     European
                   </option>
+                  {/*
                   <option key="southasian" value="southasian">
                     South Asian
                   </option>
+                  */}
                 </Input>
               </FormGroup>
             </Form>

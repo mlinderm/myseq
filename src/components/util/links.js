@@ -201,7 +201,7 @@ export function PharmGKB(props) {
       <a
         target="_blank"
         rel="noreferrer noopener"
-        href={`https://www.pharmgkb.org/chemical/${PAid}/guideline/${PAidGuide}`}
+        href={`https://www.pharmgkb.org/chemical/${PAid}/guidelineAnnotation/${PAidGuide}`}
       >
         {props.children || 'PharmGKB'}
         <Icon>launch</Icon>

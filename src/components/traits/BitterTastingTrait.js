@@ -11,7 +11,7 @@ const bitter = {
     ref: 'C',
     alt: 'G'
   },
-  rsID: 'rs713598',
+  rsId: 'rs713598',
   association: [
     { genotype: 'C/C', phenotype: 'Possibly does not taste PTC as bitter' },
     { genotype: 'C/G', phenotype: 'Can taste PTC as bitter' },
