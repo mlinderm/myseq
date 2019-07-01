@@ -222,7 +222,7 @@ class WarfarinFDA extends Component {
             );
             return (
               <tr key={assoc.vkorcGenotype}>
-                <td>{flipStrand(assoc.vkorcGenotype)}</td>
+                <td>{assoc.vkorcGenotype}</td>
                 {assoc.phenotype.map((phenotype, index) => (
                   <td
                     key={`${assoc.vkorcGenotype}-${
