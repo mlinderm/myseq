@@ -6,7 +6,7 @@ MySeq can load and analyze [Tabix-indexed](http://www.htslib.org/doc/tabix.html)
 
 ## Quick Start
 
-MySeq is deployed at <https://go.middlebury.edu/myseq>. Get started by doing one of 1) selecting a local VCF file and its index file, 2) providing a URL to a VCF file, or 3) selecting one of the pre-configured VCF files ([Genome in a Bottle](https://jimb.stanford.edu/giab) variant calls for NA12878/HG001).
+MySeq is deployed at <https://go.middlebury.edu/myseq>. Get started by doing one of 1) selecting a local VCF file and its index file, 2) providing a URL to a VCF file, or 3) selecting one of the pre-configured VCF files ([Genome in a Bottle](https://jimb.stanford.edu/giab) variant calls for NA12878/HG001). Check out a [video](https://youtu.be/RhiWw6OeK7g) demonstrating MySeq's features with variant calls from NA12878.
 
 As an example of using a public URL, you can load the 1000 Genomes chr22 variant calls directly from AWS S3 with the following URL (try querying for [rs72646967](https://www.ncbi.nlm.nih.gov/snp/rs72646967)):
 ```
