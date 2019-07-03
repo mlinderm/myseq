@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Redirect } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import {
+  UncontrolledAlert,
   Col,
   Row,
   Form,
@@ -22,6 +23,10 @@ import {
 
 const Icon = styled.i`
   font-size: 36px;
+`;
+
+const InlineIcon = styled.i`
+  font-size: 1rem;
 `;
 
 function VCFLink(props) {
@@ -191,6 +196,18 @@ class LoadVcfFile extends Component {
 
     return (
       <div>
+        <UncontrolledAlert color="info">
+          MySeq is a single-page web application for privacy-protecting personal
+          genome analysis. MySeq is for educational and research use <b>only</b>
+          . To get started, load a Tabix-indexed VCF file using one of the
+          approaches below. You can switch between the different analyses using
+          the "Analyses" dropdown menu in the header above. Click on the{' '}
+          <Link to="/help">
+            help button (
+            <InlineIcon className="material-icons">help</InlineIcon>)
+          </Link>{' '}
+          to learn more about using MySeq.
+        </UncontrolledAlert>
         <h3>Load Your Input File in One of Three Ways</h3>
         <Form>
           <FormGroup row>

@@ -9,7 +9,7 @@ function About() {
   return (
     <div>
       <p>
-        MySeq a single-page web application for privacy-protecting personal
+        MySeq is a single-page web application for privacy-protecting personal
         genome analysis developed at Middlebury College by{' '}
         <ExternalLink href="https://go.middlebury.edu/linderman">
           Michael Linderman
@@ -64,10 +64,11 @@ function Data() {
         This is the typical way to prepare and distribute VCF files and so it is
         likely that your VCF file is ready for use with MySeq without any
         further preparation. Note, that MySeq requires both the VCF file and the
-        index file. When loading locally-stored files make sure to select both
-        files (which must be in the same folder). You can select multiple files
-        in the &ldquo;File Chooser&rdquo; by holding the <kbd>Shift ⇧</kbd> or{' '}
-        <kbd>Command ⌘</kbd> on your keyboard.
+        index file (with the &ldquo;tbi&rdquo; extension). When loading
+        locally-stored files make sure to select both files (which must be in
+        the same folder). You can select multiple files in the &ldquo;File
+        Chooser&rdquo; by holding the <kbd>Shift ⇧</kbd> or <kbd>Command ⌘</kbd>{' '}
+        on your keyboard.
       </p>
       <p>
         If your VCF file is not BGZip-compressed and Tabix-indexed, you will
