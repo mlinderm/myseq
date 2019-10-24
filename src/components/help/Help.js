@@ -51,7 +51,7 @@ function Data() {
   return (
     <div>
       <p>
-        MySeq is designed to analyzed the VCF files produced by genome analysis
+        MySeq is designed to analyze the VCF files produced by genome analysis
         pipelines. VCF, or Variant Call Format, files describe genetic variants
         and the corresponding genotypes (how many copies of a variant) for any
         number of individuals. Whole genome sequencing typically identifies 4-5
@@ -64,11 +64,10 @@ function Data() {
         This is the typical way to prepare and distribute VCF files and so it is
         likely that your VCF file is ready for use with MySeq without any
         further preparation. Note, that MySeq requires both the VCF file and the
-        index file (with the &ldquo;tbi&rdquo; extension). When loading
-        locally-stored files make sure to select both files (which must be in
-        the same folder). You can select multiple files in the &ldquo;File
-        Chooser&rdquo; by holding the <kbd>Shift ⇧</kbd> or <kbd>Command ⌘</kbd>{' '}
-        on your keyboard.
+        index file. When loading locally-stored files make sure to select both
+        files (which must be in the same folder). You can select multiple files
+        in the &ldquo;File Chooser&rdquo; by holding the <kbd>Shift ⇧</kbd> or{' '}
+        <kbd>Command ⌘</kbd> on your keyboard.
       </p>
       <p>
         If your VCF file is not BGZip-compressed and Tabix-indexed, you will
@@ -137,6 +136,42 @@ function Acknowledgements() {
   );
 }
 
+function TermsAndConditions() {
+  return (
+    <div>
+      <p>
+        <b>MySeq is for educational and research use only</b>. MySeq is not
+        intended for diagnostic use or medical decision-making and no
+        information provided by the application should be considered diagnostic.
+        Please consult a health care professional with any medical questions or
+        concerns. By using MySeq (this website) you agree that you accept these
+        Terms and Conditions and are aware of the potential risks and benefits
+        of genome analysis.
+      </p>
+      <p>
+        MySeq is licensed under the{' '}
+        <ExternalLink href="https://opensource.org/licenses/Apache-2.0">
+          Apache-2.0
+        </ExternalLink>{' '}
+        license and is provided on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+        CONDITIONS OF ANY KIND, either express or implied, including, without
+        limitation, any warranties or conditions of TITLE, NON-INFRINGEMENT,
+        MERCHANTABILITY, or FITNESS FOR A PARTICULAR PURPOSE. You are solely
+        responsible for determining the appropriateness of using or
+        redistributing MySeq and assume any risks associated with Your exercise
+        of permissions under this License. In no event and under no legal
+        theory, whether in tort (including negligence), contract, or otherwise,
+        unless required by applicable law (such as deliberate and grossly
+        negligent acts) or agreed to in writing, shall any Contributor be liable
+        to You for damages, including any direct, indirect, special, incidental,
+        or consequential damages of any character arising as a result of this
+        License or out of the use or inability to use MySeq, even if such
+        Contributor has been advised of the possibility of such damages.
+      </p>
+    </div>
+  );
+}
+
 const NavLinkSidebar = styled(NavLink)`
   padding-top: 0;
   padding-bottom: 0;
@@ -147,10 +182,12 @@ function Help() {
     <div>
       <h3>MySeq Help</h3>
       <Alert color="warning">
-        MySeq is for educational and research use <b>only</b>. MySeq is not
-        intended for diagnostic use or medical decision-making. If you have any
-        questions about the results obtained via this tool, please consult a
-        health care professional.
+        <b>MySeq is for educational and research use only</b>. MySeq is not
+        intended for diagnostic use or medical decision-making. Please consult a
+        health care professional with any medical questions or concerns. By
+        using MySeq (this website) you agree that you accept the{' '}
+        <Link to="/help/terms">Terms and Conditions</Link> and are aware of the
+        potential risks and benefits of genome analysis.
       </Alert>
       <Row>
         <Col md={3}>
@@ -158,6 +195,9 @@ function Help() {
           <Nav vertical>
             <NavLinkSidebar tag={Link} to="/help/about">
               About
+            </NavLinkSidebar>
+            <NavLinkSidebar tag={Link} to="/help/terms">
+              Terms and Conditions
             </NavLinkSidebar>
             <NavLinkSidebar tag={Link} to="/help/data">
               Data Preparation
@@ -170,6 +210,7 @@ function Help() {
         <Col md={9}>
           <Switch>
             <Route path="/help/about" exact component={About} />
+            <Route path="/help/terms" exact component={TermsAndConditions} />
             <Route path="/help/data" exact component={Data} />
             <Route
               path="/help/acknowledgements"

@@ -231,14 +231,23 @@ class LRRiskModel extends Component {
         </Row>
         <Row>
           <Col>
-            This analysis, modeled on <PubMed pubmedId="20435227" />, uses a{' '}
+            This analysis, modeled on <PubMed pubmedId="20435227" />, is
+            intended to demonstrate the use of a{' '}
             <PubMed pubmedId="20497613">likelihood ratio-based approach</PubMed>{' '}
             to predict an individual's genetically-informed risk of developing
             disease. A total likelihood ratio (LR) of greater than 1 implies
             that an individual with the same genetic makeup is at increased risk
             compared the average person. The overall LR is the product the LRs
             of the individual variants. The LR for a variant is computed from
-            the odds ratio reported in the GWAS study.
+            the odds ratio reported in the GWAS study. This analysis may or may
+            not accurately model an individual's actual risk of developing this
+            condition. Only a small fraction of the variants that have been
+            reported to be associated with this condition are included in the
+            model; relevant risk or protective variants may not be included and
+            the genetic variants that are included may or may not confer risk in
+            a particular individual. This model does not incorporate any
+            specific information about the individual, such as ancestry or
+            environment (including lifestyle).
           </Col>
         </Row>
       </div>

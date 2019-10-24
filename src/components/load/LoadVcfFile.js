@@ -197,16 +197,27 @@ class LoadVcfFile extends Component {
     return (
       <div>
         <UncontrolledAlert color="info">
-          MySeq is a single-page web application for privacy-protecting personal
-          genome analysis. MySeq is for educational and research use <b>only</b>
-          . To get started, load a Tabix-indexed VCF file using one of the
-          approaches below. You can switch between the different analyses using
-          the "Analyses" dropdown menu in the header above. Click on the{' '}
-          <Link to="/help">
-            help button (
-            <InlineIcon className="material-icons">help</InlineIcon>)
-          </Link>{' '}
-          to learn more about using MySeq.
+          <p>
+            MySeq is a single-page web application for privacy-protecting
+            personal genome analysis.{' '}
+            <b>MySeq is for educational and research use only</b>. MySeq is not
+            intended for diagnostic use or medical decision-making. Please
+            consult a health care professional with any medical questions or
+            concerns. By using MySeq (this website) you agree that you accept
+            the <Link to="/help/terms">Terms and Conditions</Link> and are aware
+            of the potential risks and benefits of genome analysis.
+          </p>
+
+          <p>
+            To get started, load a Tabix-indexed VCF file using one of the
+            approaches below. You can switch between the different analyses
+            using the "Analyses" dropdown menu in the header above. Click on the{' '}
+            <Link to="/help">
+              help button (
+              <InlineIcon className="material-icons">help</InlineIcon>)
+            </Link>{' '}
+            to learn more about using MySeq.
+          </p>
         </UncontrolledAlert>
         <h3>Load Your Input File in One of Three Ways</h3>
         <Form>
