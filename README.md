@@ -4,6 +4,10 @@ MySeq is a web-application for privacy-protecting interactive analysis of person
 
 MySeq can load and analyze [Tabix-indexed](http://www.htslib.org/doc/tabix.html) [VCF](https://samtools.github.io/hts-specs/) files stored locally on the user's computer or available remotely. Queries and other analyses will only load the necessary blocks of the compressed VCF file, enabling efficient analysis of whole-genome-scale VCF files.
 
+If you use MySeq, please cite:
+
+Linderman MD, McElroy L, Chang L. [MySeq: privacy-protecting browser-based personal Genome analysis for genomics education and exploration](https://bmcmedgenomics.biomedcentral.com/articles/10.1186/s12920-019-0615-3). BMC Med Genomics. 2019 Nov 27;12(1):172.
+
 ## Quick Start
 
 MySeq is deployed at <https://go.middlebury.edu/myseq>. Get started by doing one of 1) selecting a local VCF file and its index file, 2) providing a URL to a VCF file, or 3) selecting one of the pre-configured VCF files ([Genome in a Bottle](https://jimb.stanford.edu/giab) variant calls for NA12878/HG001). Check out a [video](https://youtu.be/RhiWw6OeK7g) demonstrating MySeq's features with variant calls from NA12878.
